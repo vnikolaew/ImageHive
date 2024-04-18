@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String
-from images.db import Base
+from modules.db import Base
 from . import hashing
 
 

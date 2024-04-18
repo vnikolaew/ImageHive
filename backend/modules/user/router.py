@@ -4,7 +4,7 @@ import uuid
 from http.client import HTTPException
 from sqlalchemy.orm import Session
 from . import schema, services
-from images import db
+from modules import db
 from . import validator
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 
@@ -47,7 +47,7 @@ async def get_all_users(database: Session = Depends(db.get_db)):
 
 
 @router.get("/{user_id}", response_model=schema.DisplayUser)
-async def get_all_users(user_id: int, database: Session = Depends(db.get_db)):
+async def get_user_by_id(user_id: int, database: Session = Depends(db.get_db)):
     return await services.get_user_by_id(user_id, database)
 
 

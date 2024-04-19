@@ -35,6 +35,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
+  metadata          Json?   @default("null") @db.JsonB
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

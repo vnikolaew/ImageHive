@@ -4,7 +4,6 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma, globalForPrisma } from "@/lib/prisma";
 import { PrismaClient } from "@prisma/client";
 import { session } from "@/lib/session";
-import EmailProvider from "next-auth/providers/nodemailer";
 import ResendProvider from "next-auth/providers/resend";
 import { Resend } from "resend";
 

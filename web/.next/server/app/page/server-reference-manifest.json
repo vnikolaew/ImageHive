@@ -1,0 +1,21 @@
+{
+  "node": {
+    "e5f19d65e0e6ffe822fa7c3006c5f4733ed09163": {
+      "workers": {
+        "app/page": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions.ts [app-rsc] (ecmascript, action, ecmascript)\" } [app-rsc] (ecmascript)"
+      },
+      "layer": {
+        "app/page": "actionBrowser"
+      }
+    },
+    "3a7a2f460d044ba2f73bda933fbb85b6af295095": {
+      "workers": {
+        "app/page": "[project]/.next-internal/server/app/page/actions.js { ACTIONS_MODULE0 => \"[project]/app/actions.ts [app-rsc] (ecmascript, action, ecmascript)\" } [app-rsc] (ecmascript)"
+      },
+      "layer": {
+        "app/page": "actionBrowser"
+      }
+    }
+  },
+  "edge": {}
+}

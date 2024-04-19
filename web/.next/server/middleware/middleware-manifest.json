@@ -1,0 +1,31 @@
+{
+  "sorted_middleware": [],
+  "middleware": {
+    "/": {
+      "files": [
+        "server/edge/chunks/ssr/_b46975._.js",
+        "server/edge/chunks/ssr/node_modules_@auth_core_8e14d3._.js",
+        "server/edge/chunks/ssr/node_modules_jose_dist_browser_a7dca6._.js",
+        "server/edge/chunks/ssr/node_modules_react_9d5f17._.js",
+        "server/edge/chunks/ssr/node_modules_react-dom_3c9678._.js",
+        "server/edge/chunks/ssr/node_modules_entities_lib_esm_fa1cc9._.js",
+        "server/edge/chunks/ssr/node_modules_js-beautify_js_60eb45._.js",
+        "server/edge/chunks/ssr/node_modules_c0c049._.js",
+        "server/edge/chunks/ssr/_0087a5._.js",
+        "server/edge/chunks/ssr/edge-wrapper_2c4845.js",
+        "server/edge/chunks/ssr/edge-wrapper_653f61.js"
+      ],
+      "name": "middleware",
+      "page": "/",
+      "matchers": [
+        {
+          "regexp": "^/.*$",
+          "locale": false,
+          "originalSource": "/:path*"
+        }
+      ]
+    }
+  },
+  "instrumentation": null,
+  "functions": {}
+}

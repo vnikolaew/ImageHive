@@ -35,7 +35,7 @@ export default function Home() {
          )}
 
          {isSignedIn ?
-            <pre className={`text-sm`}>{JSON.stringify(data!.user, null, 2)}</pre> : "Not signed in."}
+            <pre className={`text-sm`}>{JSON.stringify(data!.user, null, 2)}</pre> : "You are not signed in."}
       </main>
 
    );

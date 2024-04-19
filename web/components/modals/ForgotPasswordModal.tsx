@@ -1,0 +1,82 @@
+"use client";
+import React from "react";
+import { ModalType, useModals } from "@/providers/ModalsProvider";
+import {
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
+} from "@/components/ui/dialog";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { API_ROUTES } from "@/lib/consts";
+
+const formSchema = z.object({
+   email: z.string().email({ message: `Please enter valid e-mail address.` }),
+});
+
+type FormValues = z.infer<typeof formSchema>
+
+const ForgotPasswordModal = () => {
+   const { modals, toggleModal } = useModals();
+   const form = useForm<FormValues>({
+      resolver: zodResolver(formSchema),
+      defaultValues: {
+         email: ``,
+      },
+   });
+
+   async function onSubmit(values: FormValues) {
+      fetch(API_ROUTES.FORGOT_PASSWORD, {
+         method: "POST",
+         body: JSON.stringify(values),
+         headers: {
+            "Content-Type": `application/json`,
+            "Accept": `application/json`,
+         },
+      }).then(res => res.json()).then(console.log).catch(console.error);
+
+   }
+
+   return (
+      <Dialog onOpenChange={_ => toggleModal(ModalType.FORGOT_PASSWORD)} open={true}>
+         <DialogTrigger></DialogTrigger>
+         <DialogContent className="sm:max-w-[450px]">
+            <DialogHeader>
+               <DialogTitle className={`text-center text-2xl`}>Forgot your password?</DialogTitle>
+               <DialogDescription className={`!mt-8 text-slate-500 text-sm`}>
+                  Do not worry! Fill in your email below and we&apos;ll send you a link to reset your password:
+               </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex flex-col w-full items-center">
+                  <FormField
+                     control={form.control}
+                     name="email"
+                     render={({ field }) => (
+                        <FormItem className={`!mt-4 w-3/4`}>
+                           {/*<FormLabel>Username</FormLabel>*/}
+                           <FormControl className={`!mt-1`}>
+                              <Input type={`email`} required placeholder="e.g. jack123@example.com" {...field} />
+                           </FormControl>
+                           <FormMessage className={`text-xs font-normal !mt-1`} />
+                        </FormItem>
+                     )}
+                  />
+                  <Button variant={`outline`} className={`!px-6 rounded-full mt-2 shadow-md w-3/4 bg-background`}
+                          type="submit">Reset your password</Button>
+               </form>
+            </Form>
+
+         </DialogContent>
+      </Dialog>
+   );
+};
+
+export default ForgotPasswordModal;

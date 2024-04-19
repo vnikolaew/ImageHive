@@ -1,0 +1,99 @@
+openapi: 3.1.0
+info:
+  title: Image Hive
+  description: This is private docs
+  version: '1.0'
+paths:
+  /images/classify/{image_id}:
+    post:
+      tags:
+      - Images
+      summary: Classify New Image
+      operationId: classify_new_image_images_classify__image_id__post
+      parameters:
+      - name: image_id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+          title: Image Id
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '404':
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /:
+    get:
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /hello/{name}:
+    get:
+      summary: Root
+      operationId: root_hello__name__get
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Name
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

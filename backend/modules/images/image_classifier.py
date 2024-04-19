@@ -22,7 +22,7 @@ class ImageClassifier:
                        list(sorted(zip(CATEGORIES, probs.tolist()[0]), key=lambda x: -x[1]))[:5]]
         return predictions
 
-    async def process(self, image_full_path: str) -> list[dict[str, any]]:
+    def process(self, image_full_path: str) -> list[dict[str, any]]:
         logger.info(f"Processing image '{image_full_path}' ...")
 
         try:

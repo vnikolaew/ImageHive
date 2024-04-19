@@ -65,6 +65,9 @@ class ImageService(ServiceBase):
 
     def update_image_tags(self, image: Image, tags: list[str]) -> Image:
         image.tags = tags
+        if image not in self.session:
+            self.session.add(image)
+
         self.session.commit()
         return image
 

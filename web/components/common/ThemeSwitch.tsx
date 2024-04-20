@@ -18,7 +18,7 @@ export function ThemeSwitch() {
 
    return (
       <DropdownMenu>
-         <DropdownMenuTrigger >
+         <DropdownMenuTrigger asChild >
             <TooltipProvider>
                <Tooltip >
                   <TooltipTrigger asChild>

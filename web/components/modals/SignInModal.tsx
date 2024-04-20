@@ -14,6 +14,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SignUpForm from "@/components/modals/SignUpForm";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import SignInForm from "@/components/modals/SignInForm";
+import { Separator } from "@/components/ui/separator";
 
 enum TABS {
    SIGN_UP = `SIGN_UP`,
@@ -23,14 +24,17 @@ enum TABS {
 const SignInModal = () => {
    const { modals, toggleModal } = useModals();
 
+   // if(!modals[ModalType.SIGN_IN]) return null;
+
    return (
-      <Dialog onOpenChange={value => toggleModal(ModalType.SIGN_IN)} open={modals[ModalType.SIGN_IN]}>
+      <Dialog onOpenChange={value => toggleModal(ModalType.SIGN_IN)}>
          <DialogTrigger>
          </DialogTrigger>
-         <DialogContent className="sm:max-w-[450px]">
+         <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
                <DialogTitle className={`text-center`}>Sign up to your account</DialogTitle>
                <DialogDescription>
+                  <Separator className={`w-5/6 mx-auto mt-2 bg-neutral-700 rounded-full`} />
                </DialogDescription>
             </DialogHeader>
             <ScrollArea className="grid gap-4 py-4 h-[65vh]">

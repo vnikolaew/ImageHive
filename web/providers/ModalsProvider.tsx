@@ -69,9 +69,9 @@ export const ModalsProvider = ({ children }: PropsWithChildren) => {
 
    return (
       <ModalsContext.Provider value={[modals, setModals]}>
+         {children}
          <ModalsListener/>
          <Modals />
-         {children}
       </ModalsContext.Provider>
    );
 };

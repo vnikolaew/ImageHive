@@ -6,6 +6,7 @@ import { PrismaClient } from "@prisma/client";
 import { session } from "@/lib/session";
 import ResendProvider from "next-auth/providers/resend";
 import { Resend } from "resend";
+import Credentials from "next-auth/providers/credentials";
 
 globalForPrisma.prisma ??= new PrismaClient();
 
@@ -50,5 +51,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             console.log({ error });
          }
       },
-   })],
+   }),
+      Credentials({
+            credentials: {
+               email: {
+                  type: "email",
+               }, password: {
+                  type: "password",
+               },
+            },
+            authorize: async ({ email, password }) => {
+               console.log({ email, password });
+               const user = await prisma.user.findUnique({
+                  where: { email: email as string },
+               });
+               if (user) {
+                  return {
+                     id: user.id,
+                     email: user.email,
+                     name: user.name,
+                     image: user.image,
+                  };
+               }
+               return null!;
+            },
+         },
+      )],
 });

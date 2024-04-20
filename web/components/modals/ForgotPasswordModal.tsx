@@ -44,8 +44,10 @@ const ForgotPasswordModal = () => {
 
    }
 
+   if(!modals[ModalType.FORGOT_PASSWORD]) return null;
+
    return (
-      <Dialog onOpenChange={_ => toggleModal(ModalType.FORGOT_PASSWORD)} open={true}>
+      <Dialog onOpenChange={_ => toggleModal(ModalType.FORGOT_PASSWORD)} open={false}>
          <DialogTrigger></DialogTrigger>
          <DialogContent className="sm:max-w-[450px]">
             <DialogHeader>

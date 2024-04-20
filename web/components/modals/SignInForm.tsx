@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { PASSWORD_REGEX, SocialLogins } from "@/components/modals/SignUpForm";
+import { PASSWORD_REGEX } from "@/components/modals/SignUpForm";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,8 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ModalType } from "@/providers/ModalsProvider";
+import { useIsDarkMode } from "@/hooks/useIsDarkMode";
+import { SocialLogins } from "@/components/modals/SocialLogins";
 
 const formSchema = z.object({
    usernameOrEmail: z.string().min(2).max(50),
@@ -28,6 +30,7 @@ const SignInForm = () => {
       },
    });
    const [showPassword, setShowPassword] = useState(false);
+   const darkMode=  useIsDarkMode()
    const PasswordIcon = useMemo(() => {
       return showPassword ? EyeOffIcon : EyeIcon;
    }, [showPassword]);
@@ -82,13 +85,16 @@ const SignInForm = () => {
                   </FormItem>
                )}
             />
+            <Button
+               size={`default`}
+               variant={darkMode ? `secondary` : `outline`}
+               className={`self-end !px-12 !py-1 rounded-full !mt-8 shadow-md`} type="submit">Sign in</Button>
             <div className={`flex items-center gap-3`}>
                <Separator className={`w-full flex-1`} />
                <span className={`text-sm text-neutral-500`}>OR</span>
                <Separator className={`w-full flex-1`} />
             </div>
             <SocialLogins />
-            <Button className={`self-end !px-8 rounded-full mt-4 shadow-md`} type="submit">Sign in</Button>
          </form>
       </Form>
    );

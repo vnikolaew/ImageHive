@@ -56,14 +56,14 @@ const Navbar = () => {
                         <DropdownMenuContent className={`min-w-[200px] p-1 -left-1/2`}>
                            <DropdownMenuLabel>Signed in as {data?.user?.name}</DropdownMenuLabel>
                            <DropdownMenuSeparator />
-                           <Link href={`/profile`}>
+                           <Link href={`/account/profile`}>
                               <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
                                  Profile
                               </DropdownMenuItem>
                            </Link>
-                           <Link href={`/`}>
+                           <Link href={`/account/media`}>
                               <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                                 Billing
+                                 My images
                               </DropdownMenuItem>
                            </Link>
                            <Link href={`/`}>

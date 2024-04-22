@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { ImageUpload } from "@/app/upload/_store/imageUploadsStore";
-import { getFileExtension, ImageHiveApiResponse, normalizeFormData } from "@/lib/utils";
+import { getFileExtension, normalizeFormData } from "@/lib/utils";
 import path from "node:path";
 import probe from "probe-image-size";
 import { randomUUID } from "node:crypto";
@@ -52,7 +52,7 @@ export async function uploadFile(
             userId,
             absolute_url: filePath,
             title: imageUpload.description,
-            metadata: {},
+            metadata: { aiGenerated: /^true$/i.test(imageUpload.aiGenerated?.toString()) },
          },
       });
       return { success: true, image };
@@ -84,7 +84,7 @@ export async function handleUploadImage(imageUpload: ImageUpload, userId: string
             return process.env.BACKEND_API_URL!;
          },
       }))
-         .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
+   .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
       return { success: response.raw.status === constants.HTTP_STATUS_ACCEPTED };
    }
 

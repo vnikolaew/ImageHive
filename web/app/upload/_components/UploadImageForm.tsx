@@ -65,7 +65,9 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                                            key={i}>
                                        <span>{tag}</span>
                                        <X onClick={_ => {
-                                          form.setValue(`imageUploads.${index}.tags.${i}`, field?.value?.filter(s => s !== tag));
+                                          console.log(field.value, field.name, tag);
+
+                                          form.setValue(`imageUploads.${index}.tags`, field?.value?.filter(s => s !== tag));
                                        }} className={`cursor-pointer text-muted hover:text-neutral-800`} size={12} />
                                     </Badge>
                                  ))}
@@ -77,6 +79,7 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                                  placeholder="e.g. jack123 or jack123@example.com"
                                  {...field}
                                  onChange={e => {
+                                    console.log(`we are here`);
                                     field.onChange(e);
                                     form.setValue(`imageUploads.${index}.tags`, e.target.value.split(`,`).map(s => s.trim()));
                                     form.trigger(`imageUploads.${index}.tags`);

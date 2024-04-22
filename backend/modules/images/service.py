@@ -64,7 +64,7 @@ class ImageService(ServiceBase):
         return Image.get_by_id(image_id)
 
     def update_image_tags(self, image: Image, tags: list[str]) -> Image:
-        image.tags = tags
+        image.tags = list(set(tags).union(set(image.tags)))
         if image not in self.session:
             self.session.add(image)
 

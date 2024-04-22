@@ -107,24 +107,26 @@ export let xprisma = prisma.$extends({
             password: string,
             username: string
          }, select?: Prisma.UserSelect<InternalArgs>) {
+
             let user = await xprisma.user.create({
                data: {
                   email,
                   password: bcrypt.hashSync(password, 10),
                   name: username,
-                  accounts: {
-                     create: {
-                        provider: `credentials`,
-                        providerAccountId: `0`,
-                        type: `basic`,
-                     },
-                  },
                },
                select: {
                   id: true,
                   email: true,
                   name: true,
                   ...(select ?? {}),
+               },
+            });
+            await xprisma.account.create({
+               data: {
+                  userId: user.id,
+                  provider: `credentials`,
+                  providerAccountId: user.id,
+                  type: `basic`,
                },
             });
 

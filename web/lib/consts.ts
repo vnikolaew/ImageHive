@@ -34,6 +34,24 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   UPDATE_IMAGE_SUCCESS: {
+      message: `Image update successful`,
+      description: `You've successfully updated your media.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+   DELETE_IMAGE_SUCCESS: {
+      message: `Image removal successful`,
+      description: `You've successfully deleted your media.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
 } as const;
 
 export const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");

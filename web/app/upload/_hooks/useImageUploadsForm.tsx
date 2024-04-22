@@ -4,7 +4,16 @@ import { z } from "zod";
 import { v4 as uuid } from "uuid";
 import { useCallback } from "react";
 
-const uploadImagesFormSchema = z.object({
+export const uploadImageFormSchema = z.object({
+   inputFile: z.instanceof(File).nullable(),
+   imagePreview: z.string(),
+   id: z.string(),
+   tags: z.array(z.string()),
+   description: z.string().nullable(),
+   aiGenerated: z.boolean(),
+});
+
+export const uploadImagesFormSchema = z.object({
    imageUploads: z.array(z.object({
       inputFile: z.instanceof(File),
       imagePreview: z.string(),
@@ -15,7 +24,9 @@ const uploadImagesFormSchema = z.object({
    })),
 });
 
-type UploadImageFormValues = z.infer<typeof uploadImagesFormSchema>
+export type UploadImageFormValues = z.infer<typeof uploadImagesFormSchema>
+
+export type UploadSingleImageFormValues = z.infer<typeof uploadImageFormSchema>
 
 export function useImageUploadsForm() {
    const form = useForm<UploadImageFormValues>({
@@ -25,10 +36,11 @@ export function useImageUploadsForm() {
          imageUploads: [],
       },
    });
-   const { fields, append, remove, update } = useFieldArray({
+   const { append, remove, update } = useFieldArray({
       control: form.control,
       name: "imageUploads",
    });
+   const fields = form.watch(`imageUploads`);
 
    const addImage = useCallback((imageFile: File) => {
       const id = uuid();

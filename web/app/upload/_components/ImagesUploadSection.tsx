@@ -58,7 +58,6 @@ const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSe
             <Button
                onClick={_ => {
                   openModal(ModalType.REVIEW_UPLOAD_IMAGES);
-                  console.log({ imageUploads });
                }}
                size={`lg`}
                className={`rounded-full !px-12 text-md`}

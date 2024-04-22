@@ -22,12 +22,11 @@ enum TABS {
 }
 
 const SignInModal = () => {
-   const { modals, toggleModal } = useModals();
-
-   // if(!modals[ModalType.SIGN_IN]) return null;
+   const { modal, toggleModal, openModal } = useModals();
+   if (modal !== ModalType.SIGN_IN && modal !== ModalType.SIGN_UP) return null;
 
    return (
-      <Dialog onOpenChange={value => toggleModal(ModalType.SIGN_IN)}>
+      <Dialog open onOpenChange={_ => toggleModal(ModalType.SIGN_IN)}>
          <DialogTrigger>
          </DialogTrigger>
          <DialogContent className="sm:max-w-[500px]">
@@ -38,7 +37,13 @@ const SignInModal = () => {
                </DialogDescription>
             </DialogHeader>
             <ScrollArea className="grid gap-4 py-4 h-[65vh]">
-               <Tabs defaultValue="account" className="px-4">
+               <Tabs
+                  onValueChange={value => openModal(
+                     value === TABS.SIGN_UP ? ModalType.SIGN_UP : ModalType.SIGN_IN,
+                  )}
+                  value={modal === ModalType.SIGN_IN ? TABS.SIGN_IN : TABS.SIGN_UP}
+                  defaultValue="account"
+                  className="px-4">
                   <TabsList className="w-full">
                      <TabsTrigger className={`w-1/2`} value={TABS.SIGN_UP}>Sign up</TabsTrigger>
                      <TabsTrigger className={`w-1/2`} value={TABS.SIGN_IN}>Sign in</TabsTrigger>

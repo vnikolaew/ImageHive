@@ -24,8 +24,8 @@ def time_now():
 
 class Base(DeclarativeBase):
     id = Column('id', UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True)
-    created_at = Column(TIMESTAMP(timezone=True), default=time_now, nullable=False)
-    updated_at = Column(TIMESTAMP(timezone=True), default=None, onupdate=time_now, nullable=False)
+    created_at = Column('createdAt', TIMESTAMP(timezone=True), default=time_now, nullable=False)
+    updated_at = Column('updatedAt', TIMESTAMP(timezone=True), default=None, onupdate=time_now, nullable=False)
     is_deleted = Column(Boolean, default=False)
 
     @property

@@ -19,7 +19,7 @@ scheduler.start()
 def classify_image_job(image: Image, image_service: ImageService) -> None:
     logger = get_logger(__name__)
     classifier = ImageClassifier()
-    predictions = classifier.process(image.file_path)
+    predictions = classifier.process(image.absolute_url)
 
     # Update image tags in DB:
     tags = [p['label'] for p in predictions]

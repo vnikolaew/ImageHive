@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { API_ROUTES } from "@/lib/consts";
+import { API_ROUTES, HTTP } from "@/lib/consts";
 
 const formSchema = z.object({
    email: z.string().email({ message: `Please enter valid e-mail address.` }),
@@ -24,7 +24,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 const ForgotPasswordModal = () => {
-   const { modals, toggleModal } = useModals();
+   const { modal, toggleModal } = useModals();
    const form = useForm<FormValues>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -37,17 +37,17 @@ const ForgotPasswordModal = () => {
          method: "POST",
          body: JSON.stringify(values),
          headers: {
-            "Content-Type": `application/json`,
-            "Accept": `application/json`,
+            "Content-Type": HTTP.MEDIA_TYPES.APPLICATION_JSON,
+            "Accept": HTTP.MEDIA_TYPES.APPLICATION_JSON,
          },
       }).then(res => res.json()).then(console.log).catch(console.error);
 
    }
 
-   if(!modals[ModalType.FORGOT_PASSWORD]) return null;
+   if (modal !== ModalType.FORGOT_PASSWORD) return null;
 
    return (
-      <Dialog onOpenChange={_ => toggleModal(ModalType.FORGOT_PASSWORD)} open={false}>
+      <Dialog onOpenChange={_ => toggleModal(ModalType.FORGOT_PASSWORD)} open>
          <DialogTrigger></DialogTrigger>
          <DialogContent className="sm:max-w-[450px]">
             <DialogHeader>
@@ -71,8 +71,10 @@ const ForgotPasswordModal = () => {
                         </FormItem>
                      )}
                   />
-                  <Button variant={`outline`} className={`!px-6 rounded-full mt-2 shadow-md w-3/4 bg-background`}
-                          type="submit">Reset your password</Button>
+                  <Button
+                     variant={`secondary`}
+                     className={`!px-6 rounded-full mt-2 shadow-md w-3/4 `}
+                     type="submit">Reset your password</Button>
                </form>
             </Form>
 

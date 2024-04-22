@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions", "views", "fullTextSearch"]
+  previewFeatures = ["postgresqlExtensions", "views", "fullTextSearch", "driverAdapters", "relationJoins"]
 }
 
 datasource db {
@@ -13,6 +13,7 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String    @unique
+  password      String?
   emailVerified DateTime?
   image         String?
   accounts      Account[]
@@ -64,19 +65,19 @@ model VerificationToken {
 }
 
 model Image {
-  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  file_name      String
-  file_path      String
-  file_extension String
-  width          Int
-  height         Int
-  tags           String[]
-  metadata       Json     @db.JsonB
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title              String?  @db.VarChar(200)
+  original_file_name String
+  absolute_url       String
+  file_format        String
+  dimensions_set     String[]
+  tags               String[]
+  metadata           Json     @db.JsonB
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   is_deleted Boolean  @default(false)
 
-  User   User   @relation(fields: [userId], references: [id])
+  owner  User   @relation(fields: [userId], references: [id])
   userId String
 }

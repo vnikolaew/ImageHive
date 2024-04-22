@@ -1,8 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import type { NextMiddleware } from "next/server";
 import { auth } from "@/auth";
 
-export const runtime=  `node.js`
+export const config = { runtime: "nodejs" };
 
 type MiddlewareFactory = (middleware: NextMiddleware) => NextMiddleware
 
@@ -21,12 +21,16 @@ export function chain(
 }
 
 export const urlMiddleware: MiddlewareFactory = (next: NextMiddleware) => {
-   return (req, evt) => {
-      req.headers.append("next-url", req.url);
-      // res.headers.set("next-url", req.nextUrl);
+   return async (req, evt) => {
+      const response = NextResponse.next();
+      response.headers.set("next-url", req.url);
 
-      return next(req, evt);
+      let res = next(req, evt);
+      let nextResponse = res instanceof Promise ? (await res) : res;
+      nextResponse?.headers.set("next-url", req.url);
+
+      return nextResponse;
    };
 };
 
-export const middleware = auth;
+export const middleware = chain([urlMiddleware]);

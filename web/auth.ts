@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import Google from "@auth/core/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma, globalForPrisma } from "@/lib/prisma";
+import { prisma, globalForPrisma, xprisma } from "@/lib/prisma";
 import { PrismaClient } from "@prisma/client";
 import { session } from "@/lib/session";
 import ResendProvider from "next-auth/providers/resend";
@@ -56,16 +56,40 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             credentials: {
                email: {
                   type: "email",
-               }, password: {
+               },
+               username: {
+                  type: "text",
+               },
+               password: {
                   type: "password",
                },
+               type: {
+                  type: "text",
+               },
             },
-            authorize: async ({ email, password }) => {
-               console.log({ email, password });
-               const user = await prisma.user.findUnique({
-                  where: { email: email as string },
-               });
-               if (user) {
+            authorize: async ({ username, email, password, type }) => {
+               if (type === `signup`) {
+                  // Handle user sign up:
+                  const existing = await xprisma.user.findFirst({
+                     where: {
+                        OR: [
+                           {
+                              email: email as string,
+                           },
+                           {
+                              name: username as string,
+                           },
+                        ],
+                     },
+                  });
+                  if (existing) return null!;
+
+                  const user = await xprisma.user.signUp({
+                     email: email as string,
+                     password: password as string,
+                     username: username as string,
+                  }, { image: true });
+
                   return {
                      id: user.id,
                      email: user.email,
@@ -73,7 +97,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                      image: user.image,
                   };
                }
-               return null!;
+
+               const user = await xprisma.user.signIn({
+                  email: email as string,
+                  password: password as string,
+                  username: username as string,
+               });
+
+               return user!;
             },
          },
       )],

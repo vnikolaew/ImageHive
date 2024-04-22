@@ -1,76 +1,53 @@
 "use client";
 import React, {
    createContext,
-   Dispatch, Fragment,
+   Dispatch,
    PropsWithChildren,
    SetStateAction,
-   useContext,
-   useEffect,
-   useState,
 } from "react";
-import { useSearchParams } from "next/navigation";
 import Modals from "@/components/modals/Modals";
+import { parseAsInteger, useQueryState } from "nuqs";
 
 export enum ModalType {
-   SIGN_IN = 1,
-   FORGOT_PASSWORD = 2
+   SIGN_UP = 1,
+   SIGN_IN = 2,
+   FORGOT_PASSWORD = 3,
+   REVIEW_UPLOAD_IMAGES = 4
 }
 
-const ModalsContext = createContext<[Record<ModalType, boolean>, Dispatch<SetStateAction<Record<ModalType, boolean>>>]>(null!);
+const ModalsContext = createContext<[ModalType | null, Dispatch<SetStateAction<ModalType | null>>]>(null!);
 
-export const useModalsContext = () => useContext(ModalsContext);
+const useModalQueryState = () => useQueryState<ModalType>(`modal`,
+   parseAsInteger.withOptions({
+      history: `replace`,
+   }));
 
 export function useModals() {
-   const [modals, setModals] = useModalsContext();
+   const [modal, setModal] = useModalQueryState();
 
-   const toggleModal = (modal: ModalType) => {
-      if (modal in modals) setModals({ ...modals, [modal]: !modals[modal] });
-      //@ts-ignore
-      else setModals({ ...modals, [modal]: true });
+   const toggleModal = (m: ModalType) => {
+      if (!!modal) setModal(null);
+      else setModal(m);
    };
 
    const closeModal = (modal: ModalType) => {
-      setModals({ ...modals, [modal]: false });
+      setModal(null);
    };
 
    const openModal = (modal: ModalType) => {
-      const newModals: Record<ModalType, boolean> = Object.entries(modals).reduce((acc, [key, value]) => ({
-         ...acc,
-         [key]: key == modal,
-      }), {} as Record<ModalType, boolean>);
-
-      setModals(newModals);
+      setModal(modal);
    };
 
-   return { modals, toggleModal, closeModal, openModal };
+   return { modal, toggleModal, closeModal, openModal };
 }
 
-export const ModalsListener = () => {
-   const { openModal } = useModals();
-   const searchParams = useSearchParams();
-
-   useEffect(() => {
-      const modal = searchParams.get("modal");
-
-      if (modal && modal in ModalType) {
-         openModal(modal as ModalType);
-      }
-
-   }, [searchParams]);
-
-   return <Fragment />
-};
 
 export const ModalsProvider = ({ children }: PropsWithChildren) => {
-   const [modals, setModals] = useState<Record<ModalType, boolean>>({
-      [ModalType.SIGN_IN]: false,
-      [ModalType.FORGOT_PASSWORD]: false,
-   });
+   const [modal, setModal] = useModalQueryState();
 
    return (
-      <ModalsContext.Provider value={[modals, setModals]}>
+      <ModalsContext.Provider value={[modal, setModal]}>
          {children}
-         <ModalsListener/>
          <Modals />
       </ModalsContext.Provider>
    );

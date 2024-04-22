@@ -11,12 +11,14 @@ import { Separator } from "@/components/ui/separator";
 //@ts-ignore
 import { UilFacebook, UilGoogle } from "@iconscout/react-unicons";
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
-import { SocialLogins } from "@/components/modals/SocialLogins";
-import { handleCredentialsSignUp } from "@/components/modals/actions";
+import { LoadingSpinner, SocialLogins } from "@/components/modals/SocialLogins";
+import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
+import { usePromise } from "@/hooks/usePromise";
 
 export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}|:"<>?[\]\\';,./]).{6,}$/;
 
-const formSchema = z.object({
+export const formSchema = z.object({
    username: z.string().min(2).max(50),
    email: z.string().email(),
    password: z.string().min(6).max(50).regex(PASSWORD_REGEX, {
@@ -36,16 +38,33 @@ const SignUpForm = () => {
          password: ``,
       },
    });
+   const router = useRouter();
    const darkMode = useIsDarkMode();
-   const [showPassword, setShowPassword] = useState(false);
-   const PasswordIcon = useMemo(() => {
-      return showPassword ? EyeOffIcon : EyeIcon;
-   }, [showPassword]);
 
-   // 2. Define a submit handler.
+   const [showPassword, setShowPassword] = useState(false);
+
+   const PasswordIcon = useMemo(() =>
+      showPassword ? EyeOffIcon : EyeIcon, [showPassword]);
+   const { loading, action: signUp } = usePromise(async (values: FormValues) => {
+      await signIn(`credentials`, {
+         ...values,
+         type: `signup`,
+         redirect: false,
+         callbackUrl: `/`,
+      })
+         .then(res => {
+            console.log({ res });
+            if (res?.error === `CredentialsSignin`) {
+               form.setError(`email`, { message: `Invalid credentials` });
+            } else {
+               router.push(`/`);
+            }
+         })
+         .catch(console.error);
+   });
+
    async function onSubmit(values: FormValues) {
-      console.log(values);
-      await handleCredentialsSignUp(values)
+      await signUp(values);
    }
 
    return (
@@ -109,11 +128,13 @@ const SignUpForm = () => {
                )}
             />
             <Button
+               disabled={loading}
                size={`default`}
                variant={darkMode ? `secondary` : `outline`}
                className={`self-end !px-12 !py-1 rounded-full !mt-8 shadow-md`}
                type="submit">
-               Create an account
+
+               {loading ? <LoadingSpinner text={`Creating an account ...`} /> : `Create an account`}
             </Button>
             <div className={`flex items-center gap-3`}>
                <Separator className={`w-full flex-1`} />

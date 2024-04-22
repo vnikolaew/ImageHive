@@ -53,6 +53,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
          expiresIn: 60 * 60 * 10,
       });
 
+
+      // Send an e-mail here:
+      await sendResetEmailAsync(user, user_token);
+
       let account = await prisma.account.findFirst({
          where: { userId: user.id },
       });

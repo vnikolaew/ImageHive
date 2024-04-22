@@ -5,6 +5,8 @@ import { APP_NAME } from "@/lib/consts";
 import Navbar from "@/components/common/Navbar";
 import Providers from "@/providers";
 import "./globals.css";
+import Footer from "@/components/common/Footer";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -25,6 +27,8 @@ export default function RootLayout({
       <Providers>
          <Navbar />
          {children}
+         <Toaster />
+         <Footer />
       </Providers>
       </body>
       </html>

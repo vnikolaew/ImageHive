@@ -1,4 +1,5 @@
-from sqlalchemy import Text, Column, Integer, TIMESTAMP, ARRAY
+from sqlalchemy import Text, Column, Integer, TIMESTAMP, ARRAY, UUID, Boolean, String, text, func
+from sqlalchemy.dialects.postgresql import JSONB
 
 from modules.db import Base
 
@@ -6,9 +7,12 @@ from modules.db import Base
 class Image(Base):
     __tablename__ = 'Image'
 
-    file_name = Column('file_name', Text, nullable=False)
-    file_path = Column('file_path', Text, nullable=False)
-    file_extension = Column('file_extension', Text, nullable=False)
-    width = Column('width', Integer, nullable=False)
-    height = Column('height', Integer, nullable=False)
-    tags = Column('tags', ARRAY(Text))
+    id = Column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"), nullable=False)
+    file_format = Column(Text, nullable=False)
+    tags = Column(ARRAY(Text))
+    image_metadata = Column("metadata", JSONB, nullable=False)
+    userId = Column(Text, nullable=False)
+    absolute_url = Column(Text, nullable=False)
+    dimensions_set = Column(ARRAY(Text))
+    original_file_name = Column(Text, nullable=False)
+    title = Column(String(200))

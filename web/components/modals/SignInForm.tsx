@@ -1,9 +1,8 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { PASSWORD_REGEX } from "@/components/modals/SignUpForm";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -12,7 +11,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ModalType } from "@/providers/ModalsProvider";
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
-import { SocialLogins } from "@/components/modals/SocialLogins";
+import { LoadingSpinner, SocialLogins } from "@/components/modals/SocialLogins";
+import { signIn } from "next-auth/react";
+import { usePromise } from "@/hooks/usePromise";
+import { useRouter } from "next/navigation";
+
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}|:"<>?[\]\\';,./]).{6,}$/;
 
 const formSchema = z.object({
    usernameOrEmail: z.string().min(2).max(50),
@@ -22,6 +26,7 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 const SignInForm = () => {
+   const router = useRouter()
    const form = useForm<FormValues>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -30,15 +35,31 @@ const SignInForm = () => {
       },
    });
    const [showPassword, setShowPassword] = useState(false);
-   const darkMode=  useIsDarkMode()
+   const darkMode = useIsDarkMode();
+   const { loading, action: signInAction } = usePromise(async (values: FormValues) =>
+      await signIn(`credentials`, {
+         username: values.usernameOrEmail,
+         email: values.usernameOrEmail,
+         password: values.password,
+         type: `signin`,
+         redirect: false,
+         callbackUrl: `/`,
+      })
+         .then(res => {
+            if (res?.error === `CredentialsSignin`) {
+               form.setError(`usernameOrEmail`, { message: `Invalid credentials` });
+            }
+            router.push(`/`)
+         })
+         .catch(console.error));
+
+
    const PasswordIcon = useMemo(() => {
       return showPassword ? EyeOffIcon : EyeIcon;
    }, [showPassword]);
 
-   // 2. Define a submit handler.
-   function onSubmit(values: FormValues) {
-      // ✅ This will be type-safe and validated.
-      console.log(values);
+   async function onSubmit(values: FormValues) {
+      await signInAction(values);
    }
 
    return (
@@ -49,13 +70,13 @@ const SignInForm = () => {
                name="usernameOrEmail"
                render={({ field }) => (
                   <FormItem className={`!mt-4`}>
-                     <FormLabel>Username or E-mail</FormLabel>
+                     <FormLabel>Username or e-mail</FormLabel>
                      <FormControl className={`!mt-1`}>
                         <Input type={`text`} required placeholder="e.g. jack123 or jack123@example.com" {...field} />
                      </FormControl>
                      <FormDescription>
                      </FormDescription>
-                     <FormMessage />
+                     <FormMessage className={`dark:text-red-400`} />
                   </FormItem>
                )}
             />
@@ -64,7 +85,7 @@ const SignInForm = () => {
                name="password"
                render={({ field }) => (
                   <FormItem className={`!mt-6`}>
-                     <FormLabel>Password</FormLabel>
+                     <FormLabel htmlFor={`password`}>Password</FormLabel>
                      <FormControl className={`!mt-1`}>
                         <div className={`relative`}>
                            <Input required type={showPassword ? `text` : `password`}
@@ -81,14 +102,18 @@ const SignInForm = () => {
                            </Link>
                         </Button>
                      </FormDescription>
-                     <FormMessage />
+                     <FormMessage className={`dark:text-red-400`} />
                   </FormItem>
                )}
             />
             <Button
+               disabled={loading}
                size={`default`}
                variant={darkMode ? `secondary` : `outline`}
-               className={`self-end !px-12 !py-1 rounded-full !mt-8 shadow-md`} type="submit">Sign in</Button>
+               className={`self-end !px-12 !py-1 rounded-full !mt-8 shadow-md !min-w-1/2`}
+               type="submit">
+               {loading ? <LoadingSpinner /> : `Sign in`}
+            </Button>
             <div className={`flex items-center gap-3`}>
                <Separator className={`w-full flex-1`} />
                <span className={`text-sm text-neutral-500`}>OR</span>

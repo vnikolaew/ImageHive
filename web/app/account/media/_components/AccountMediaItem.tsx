@@ -65,12 +65,11 @@ const AccountMediaItem = ({ image }: AccountMediaItemProps) => {
                   ))}
                   {image.tags.length > 3 && (
                      <TooltipProvider>
-
                         <Tooltip>
                            <TooltipTrigger className={`cursor-auto`}>
                               <Badge className={`text-nowrap`} variant={`outline`} key={`more`}>+{image.tags.length - 3} more</Badge>
                            </TooltipTrigger>
-                           <TooltipContent className={`!text-xs rounded-lg bg-transparent text-white flex gap-2`}>
+                           <TooltipContent className={`!text-xs rounded-lg bg-black text-white flex gap-1`}>
                               {image.tags.slice(3).sort().map((tag, i) => (
                                  <Badge variant={`secondary`} key={i}>{tag}</Badge>
                               ))}
@@ -84,13 +83,13 @@ const AccountMediaItem = ({ image }: AccountMediaItemProps) => {
          </div>
          <Dialog onOpenChange={setEditMediaModalOpen} open={editMediaModalOpen}>
             <DialogTrigger></DialogTrigger>
-            <DialogContent className="min-h-[70vh] !h-fit !w-[40vw] !max-w-[40vw] flex gap-4 !p-0 rounded-xl">
+            <DialogContent className="min-h-[70vh] !h-fit !w-[40vw] sm:!w-[70vw] !max-w-[40vw] sm:!max-w-[70vw] flex gap-4 !p-0 rounded-xl">
                <DialogHeader>
                   <div ref={imageRef} style={{
                      backgroundImage: `url(${imageSrc})`,
                      backgroundSize: `cover`,
                      backgroundOrigin: `center`,
-                  }} className="!h-full w-[300px] rounded-xl">
+                  }} className="!h-full min-w-[300px] sm:w-[400px] rounded-xl">
                   </div>
                </DialogHeader>
                <div className={`p-8 flex-1`}>

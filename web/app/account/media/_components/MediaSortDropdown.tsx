@@ -21,7 +21,7 @@ const MediaSortDropdown = ({ sort }: MediaSortDropdownProps) => {
       if (sort && Object.keys(SortOptions).includes(sort)) {
          return sort;
       }
-      return SortOptions.UploadedLatest;
+      return `UploadedLatest`;
    });
    console.log({ selectedSortOption });
 

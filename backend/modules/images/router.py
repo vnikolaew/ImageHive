@@ -4,27 +4,14 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from fastapi import APIRouter, Depends, status, HTTPException
 from fastapi.responses import JSONResponse
 
-from logger import get_logger
 from modules.db import time_now
-from modules.images.image_classifier import ImageClassifier
-from modules.images.models import Image
 from modules.images.service import ImageService
+from modules.images.tasks.classify_image_job import ClassifyImageJob
 
 router = APIRouter(tags=["Images"], prefix="/images")
 
 scheduler = BackgroundScheduler()
 scheduler.start()
-
-
-def classify_image_job(image: Image, image_service: ImageService) -> None:
-    logger = get_logger(__name__)
-    classifier = ImageClassifier()
-    predictions = classifier.process(image.absolute_url)
-
-    # Update image tags in DB:
-    tags = [p['label'] for p in predictions]
-    image = image_service.update_image_tags(image, tags)
-    logger.info(f"Classified Image with ID '{image.id}' with tags [{str.join(',', tags)}]")
 
 
 @router.post("/classify/{image_id}",
@@ -38,7 +25,9 @@ async def classify_new_image(
         if not image:
             raise HTTPException(status_code=404)
 
-        scheduler.add_job(classify_image_job, args=[image, image_service],
-                          id=f'classify_image_job-{image_id}_{uuid.uuid4()}')
+        scheduler.add_job(
+            ClassifyImageJob(image, image_service),
+            args=[],
+            id=f'classify_image_job-{image_id}_{uuid.uuid4()}')
         return JSONResponse(status_code=status.HTTP_202_ACCEPTED,
                             content={"image_id": str(image_id), 'timestamp': str(time_now())})

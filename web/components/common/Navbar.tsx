@@ -3,7 +3,6 @@ import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { ThemeSwitch } from "@/components/common/ThemeSwitch";
 import Image from "next/image";
-import { useIsSignedIn } from "@/hooks/useIsSignedIn";
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -22,6 +21,9 @@ import { useIsDarkMode } from "@/hooks/useIsDarkMode";
 import { usePromise } from "@/hooks/usePromise";
 import { SignedIn, SignedOut } from "@/components/common/Auth";
 import { Upload } from "lucide-react";
+import NavSearchBar from "@/components/common/NavSearchBar";
+import { useWindowScroll } from "@uidotdev/usehooks";
+import { useMemo, useRef } from "react";
 
 const Navbar = () => {
    const { data } = useSession();
@@ -31,56 +33,69 @@ const Navbar = () => {
       await signOut({ redirect: true, callbackUrl: `/` });
    });
 
+   const navRef = useRef<HTMLElement>(null!);
+   const [{ y }] = useWindowScroll();
+   const showNavbarBackground = useMemo(() => {
+      return y! >= navRef?.current?.clientHeight;
+   }, [y]);
+
    return (
       <nav
-         className="w-full navbar-dark bg-dark flex items-center justify-between px-12 py-4 shadow-sm sticky !z-100 border-b-[1px] rounded-b-xl">
+         ref={navRef}
+         className={cn(`w-full navbar-dark bg-transparent flex items-center justify-between gap-24 px-12 py-4 shadow-sm !z-10 rounded-b-xl fixed transition-colors duration-300`,
+            showNavbarBackground && `bg-background border-b-[1px]`)}>
          <h2 className="text-xl cursor-pointer">
             <Link href={`/`}>
                <Image alt={`logo`} width={120} height={30}
                       src={darkMode ? LogoDark : Logo} />
             </Link>
          </h2>
+         <div className={`flex-1`}>
+            {showNavbarBackground && (
+               <NavSearchBar />
+            )}
+         </div>
          <div className="mr-8 flex items-center gap-4">
-            <ThemeSwitch />
+            <ThemeSwitch showNavbarBackground={showNavbarBackground} />
             <div className={`flex items-center gap-4`}>
                <SignedIn>
-                     <DropdownMenu modal>
-                        <DropdownMenuTrigger asChild>
-                           <Image
-                              className={cn(`rounded-full cursor-pointer bg-white border-[1px] border-neutral-200`,
-                                 !data?.user?.image && `p-1`)}
-                              height={36}
-                              width={36}
-                              src={data?.user?.image ?? DefaultAvatar} alt={``} />
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className={`min-w-[200px] p-1 -left-1/2`}>
-                           <DropdownMenuLabel>Signed in as {data?.user?.name}</DropdownMenuLabel>
-                           <DropdownMenuSeparator />
-                           <Link href={`/account/profile`}>
-                              <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                                 Profile
-                              </DropdownMenuItem>
-                           </Link>
-                           <Link href={`/account/media`}>
-                              <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                                 My images
-                              </DropdownMenuItem>
-                           </Link>
-                           <Link href={`/`}>
-                              <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                                 Team
-                              </DropdownMenuItem>
-                           </Link>
-                           <DropdownMenuItem className={`flex mt-2 justify-center w-full hover:!bg-transparent`}>
-                              <Button
-                                 disabled={loading}
-                                 className={`!px-6 rounded-lg !py-2 shadow-md`} variant={`destructive`}
-                                 onClick={() => signOutAction()}>
-                                 Sign out
-                              </Button>
+                  <DropdownMenu modal>
+                     <DropdownMenuTrigger asChild>
+                        <Image
+                           className={cn(`rounded-full cursor-pointer bg-white border-neutral-200`,
+                              !data?.user?.image && `p-1`)}
+                           height={36}
+                           width={36}
+                           src={data?.user?.image ?? DefaultAvatar} alt={``} />
+                     </DropdownMenuTrigger>
+                     <DropdownMenuContent className={`min-w-[200px] p-1 -left-1/2`}>
+                        <DropdownMenuLabel>Signed in as {data?.user?.name}</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <Link href={`/account/profile`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              Profile
                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                     </DropdownMenu>
+                        </Link>
+                        <Link href={`/account/media`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              My images
+                           </DropdownMenuItem>
+                        </Link>
+                        <Link href={`/`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              Team
+                           </DropdownMenuItem>
+                        </Link>
+                        <DropdownMenuItem className={`flex mt-2 justify-center w-full hover:!bg-transparent`}>
+                           <Button
+                              disabled={loading}
+                              className={`!px-6 rounded-lg !py-2 shadow-md`} variant={`destructive`}
+                              onClick={() => signOutAction()}>
+                              Sign out
+                           </Button>
+                        </DropdownMenuItem>
+                     </DropdownMenuContent>
+                  </DropdownMenu>
                   <Button asChild variant={`default`} className={`gap-3 text-default !px-5 rounded-lg`}>
                      <Link href={`/upload`}>
                         <Upload size={16} />

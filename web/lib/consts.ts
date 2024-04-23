@@ -34,6 +34,16 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   MANY_UPLOAD_SUCCESS: {
+      message: `Image uploads successful`,
+      description: `You've successfully uploaded your media.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`,
+         description: `text-md`,
+      },
+      duration: 10_000,
+   },
    UPDATE_IMAGE_SUCCESS: {
       message: `Image update successful`,
       description: `You've successfully updated your media.`,

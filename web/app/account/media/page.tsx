@@ -6,6 +6,9 @@ import { Separator } from "@/components/ui/separator";
 import AccountMediaItem from "@/app/account/media/_components/AccountMediaItem";
 import MediaSearchBar from "@/app/account/media/_components/MediaSearchBar";
 import MediaSortDropdown from "@/app/account/media/_components/MediaSortDropdown";
+import { Button } from "@/components/ui/button";
+import { Upload } from "lucide-react";
+import Link from "next/link";
 
 interface PageSearchParams {
    qs?: string;
@@ -24,8 +27,7 @@ const SortOptions = {
 
 const IMAGES_LIMIT = 10;
 
-const Page = async ({ params, searchParams }: { params: any, searchParams: PageSearchParams }) => {
-   console.log({ params, searchParams });
+const Page = async ({ searchParams }: { params: any, searchParams: PageSearchParams }) => {
    const session = await auth();
 
    let sortClause: Prisma.ImageOrderByWithRelationAndSearchRelevanceInput | Prisma.ImageOrderByWithRelationAndSearchRelevanceInput[] | undefined;
@@ -40,20 +42,7 @@ const Page = async ({ params, searchParams }: { params: any, searchParams: PageS
          default:
             break;
       }
-
    }
-   let user = await xprisma.user.findUnique({
-      where: {
-         id: session!.user!.id as string,
-      },
-      include: {
-         following: {
-            select: { following: true },
-         },
-         followedBy: true,
-      },
-   });
-   console.log(JSON.stringify(user, null, 2));
 
    const myImages: IImage[] = await xprisma.image.findMany({
       where: {
@@ -79,12 +68,30 @@ const Page = async ({ params, searchParams }: { params: any, searchParams: PageS
             </div>
          </div>
          <Separator className={`w-full my-4 h-[2px]`} />
-         <div className={`flex items-start gap-6 mt-8`}>
-            {filteredImages.map((image, i) => (
-               <AccountMediaItem key={i} image={image} />
-            ))}
-         </div>
+         {filteredImages.length ? (
+            <div className={`flex items-start gap-6 mt-8`}>
+               {filteredImages.map((image, i) => (
+                  <AccountMediaItem key={i} image={image} />
+               ))}
+            </div>
+         ) : (
+            <div className={`my-16 flex flex-col items-center gap-4 text-neutral-500 w-full text-center`}>
+               <span className={`!text-lg`}>
+                  You haven&apos;t posted any media yet.
+               </span>
 
+               <span className={`text-md`}>
+                  Upload media now
+               </span>
+
+               <Button asChild className={`rounded-full gap-2 !px-12 mt-4 shadow-md`} size={`lg`} variant={`default`}>
+                  <Link href={`/upload`}>
+                     <Upload size={16} />
+                     Upload
+                  </Link>
+               </Button>
+            </div>
+         )}
       </div>
    );
 };

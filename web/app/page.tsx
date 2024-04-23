@@ -1,41 +1,40 @@
-"use client";
-import { APP_NAME } from "@/lib/consts";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { useSession, signOut, signIn } from "next-auth/react";
-import { useIsSignedIn } from "@/hooks/useIsSignedIn";
-import { handleEmailSignIn } from "@/app/actions";
-// @ts-ignore
-import { UilGoogle } from "@iconscout/react-unicons";
-import { Label } from "@/components/ui/label";
+import { xprisma } from "@/lib/prisma";
+import HomeSearchBar from "@/app/_components/HomeSearchBar";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+import TopTagsSection from "@/app/_components/TopTagsSection";
+import HomeFeedSection from "@/app/_components/HomeFeedSection";
 
-export default function Home() {
-   const { data } = useSession();
-   const isSignedIn = useIsSignedIn();
+export default async function Home() {
+   const imagesCount = await xprisma.image.count();
 
    return (
-      <main className="flex min-h-screen flex-col items-center justify-start gap-12 p-24">
-         <h1 className={`text-3xl`}>
-            Welcome to <span className={`italic`}>{APP_NAME}</span> {isSignedIn && data?.user?.name &&
-            <b>{`, ${data?.user?.name ?? ``}`}</b>}
-         </h1>
-         {!isSignedIn && (
-            <div className={`flex flex-col gap-12 items-center`}>
-               <form className={`w-full`} action={async () => {
-                  await signIn("google");
-               }}>
-                  <Button
-                     size={`lg`} className={`gap-2 rounded-lg !px-8 !py-4 w-full`}
-                     type={`submit`}>
-                     <UilGoogle className={`text-red-500`} />
-                     Sign in with Google
-                  </Button>
-               </form>
+      <main className="flex min-h-screen flex-col items-center justify-start gap-12">
+         <div style={{
+            background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))`,
+            backgroundImage: `url('sunset.jpg')`,
+            backgroundPosition: `center top`,
+            backgroundSize: `cover`,
+            // opacity: `50%`
+         }} className="w-full h-[450px] !z-1 flex items-center relative justify-center flex-col">
+            <div className={`flex flex-col items-start gap-2`}>
+               <h1 className={`font-semibold text-3xl text-white/100 `}>
+                  Find inspiration in our curated collection of royalty-free images
+               </h1>
+               <h2>
+                  Over {imagesCount} high quality stock images posted by our talented community.
+               </h2>
+               <HomeSearchBar />
             </div>
-         )}
-
-         {isSignedIn ?
-            <pre className={`text-sm`}>{JSON.stringify(data!.user, null, 2)}</pre> : "You are not signed in."}
+            <div
+               className={`justify-self-end absolute bottom-6 left-6 flex items-center justify-between text-xs text-neutral-300`}>
+               Read more about our <Link href={`/service/terms`} className={cn(`ml-1 underline hover:text-white`)}>
+               Content License
+            </Link>
+            </div>
+         </div>
+         <TopTagsSection />
+         <HomeFeedSection/>
       </main>
 
    );

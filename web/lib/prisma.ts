@@ -1,7 +1,8 @@
-import { Prisma, PrismaClient, User } from "@prisma/client";
+import { Image, Prisma, PrismaClient, User } from "@prisma/client";
 import { __IS_DEV__ } from "@/lib/consts";
 import bcrypt from "bcryptjs";
 import { InternalArgs } from "@prisma/client/runtime/binary";
+import { groupBy } from "lodash";
 
 export const config = { runtime: "node.js" };
 
@@ -60,7 +61,14 @@ export let xprisma = prisma.$extends({
                };
             },
          },
-
+      },
+      image: {
+         dimensions: {
+            needs: { dimensions_set: true },
+            compute({ dimensions_set }) {
+               return dimensions_set.map(d => d.split(`,`).map(x => Number(x)).filter(x => !Number.isNaN(x)));
+            },
+         },
       },
    },
    model: {
@@ -131,6 +139,35 @@ export let xprisma = prisma.$extends({
             });
 
             return user;
+         },
+      },
+      image: {
+         async search(searchValue: string, limit: number = 10): Promise<Image[]> {
+            const result = await xprisma.$queryRaw`
+                SELECT *,
+                       unnested_tag                                     AS tag_match,
+                       levenshtein(LOWER(unnested_tag), ${searchValue}) AS distance,
+                       levenshtein(LOWER(title), ${searchValue})        AS title_distance
+                FROM (SELECT *, unnest(tags) AS unnested_tag
+                      FROM "Image") AS unnested_tags
+                ORDER BY distance
+                LIMIT ${limit};
+            `;
+
+            return Object
+               .entries(groupBy(result as any[], i => i.id))
+               .map(([_, value]) => value[0] as Image);
+         },
+         async mostUsedTags(limit: number = 20): Promise<{ tag: string, count: BigInt }[]> {
+            const result = await xprisma.$queryRaw<{ tag: string, count: BigInt }[]>`
+                SELECT unnest(tags) as tag, COUNT(*) AS count
+                FROM "Image"
+                GROUP BY tag
+                ORDER BY count DESC
+                LIMIT ${limit};
+            `;
+
+            return result;
          },
       },
    },

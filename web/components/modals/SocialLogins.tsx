@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { UilFacebook, UilGoogle } from "@iconscout/react-unicons";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
+import { usePromise } from "@/hooks/usePromise";
 
 export const LoadingSpinner = ({ text }: { text?: string }) => (
    <Fragment>
@@ -17,28 +18,27 @@ export const LoadingSpinner = ({ text }: { text?: string }) => (
 );
 
 export function SocialLogins() {
-   const [signInLoading, setSignInLoading] = useState(false);
    const { theme } = useTheme();
+   const { loading, action: googleSignIn } = usePromise(() => signIn(`google`, { redirect: true, callbackUrl: `/` }));
 
    const handleGoogleLogin = async (e: any) => {
       e.preventDefault();
-      setSignInLoading(true);
-      await signIn(`google`, { redirect: true }).finally(() => setSignInLoading(false));
+      await googleSignIn()
    };
 
    const handleFacebookLogin = async (e: any) => {
       e.preventDefault();
-      setSignInLoading(true);
+      // setSignInLoading(true);
    };
 
    return (
       <div className={`w-full items-center flex flex-col gap-4`}>
          <Button
-            disabled={signInLoading}
+            disabled={loading}
             onClick={handleGoogleLogin}
-            className={cn(`gap-2 w-full rounded-full items-center text-sm text-white`, signInLoading ? `justify-center` : `justify-between`)}
+            className={cn(`gap-2 w-full rounded-full items-center text-sm text-white`, loading ? `justify-center` : `justify-between`)}
             variant={theme === `dark` ? `default` : `outline`}>
-            {signInLoading ? <LoadingSpinner /> : (
+            {loading ? <LoadingSpinner /> : (
                <>
                   <UilGoogle size={16} className={`text-red-500`} />
                   Continue with Google
@@ -47,10 +47,11 @@ export function SocialLogins() {
 
             )}
          </Button>
-         <Button onClick={handleFacebookLogin} disabled={signInLoading}
-                 className={cn(`gap-2 w-full rounded-full items-center text-sm`, signInLoading ? `justify-center` : `justify-between`)}
+         <Button onClick={handleFacebookLogin}
+                 disabled={false}
+                 className={cn(`gap-2 w-full rounded-full items-center text-sm`, false ? `justify-center` : `justify-between`)}
                  variant={`outline`}>
-            {signInLoading ? <LoadingSpinner /> : <Fragment>
+            {false ? <LoadingSpinner /> : <Fragment>
                <UilFacebook size={16} className={`text-blue-500`} />
                Continue with Facebook
                <span />

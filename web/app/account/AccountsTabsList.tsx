@@ -14,12 +14,16 @@ const TABS = [
       label: `Profile`,
    },
    {
+      href: `/account/statistics`,
+      label: `Statistics`,
+   },
+   {
       href: `/account/settings`,
       label: `Settings`,
    },
    {
-      href: ``,
-      label: ``,
+      href: `/account/collections`,
+      label: `Collections`,
    },
    {
       href: ``,

@@ -53,7 +53,7 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
 
       await handleUploadAction(formData).then(res => {
          if (res.success) {
-            const { message, ...rest } = TOASTS.UPLOAD_SUCCESS;
+            const { message, ...rest } = data.length > 1 ? TOASTS.MANY_UPLOAD_SUCCESS : TOASTS.UPLOAD_SUCCESS;
             toast(message, { ...rest, icon: <Check size={16} /> });
 
             closeModal(ModalType.REVIEW_UPLOAD_IMAGES);

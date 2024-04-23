@@ -2,12 +2,12 @@
 
 import { auth } from "@/auth";
 import { ImageUpload } from "@/app/upload/_store/imageUploadsStore";
-import { getFileExtension, normalizeFormData } from "@/lib/utils";
+import { ApiResponse, getFileExtension, normalizeFormData } from "@/lib/utils";
 import path from "node:path";
 import probe from "probe-image-size";
 import { randomUUID } from "node:crypto";
 import { writeFile } from "node:fs";
-import { Image } from "@prisma/client";
+import { Image, ImageCollection } from "@prisma/client";
 import { xprisma } from "@/lib/prisma";
 import { Readable } from "node:stream";
 import { revalidatePath } from "next/cache";
@@ -84,7 +84,7 @@ export async function handleUploadImage(imageUpload: ImageUpload, userId: string
             return process.env.BACKEND_API_URL!;
          },
       }))
-   .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
+         .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
       return { success: response.raw.status === constants.HTTP_STATUS_ACCEPTED };
    }
 

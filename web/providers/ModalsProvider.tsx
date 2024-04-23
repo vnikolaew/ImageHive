@@ -12,14 +12,16 @@ export enum ModalType {
    SIGN_UP = 1,
    SIGN_IN = 2,
    FORGOT_PASSWORD = 3,
-   REVIEW_UPLOAD_IMAGES = 4
+   REVIEW_UPLOAD_IMAGES = 4,
+   ADD_IMAGE_TO_COLLECTION = 5,
+   CREATE_NEW_COLLECTION = 6,
 }
 
 const ModalsContext = createContext<[ModalType | null, Dispatch<SetStateAction<ModalType | null>>]>(null!);
 
 const useModalQueryState = () => useQueryState<ModalType>(`modal`,
    parseAsInteger.withOptions({
-      history: `replace`,
+      history: `push`,
    }));
 
 export function useModals() {

@@ -4,17 +4,20 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import { ModalsProvider } from "@/providers/ModalsProvider";
 import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { ToastProvider } from "@/components/ui/toast";
+import SwrProvider from "@/providers/SWRProvider";
 
 const Providers = ({ children }: PropsWithChildren) => {
    return (
       <ErrorBoundary>
          <SessionProvider>
             <ThemeProvider enableSystem disableTransitionOnChange defaultTheme={`system`} attribute={`class`}>
-               <ModalsProvider>
-                  <ToastProvider swipeDirection={"right"}>
-                     {children}
-                  </ToastProvider>
-               </ModalsProvider>
+               <SwrProvider>
+                  <ModalsProvider>
+                     <ToastProvider swipeDirection={"right"}>
+                        {children}
+                     </ToastProvider>
+                  </ModalsProvider>
+               </SwrProvider>
             </ThemeProvider>
          </SessionProvider>
       </ErrorBoundary>

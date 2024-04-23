@@ -9,8 +9,12 @@ export function cn(...inputs: ClassValue[]) {
 export interface ApiResponse<T> {
    success: boolean,
    message: string;
-   data: T,
+   data?: T,
 }
+
+//@ts-ignore
+export const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+
 
 export class ImageHiveApiResponse<Body = unknown> extends NextResponse<Body> {
 
@@ -121,4 +125,8 @@ export const objectToFormData = function(obj: any, form: FormData, namespace: st
 export function getFileExtension(fileName: string) {
    const dotIndex = fileName.lastIndexOf(".");
    return dotIndex !== -1 ? fileName.substring(dotIndex + 1).trim() : "";
+}
+
+export function getFileName(fileName: string) {
+   return fileName.split(`\\`).at(-1)?.trim();
 }

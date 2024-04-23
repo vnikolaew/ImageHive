@@ -3,7 +3,7 @@ import { xprisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
-import { Settings, Settings2 } from "lucide-react";
+import { Settings } from "lucide-react";
 
 export interface TopTagsSectionProps {
 }

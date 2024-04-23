@@ -10,6 +10,7 @@ export const __IS_DEV__ = process.env.NODE_ENV === "development";
 export const API_ROUTES = {
    FORGOT_PASSWORD: `/api/forgot`,
    RESET_PASSWORD: `/api/reset`,
+   COLLECTIONS: `/api/collections`,
 } as const;
 
 export const HTTP = {

@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
-import {
-   Dialog,
-   DialogContent,
+import { Dialog, DialogContent,
    DialogDescription,
    DialogHeader,
    DialogTitle,

@@ -33,8 +33,10 @@ export default async function Home() {
             </Link>
             </div>
          </div>
-         <TopTagsSection />
-         <HomeFeedSection/>
+         <div className={`w-3/4`}>
+            <TopTagsSection />
+            <HomeFeedSection/>
+         </div>
       </main>
 
    );

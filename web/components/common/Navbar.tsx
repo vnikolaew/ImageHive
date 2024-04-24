@@ -24,9 +24,11 @@ import { Upload } from "lucide-react";
 import NavSearchBar from "@/components/common/NavSearchBar";
 import { useWindowScroll } from "@uidotdev/usehooks";
 import { useMemo, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
    const { data } = useSession();
+   const pathname = usePathname()
    const darkMode = useIsDarkMode();
    const { openModal } = useModals();
    const { loading, action: signOutAction } = usePromise(async () => {
@@ -38,12 +40,15 @@ const Navbar = () => {
    const showNavbarBackground = useMemo(() => {
       return y! >= navRef?.current?.clientHeight;
    }, [y]);
+   console.log({ pathname});
 
    return (
       <nav
          ref={navRef}
-         className={cn(`w-full navbar-dark bg-transparent flex items-center justify-between gap-24 px-12 py-4 shadow-sm !z-10 rounded-b-xl fixed transition-colors duration-300`,
-            showNavbarBackground && `bg-background border-b-[1px]`)}>
+         className={cn(`w-full navbar-dark bg-transparent flex items-center justify-between gap-24 px-12 py-4 shadow-sm !z-10 rounded-b-xl sticky transition-colors duration-300`,
+            showNavbarBackground && `bg-background border-b-[1px]`,
+            pathname === `/` && `fixed`
+         )}>
          <h2 className="text-xl cursor-pointer">
             <Link href={`/`}>
                <Image alt={`logo`} width={120} height={30}

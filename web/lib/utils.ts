@@ -13,7 +13,7 @@ export interface ApiResponse<T> {
 }
 
 //@ts-ignore
-export const fetcher = (...args: any[]) => fetch(...args).then(res => res.json())
+export const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 
 
 export class ImageHiveApiResponse<Body = unknown> extends NextResponse<Body> {
@@ -129,4 +129,9 @@ export function getFileExtension(fileName: string) {
 
 export function getFileName(fileName: string) {
    return fileName.split(`\\`).at(-1)?.trim();
+}
+
+
+export async function sleep(duration: number) {
+   return await new Promise(res => setTimeout(res, duration));
 }

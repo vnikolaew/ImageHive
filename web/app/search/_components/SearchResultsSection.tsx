@@ -34,7 +34,7 @@ const SearchResultsSection = async ({ search }: SearchResultsSectionProps) => {
             {`${search[0].toUpperCase()}${search.slice(1).toLowerCase()}`} Images & Pictures
          </h2>
          <p className={`text-sm font-normal text-neutral-500`}>
-            8,000+ beautiful {search} photos & stock images. Download your favorite royalty free {search} pictures in HD
+            {result.length}+ beautiful {search} photos & stock images. Download your favorite royalty free {search} pictures in HD
             to 4K quality as wallpapers,
             backgrounds & more.
          </p>

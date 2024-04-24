@@ -12,7 +12,7 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "@/components/ui/dialog";
-import { useFieldArray, UseFormReturn } from "react-hook-form";
+import { UseFormReturn } from "react-hook-form";
 
 export interface DeleteImageModalProps {
    imageUpload: ImageUpload,
@@ -54,8 +54,8 @@ const DeleteImageModal = ({ imageUpload, form, deleteImage }: DeleteImageModalPr
                   <DialogDescription>
                   </DialogDescription>
                </DialogHeader>
-               <div className="flex items-center justify-start gap-4 py-4 h-[20vh]">
-                  <span className={`text-neutral-500 text-md font-normal !my-12`}>
+               <div className="flex items-center justify-start gap-4 py-4 !h-fit">
+                  <span className={`text-neutral-400 text-center text-md font-normal !my-8`}>
                      Deleting a file is permanent and will need to be reuploaded.
                   </span>
                </div>

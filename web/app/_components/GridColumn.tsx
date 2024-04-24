@@ -1,16 +1,18 @@
 import React from "react";
-import { getImageLikes, GridColumnProps } from "@/app/_components/HomeFeedSection";
 import GridColumnImage from "@/app/_components/GridColumnImage";
 import { randomUUID } from "node:crypto";
+import { Image as IImage } from "@prisma/client";
 
 function getFileName(fullPath: string): string {
    return fullPath.split(`\\`).at(-1)!.trim();
 }
 
-export const GridColumn = async ({ images }: GridColumnProps) => {
-   let likedImages = await getImageLikes();
-   const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
+export interface GridColumnProps {
+   images: (IImage & { dimensions: number[][] })[];
+   likedImageIds: Set<string>
+}
 
+export const GridColumn = async ({ images, likedImageIds }: GridColumnProps) => {
    return (
       <div className={`grid gap-8`}>
          {images.map((image, i) => (

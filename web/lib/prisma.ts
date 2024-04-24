@@ -158,6 +158,19 @@ export let xprisma = prisma.$extends({
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
+         async findSimilarImages(image: Image, limit: number = 10): Promise<Image[]> {
+            const imageTags = image.tags.map(t => t.toLowerCase());
+            const result = await xprisma.$queryRaw<Image[]>`
+                SELECT DISTINCT(i.id), *
+                FROM (SELECT *
+                      FROM (SELECT *, unnest(tags) tag from "Image") i
+                      WHERE i.tag ILIKE ANY (array [${Prisma.join(imageTags)}])) i
+                LIMIT ${limit}
+                ;
+            `;
+
+            return result!;
+         },
          async mostUsedTags(limit: number = 20): Promise<{ tag: string, count: BigInt }[]> {
             const result = await xprisma.$queryRaw<{ tag: string, count: BigInt }[]>`
                 SELECT unnest(tags) as tag, COUNT(*) AS count

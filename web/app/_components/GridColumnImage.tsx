@@ -8,6 +8,7 @@ import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
 import { useQsImageId } from "@/hooks/useQsImageId";
+import Link from "next/link";
 
 export interface GridColumnImageProps {
    image: Image;
@@ -18,13 +19,14 @@ export interface GridColumnImageProps {
 
 const GridColumnImage = ({
                             imageUrl,
-                            imageKey,
                             likedByMe,
-                            image: { tags, id, absolute_url, dimensions: [[x, y]] },
+                            image: { tags, id, absolute_url, dimensions_set },
                          }: GridColumnImageProps) => {
    const IMAGE_WIDTH = 340;
    const { openModal } = useModals();
    const [, setImageId] = useQsImageId();
+
+   const [x, y] = dimensions_set[0].split(`,`).map(x => Number(x));
 
    async function handleAddToCollection() {
       setImageId(id).then(_ => {
@@ -38,31 +40,33 @@ const GridColumnImage = ({
    }
 
    return (
-      <div
-         style={{
-            backgroundImage: `url(${imageUrl})`,
-            backgroundPosition: `center center`,
-            backgroundSize: "cover",
-            position: "relative",
-            width: `100%`,
-            height: `${Math.round((IMAGE_WIDTH / x) * y)}px`,
-         }}
-         className={`cursor-pointer group rounded-lg hover:opacity-80 transition-opacity duration-200`}
-      >
-         <div className={`absolute flex gap-2 items-center justify-start w-5/6 top-3 left-3`}>
-            <ActionButton text={`Add to collection`} icon={<Bookmark size={18} />} action={handleAddToCollection} />
-            <ActionButton
-               active={likedByMe}
-               text={likedByMe ? `Unlike` : `Like`} icon={<Heart size={18} />}
-               action={() => handleLikeImageClient(id)} />
-         </div>
+      <Link href={`/photos/${id}`}>
          <div
-            className={`absolute items-center gap-2 hidden group-hover:flex text-sm lg:text-md bottom-2 left-4 text-neutral-200/80`}>
-            {tags.sort().slice(0, 4).map((tag, i) => (
-               <span className={`text-sm lg:text-md`} key={i}>{tag}</span>
-            ))}
+            style={{
+               backgroundImage: `url(${imageUrl})`,
+               backgroundPosition: `center center`,
+               backgroundSize: "cover",
+               position: "relative",
+               width: `100%`,
+               height: `${Math.round((IMAGE_WIDTH / x) * y)}px`,
+            }}
+            className={`cursor-pointer group rounded-lg hover:opacity-80 transition-opacity duration-200 overflow-hidden`}
+         >
+            <div className={`absolute flex gap-2 items-center justify-start w-5/6 top-3 left-3`}>
+               <ActionButton text={`Add to collection`} icon={<Bookmark className={`text-white`} size={18} />} action={handleAddToCollection} />
+               <ActionButton
+                  active={likedByMe}
+                  text={likedByMe ? `Unlike` : `Like`} icon={<Heart className={`text-white`} size={18} />}
+                  action={() => handleLikeImageClient(id)} />
+            </div>
+            <div
+               className={`absolute items-center gap-2 hidden group-hover:flex text-sm lg:text-md bottom-2 left-4 text-neutral-200/80`}>
+               {tags.sort().slice(0, 4).map((tag, i) => (
+                  <span className={`text-sm lg:text-md`} key={i}>{tag}</span>
+               ))}
+            </div>
          </div>
-      </div>
+      </Link>
    );
 };
 

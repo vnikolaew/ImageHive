@@ -15,7 +15,10 @@ import { FormField, Form, FormItem, FormControl, FormDescription, FormLabel, For
 import { Button } from "../ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { EyeOff } from "lucide-react";
-import { API_ROUTES, HTTP } from "@/lib/consts";
+import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
+import { useQsImageId } from "@/hooks/useQsImageId";
+import { ApiResponse } from "@/lib/utils";
+import { toast } from "sonner";
 
 export interface CreateNewCollectionModalProps {
 }
@@ -28,7 +31,7 @@ const createCollectionSchema = z.object({
 type FormValues = z.infer<typeof createCollectionSchema>;
 
 const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
-   const { modal, toggleModal } = useModals();
+   const { modal, toggleModal, closeModal } = useModals();
    const form = useForm<FormValues>({
       resolver: zodResolver(createCollectionSchema),
       defaultValues: {
@@ -39,7 +42,7 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
    });
    if (modal !== ModalType.CREATE_NEW_COLLECTION) return null;
 
-   async function onSubmit(values: any) {
+   async function onSubmit(values: FormValues) {
       console.log({ values });
       fetch(API_ROUTES.COLLECTIONS, {
          method: `POST`,
@@ -47,11 +50,14 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
             Accept: HTTP.MEDIA_TYPES.APPLICATION_JSON,
             "Content-Type": HTTP.MEDIA_TYPES.APPLICATION_JSON,
          },
-         body: JSON.stringify({ imageId, title: `Saved` }),
-
+         body: JSON.stringify({ imageId: null, title: values.title, public: values.public }),
       }).then(res => res.json())
-         .then(res => {
+         .then((res: ApiResponse<any>) => {
             console.log({ res });
+            if(res.success) {
+               closeModal(ModalType.CREATE_NEW_COLLECTION);
+               toast(TOASTS.CREATE_COLLECTION_SUCCESS);
+            }
          })
          .catch(console.error);
    }

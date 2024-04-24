@@ -23,6 +23,10 @@ const config = {
       fontFamily: {
         // sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      boxShadow :{
+        inset: `inset 0px 2px -2px 2px rgba(255,255,204,0.7), inset 0px -2px -2px 2px rgba(255,255,204,0.7);`,
+        test: ` inset 0px 0px 0px 0px #fff, inset 0px -16px 32px 0px #fff;`
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

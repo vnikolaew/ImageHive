@@ -9,13 +9,13 @@ export interface TopTagsSectionProps {
 }
 
 const TopTagsSection = async ({}: TopTagsSectionProps) => {
-   const topTags = await xprisma.image.mostUsedTags(20);
+   const topTags = await xprisma.image.mostUsedTags(10);
 
    return (
       <div className={`w-full flex items-center px-12 justify-between`}>
          <div className={`w-full flex items-center gap-4`}>
             {topTags.map(({ tag }, i) => (
-               <Link key={i} href={`/search/${tag}`}>
+               <Link key={i} href={`/search?q=${encodeURIComponent(tag.toLowerCase())}`}>
                   <Badge
                      className={`text-md cursor-pointer bg-white text-neutral-600 hover:border-[1px] hover:border-neutral-300 transition-colors duration-300`}
                      variant={`outline`} key={i}>{tag}</Badge>

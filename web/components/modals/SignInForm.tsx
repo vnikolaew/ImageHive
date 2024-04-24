@@ -119,7 +119,7 @@ const SignInForm = () => {
                <span className={`text-sm text-neutral-500`}>OR</span>
                <Separator className={`w-full flex-1`} />
             </div>
-            <SocialLogins />
+               <SocialLogins />
          </form>
       </Form>
    );

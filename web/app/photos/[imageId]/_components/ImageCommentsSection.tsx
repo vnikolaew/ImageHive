@@ -25,6 +25,10 @@ export interface ImageComment {
 
 const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
    await sleep(1000);
+   const total = await xprisma.imageComment.count({
+      where: { imageId },
+   });
+
    const imageComments = await xprisma.imageComment.findMany({
       where: { imageId },
       orderBy: { createdAt: `desc` },
@@ -35,23 +39,29 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
       },
    });
 
+   console.log({ imageComments, total });
+
    return (
       <div className={`mt-8`}>
          <h2 className="text-xl font-bold text-gray-900">
-            {imageComments.length} comments.
+            {imageComments.length + 10} comments.
          </h2>
          <AddCommentSection imageId={imageId} />
-         <ImageComments comments={[...imageComments, {
-            imageId: ``,
-            user: { image: `https://randomuser.me/api/portraits/men/34.jpg`, id: ``, name: `John` },
-            userId: randomUUID(),
-            metadata: {},
-            createdAt: moment(new Date()).subtract(3, `day`).toDate(),
-            updatedAt: new Date(),
-            id: randomUUID(),
-            is_deleted: false,
-            raw_text: `Some cool comment`,
-         }]} />
+         <ImageComments hasMore comments={[
+            ...Array.from({ length: 10 }).map((_, i) => (
+               {
+                  imageId,
+                  user: { image: `https://randomuser.me/api/portraits/men/34.jpg`, id: randomUUID(), name: `John` },
+                  userId: randomUUID(),
+                  metadata: {},
+                  createdAt: moment(new Date()).subtract(3, `day`).toDate(),
+                  updatedAt: new Date(),
+                  id: randomUUID(),
+                  is_deleted: false,
+                  raw_text: `Some cool comment ${i + 1}`,
+               }
+            )),
+         ]} />
       </div>
    );
 };

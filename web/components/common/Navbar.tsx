@@ -28,7 +28,7 @@ import { usePathname } from "next/navigation";
 
 const Navbar = () => {
    const { data } = useSession();
-   const pathname = usePathname()
+   const pathname = usePathname();
    const darkMode = useIsDarkMode();
    const { openModal } = useModals();
    const { loading, action: signOutAction } = usePromise(async () => {
@@ -38,26 +38,26 @@ const Navbar = () => {
    const navRef = useRef<HTMLElement>(null!);
    const [{ y }] = useWindowScroll();
    const showNavbarBackground = useMemo(() => {
-      return y! >= navRef?.current?.clientHeight;
+      return  y! >= navRef?.current?.clientHeight;
    }, [y]);
-   console.log({ pathname});
 
    return (
       <nav
          ref={navRef}
-         className={cn(`w-full navbar-dark bg-transparent flex items-center justify-between gap-24 px-12 py-4 shadow-sm !z-10 rounded-b-xl sticky transition-colors duration-300`,
+         className={cn(`w-full navbar-dark bg-transparent flex items-center justify-between gap-24 px-12 py-4 shadow-sm !z-20 rounded--bxl sticky transition-colors duration-300`,
+            (pathname === `/` || pathname.startsWith(`/users`)) && `fixed`,
+            (pathname.startsWith(`/users`)) && `bg-transparent`,
             showNavbarBackground && `bg-background border-b-[1px]`,
-            pathname === `/` && `fixed`
          )}>
          <h2 className="text-xl cursor-pointer">
             <Link href={`/`}>
                <Image alt={`logo`} width={120} height={30}
-                      src={darkMode ? LogoDark : Logo} />
+                      src={!darkMode ? Logo : (darkMode || !showNavbarBackground) ? LogoDark : Logo} />
             </Link>
          </h2>
          <div className={`flex-1`}>
-            {showNavbarBackground && (
-               <NavSearchBar />
+            {(showNavbarBackground || pathname.startsWith(`/users`)) && (
+               <NavSearchBar showNavbarBackground={showNavbarBackground} />
             )}
          </div>
          <div className="mr-8 flex items-center gap-4">

@@ -3,13 +3,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { APP_NAME } from "@/lib/consts";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { isDynamicUsageError } from "next/dist/export/helpers/is-dynamic-usage-error";
 
-export interface NavSearchBarProps {
+interface NavSearchBarProps {
+   showNavbarBackground: boolean;
 }
 
-const NavSearchBar = ({}: NavSearchBarProps) => {
+const NavSearchBar = ({ showNavbarBackground }: NavSearchBarProps) => {
    const [searchValue, setSearchValue] = useState(``);
    const inputRef = useRef<HTMLInputElement>(null!);
+   const pathname = usePathname();
+   const isUsersPage = pathname.startsWith(`/users`);
 
    useEffect(() => {
       const handler = (e: KeyboardEvent) => {
@@ -23,8 +29,11 @@ const NavSearchBar = ({}: NavSearchBarProps) => {
    }, [searchValue]);
 
    return (
-      <div className={`w-full rounded-full relative border-[1px] dark:border-neutral-700 dark:bg-neutral-800`}>
-         <Search size={16} className={`absolute top-[50%] left-3 -translate-y-1/2 cursor-pointer`} />
+      <div className={cn(`w-full rounded-full relative border-[1px] dark:border-neutral-700 dark:bg-neutral-800 z-20`,
+         isUsersPage && `bg-transparent backdrop-blur-sm !border-neutral-500`)}>
+         <Search size={16} className={cn(`absolute top-[50%] left-3 -translate-y-1/2 cursor-pointer`,
+            isUsersPage && `text-white`,
+            isUsersPage && showNavbarBackground && `text-black`)} />
          <Input
             ref={inputRef}
             onChange={e => setSearchValue(e.target.value)}

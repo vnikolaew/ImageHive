@@ -28,7 +28,6 @@ export function SocialLogins() {
 
    const handleFacebookLogin = async (e: any) => {
       e.preventDefault();
-      // setSignInLoading(true);
    };
 
    return (
@@ -36,7 +35,7 @@ export function SocialLogins() {
          <Button
             disabled={loading}
             onClick={handleGoogleLogin}
-            className={cn(`gap-2 w-full rounded-full items-center text-sm text-white`, loading ? `justify-center` : `justify-between`)}
+            className={cn(`gap-2 w-full rounded-full items-center text-sm dark:text-white`, loading ? `justify-center` : `justify-between`)}
             variant={theme === `dark` ? `default` : `outline`}>
             {loading ? <LoadingSpinner /> : (
                <>

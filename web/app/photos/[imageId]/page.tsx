@@ -58,7 +58,7 @@ const Page = async ({ params }: PageProps) => {
          <div className={`bg-white/30 h-full`}>
             <div className={`w-full flex flex-col items-center mx-auto !h-[70vh]`}>
                <div
-                  className={`!h-full relative group aspect-[5/3] bg-blue-500 z-10 overflow-hidden hover:opacity-80 transition-opacity duration-200`}>
+                  className={`!h-full relative group aspect-[5/3] z-10 overflow-hidden hover:opacity-80 transition-opacity duration-200`}>
                   <div className={`absolute hidden top-3 left-3 group-hover:block`}>
 
                   </div>
@@ -87,7 +87,7 @@ const Page = async ({ params }: PageProps) => {
                      height={600}
                      // fill
                      // className={`h-full`}
-                     src={path.join(`/uploads`, getFileName(image!.absolute_url)!).replaceAll(`\\`, `/`)} alt={``} />
+                     src={path.join(`/uploads`, getFileName(image?.absolute_url)!).replaceAll(`\\`, `/`)} alt={``} />
 
                </div>
             </div>

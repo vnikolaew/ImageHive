@@ -12,6 +12,11 @@ export interface ApiResponse<T> {
    data?: T,
 }
 
+export interface ActionApiResponse<T = unknown> {
+   success: boolean,
+   data?: T,
+}
+
 //@ts-ignore
 export const fetcher = (...args: any[]) => fetch(...args).then(res => res.json());
 

@@ -11,6 +11,7 @@ export const API_ROUTES = {
    FORGOT_PASSWORD: `/api/forgot`,
    RESET_PASSWORD: `/api/reset`,
    COLLECTIONS: `/api/collections`,
+   COMMENTS: `/api/comments`,
 } as const;
 
 export const HTTP = {
@@ -57,6 +58,16 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
    DELETE_IMAGE_SUCCESS: {
       message: `Image removal successful`,
       description: `You've successfully deleted your media.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+
+   CREATE_COLLECTION_SUCCESS: {
+      message: `Collection successfully created.`,
+      description: `You've successfully created a new collection.`,
       className: ``,
       classNames: {
          title: `text-lg`, description: `text-md`,

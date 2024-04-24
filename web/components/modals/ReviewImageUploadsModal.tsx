@@ -73,9 +73,9 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
                   {/*<Separator className={`w-5/6 mr-auto mt-2 bg-neutral-700 rounded-full`} />*/}
                </DialogDescription>
             </DialogHeader>
-            <div className={`mt-12 flex-1 rounded-md border-[1px] border-neutral-700 bg-neutral-800`}>
-               <div className={`p-4 px-6 flex items-center border-b-[1px] border-neutral-700`}>
-                  <span>
+            <div className={`mt-12 flex-1 rounded-md border-[1px] dark:border-neutral-700 dark:bg-neutral-800`}>
+               <div className={`p-4 px-6 flex items-center border-b-[1px] dark:border-neutral-700`}>
+                  <span className={`dark:text-white`}>
                      Your submission
                   </span>
                   <span className={`ml-4 text-neutral-500 text-sm`}>

@@ -60,9 +60,9 @@ const GridColumnImage = ({
                   action={() => handleLikeImageClient(id)} />
             </div>
             <div
-               className={`absolute items-center gap-2 hidden group-hover:flex text-sm lg:text-md bottom-2 left-4 text-neutral-200/80`}>
+               className={`absolute items-center gap-2 hidden group-hover:flex text-sm lg:text-md bottom-2 left-4 `}>
                {tags.sort().slice(0, 4).map((tag, i) => (
-                  <span className={`text-sm lg:text-md`} key={i}>{tag}</span>
+                  <span className={`text-sm lg:text-md text-neutral-100`} key={i}>{tag}</span>
                ))}
             </div>
          </div>
@@ -82,7 +82,10 @@ const ActionButton = ({ action, active, icon, text }: ActionButtonProps) => {
       <TooltipProvider delayDuration={100}>
          <Tooltip>
             <TooltipTrigger className={`cursor-auto`}>
-               <Button onClick={action}
+               <Button onClick={e => {
+                  e.preventDefault()
+                  action?.()
+               }}
                        className={cn(`bg-transparent border-neutral-500 hover:border-neutral-300 hover:bg-transparent`,
                           active && `bg-green-500 hover:bg-green-600`)}
                        size={`icon`} variant={`outline`}>

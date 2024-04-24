@@ -23,7 +23,7 @@ const HomeSearchBar = ({}: HomeSearchBarProps) => {
    }, [searchValue]);
 
    return (
-      <div className={`w-full rounded-full relative dark:bg-neutral-100 mt-8 p-1`}>
+      <div className={`w-full rounded-full relative bg-neutral-100 mt-8 p-1`}>
          <Search size={18} className={`absolute top-[50%] left-4 -translate-y-1/2 cursor-pointer text-primary`} />
          <Input
             ref={inputRef}

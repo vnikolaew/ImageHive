@@ -20,7 +20,7 @@ const ImageSummary = ({ image }: ImageSummaryProps) => {
    }
 
    return (
-      <div className="w-full h-fit sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-xl p-6">
+      <div className="w-full h-fit sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-lg p-6">
          <div className={`w-full flex items-center gap-2`}>
             <CircleCheck className={`dark:text-neutral-200`} size={16} />
             <span className={`dark:text-neutral-300 text-sm`}>  Free for use under the ImageHive <Link

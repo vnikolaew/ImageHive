@@ -21,7 +21,7 @@ export default async function Home() {
                <h1 className={`font-semibold text-3xl text-white/100 `}>
                   Find inspiration in our curated collection of royalty-free images
                </h1>
-               <h2>
+               <h2 className={`text-white/80`}>
                   Over {imagesCount} high quality stock images posted by our talented community.
                </h2>
                <HomeSearchBar />

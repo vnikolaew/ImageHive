@@ -1,0 +1,72 @@
+import React from "react";
+import { xprisma } from "@/lib/prisma";
+
+import { notFound } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { GridColumn } from "@/app/_components/GridColumn";
+import { getImageLikes } from "@/app/_components/HomeFeedSection";
+import UserProfileSection from "@/app/users/_components/UserProfileSection";
+
+export interface PageProps {
+   params: { userId: string };
+}
+
+const Page = async ({ params: { userId } }: PageProps) => {
+   const user = await xprisma.user.findUnique({
+      where: { id: userId },
+      include: {
+         images: {
+            take: 20,
+         },
+         accounts: true,
+         _count: { select: { followedBy: true, imageDownloads: true, imageLikes: true, following: true } },
+      },
+   });
+   if (!user) return notFound();
+   console.log(JSON.stringify(user, null, 2));
+
+   const likedImages = await getImageLikes();
+   const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
+
+   const firstColumn = user.images.filter((_, index) => index % 4 === 0);
+   const secondColumn = user.images.filter((_, index) => index % 4 === 1);
+   const thirdColumn = user.images.filter((_, index) => index % 4 === 2);
+   const fourthColumn = user.images.filter((_, index) => index % 4 === 3);
+
+   const { verifyPassword, updatePassword, ...rest } = user;
+   //@ts-ignore
+   rest.accounts = rest.accounts.map(a => {
+      const { deleteResetToken, ...rest } = a
+      return rest;
+   })
+   console.log({ accounts : rest.accounts });
+
+   return (
+      <main className="flex min-h-screen flex-col items-center justify-start ">
+         <div style={{
+            background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))`,
+            backgroundImage: `url('/dark-banner.png')`,
+            backgroundPosition: `center center`,
+            backgroundSize: `cover`,
+            // opacity: `50%`
+         }} className="w-full h-[300px] !z-10 flex items-center relative justify-center flex-col">
+         </div>
+         <div className={`w-5/6 relative min-h-[60vh]`}>
+            <UserProfileSection user={rest} />
+            <div className={`mt-12`}>
+               <Button size={`lg`} variant={`secondary`}
+                       className={cn(`gap-2 rounded-full !px-6 shadow-sm transition-colors duration-200`)}>Images</Button>
+               <div className={`w-full mt-6 grid grid-cols-4 items-start gap-8 px-0`}>
+                  <GridColumn likedImageIds={likedImageIds} key={1} images={firstColumn} />
+                  <GridColumn likedImageIds={likedImageIds} key={2} images={secondColumn} />
+                  <GridColumn likedImageIds={likedImageIds} key={3} images={thirdColumn} />
+                  <GridColumn likedImageIds={likedImageIds} key={4} images={fourthColumn} />
+               </div>
+            </div>
+         </div>
+      </main>
+   );
+};
+
+export default Page;

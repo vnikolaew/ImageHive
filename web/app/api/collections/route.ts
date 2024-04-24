@@ -53,7 +53,7 @@ export async function GET(req: NextRequest, res: NextResponse): Promise<any> {
 const newCollectionSchema = z.object({
    imageId: z.string().nullable(),
    title: z.string().max(100, { message: "Title must contain at most 100 characters." }),
-   public: z.boolean(),
+   public: z.union([z.literal(`true`), z.literal(`false`)]),
 });
 
 export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
@@ -66,7 +66,7 @@ export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
 
    let create: XOR<CollectionImageCreateWithoutCollectionInput, CollectionImageUncheckedCreateWithoutCollectionInput>
       | CollectionImageCreateWithoutCollectionInput[]
-      | CollectionImageUncheckedCreateWithoutCollectionInput[] = null;
+      | CollectionImageUncheckedCreateWithoutCollectionInput[] = null!;
    if (!!newCollectionBody.data.imageId?.length) {
       create = {
          imageId: newCollectionBody.data.imageId,
@@ -74,16 +74,17 @@ export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
       };
    }
    const newCollection = await xprisma.imageCollection.create({
-      data: {
-         userId: session.user!.id!,
-         title: newCollectionBody.data.title,
-         metadata: {},
-         public: newCollectionBody.data.public,
-         images: { create },
-      },
-   });
+         data: {
+            userId: session.user!.id!,
+            title: newCollectionBody.data.title,
+            metadata: {},
+            public: newCollectionBody.data.public === `true`,
+            ...(!!create ? ({ images: { create } }) : {}),
+         },
+      })
+   ;
 
    console.log({ newCollection });
-   return ImageHiveApiResponse.json({ newCollection });
+   return ImageHiveApiResponse.success({ newCollection });
 }
 

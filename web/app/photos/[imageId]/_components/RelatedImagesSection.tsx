@@ -1,7 +1,7 @@
 import React from "react";
 import { xprisma } from "@/lib/prisma";
 import { ImageSummary } from "@/app/photos/[imageId]/page";
-import { groupBy, partition, uniq } from "lodash";
+import { groupBy } from "lodash";
 import { getImageLikes } from "@/app/_components/HomeFeedSection";
 import { GridColumn } from "@/app/_components/GridColumn";
 import { sleep } from "@/lib/utils";
@@ -33,7 +33,7 @@ const RelatedImagesSection = async ({ image }: RelatedImagesSectionProps) => {
 
    return (
       <div className={`mt-12`}>
-         <h2 className="text-xl font-bold text-gray-900">
+         <h2 className="text-xl font-bold text-gray-900 dark:text-white">
             Similar images
          </h2>
          <div className={`w-full grid grid-cols-3 gap-8 mt-4`}>

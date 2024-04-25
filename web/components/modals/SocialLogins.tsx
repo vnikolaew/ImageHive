@@ -56,11 +56,11 @@ export function SocialLogins() {
                <span />
             </Fragment>}
          </Button>
-         <p className="px-0 text-center text-sm text-muted-foreground !w-full leading-tight">
+         <p className="px-0 mt-4 text-center text-sm text-muted-foreground !w-full leading-none">
             By clicking continue, you agree to our{" "}
             <Link
                href="/service/terms"
-               className={cn(`underline-offset-4 hover:text-primary`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-2`)}
+               className={cn(`underline-offset-4 hover:text-primary !text-sm`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-2`)}
             >
                Terms of Service
             </Link>

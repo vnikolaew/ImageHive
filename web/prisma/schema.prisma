@@ -31,10 +31,16 @@ model User {
 }
 
 model Follows {
-  follower    User   @relation("follower", fields: [followerId], references: [id])
-  followerId  String
+  follower   User   @relation("follower", fields: [followerId], references: [id])
+  followerId String
+
   following   User   @relation("following", fields: [followingId], references: [id])
   followingId String
+
+  metadata Json? @default("null") @db.JsonB
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@id([followingId, followerId])
 }

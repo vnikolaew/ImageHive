@@ -3,6 +3,8 @@ import { __IS_DEV__ } from "@/lib/consts";
 import bcrypt from "bcryptjs";
 import { InternalArgs } from "@prisma/client/runtime/binary";
 import { groupBy } from "lodash";
+import { getFileName, isAbsoluteUrl } from "@/lib/utils";
+import path from "path";
 
 export const config = { runtime: "node.js" };
 
@@ -40,6 +42,13 @@ export let xprisma = prisma.$extends({
          },
       },
       user: {
+         profilePictureImageSrc: {
+            needs: { image: true },
+            compute({ image }) {
+               if (!image) return null;
+               return isAbsoluteUrl(image) ? image : path.join(`/uploads`, getFileName(image)!).replaceAll(`\\`, `/`);
+            },
+         },
          verifyPassword: {
             needs: { password: true },
             compute(user) {

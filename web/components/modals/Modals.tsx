@@ -6,6 +6,7 @@ import {
    AddImageToCollectionModalWrapper,
 } from "@/components/modals/AddImageToCollectionModal";
 import CreateNewCollectionModal from "@/components/modals/CreateNewCollectionModal";
+import ShareProfileModal from "@/components/modals/ShareProfileModal";
 
 const Modals = () => {
    return (
@@ -14,6 +15,7 @@ const Modals = () => {
          <ForgotPasswordModal />
          <AddImageToCollectionModalWrapper />
          <CreateNewCollectionModal />
+         <ShareProfileModal />
       </Fragment>
    );
 };

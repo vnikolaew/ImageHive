@@ -33,7 +33,7 @@ const SignInModal = () => {
             <DialogHeader>
                <DialogTitle className={`text-center`}>Sign up to your account</DialogTitle>
                <DialogDescription>
-                  <Separator className={`w-5/6 mx-auto mt-2 bg-neutral-700 rounded-full`} />
+                  <Separator className={`w-5/6 mx-auto mt-2 dark:bg-neutral-700 rounded-full`} />
                </DialogDescription>
             </DialogHeader>
             <ScrollArea className="grid gap-4 py-4 h-[65vh]">

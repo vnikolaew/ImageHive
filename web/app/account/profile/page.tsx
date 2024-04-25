@@ -23,13 +23,7 @@ const ProfilePage = async () => {
                <span className={`text-neutral-400 text-sm`}>{user.email}</span>
             </div>
          </div>
-         <Separator className={`w-2/3 mt-4 !h-[2px]`} />
-         <div className={`!mt-8`}>Profile page. Current session is:</div>
-         <pre
-            className={`bg-neutral-800 border-[1px] border-neutral-600 p-2 rounded-lg w-1/2`}>{JSON.stringify(session, null, 2)}</pre>
-         <span className={`mt-4`}>Current user info is : </span>
-         < pre
-            className={`bg-neutral-800 border-[1px] border-neutral-600 p-2 rounded-lg w-1/2`}>{JSON.stringify(user, null, 2)}</pre>
+         <Separator className={`w-2/3 mt-4 !h-[1px]`} />
       </div>
    );
 };

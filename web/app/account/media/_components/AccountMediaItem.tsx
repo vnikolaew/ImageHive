@@ -16,6 +16,7 @@ import EditMediaForm from "@/app/account/media/_components/EditMediaForm";
 import MediaSettingsForm from "./MediaSettingsForm";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useIsDarkMode } from "@/hooks/useIsDarkMode";
 
 interface AccountMediaItemProps {
    image: IImage;
@@ -32,13 +33,14 @@ function getFileName(fullPath: string): string {
 
 const AccountMediaItem = ({ image }: AccountMediaItemProps) => {
    const [editMediaModalOpen, setEditMediaModalOpen] = useState(false);
+   const darkMode = useIsDarkMode();
    const imageRef = useRef<HTMLDivElement>(null!);
 
    const imageSrc = path.join(`/uploads`, getFileName(image.absolute_url)).replaceAll(`\\`, `/`);
 
    return (
       <div>
-         <div className={`flex flex-col rounded-2xl border-[1px] border-neutral-700 `}>
+         <div className={`flex flex-col rounded-2xl border-[1px] dark:border-neutral-700 `}>
             <div className={`relative group cursor-pointer rounded-2xl m-1`}>
                <div className={`absolute z-10 top-2 left-2 hidden text-white group-hover:block`}>
                   <Button onClick={_ => setEditMediaModalOpen(true)}
@@ -55,23 +57,27 @@ const AccountMediaItem = ({ image }: AccountMediaItemProps) => {
                   src={imageSrc} />
             </div>
             <div
-               className={`mt-0 flex flex-col items-start justify-start gap-2 text-center text-lg p-3 border-t-[1px] border-neutral-700`}>
-               <span className={`ml-2`}>
+               className={`mt-0 flex flex-col items-start justify-start gap-2 text-center text-lg p-3 border-t-[1px] dark:border-neutral-700`}>
+               <span className={`ml-2 font-semibold`}>
                   {image.title}
                </span>
                <div className={`items-center flex gap-2`}>
-                  {image.tags.slice(0,3).sort().map((tag, i) => (
+                  {image.tags.slice(0, 3).sort().map((tag, i) => (
                      <Badge variant={`secondary`} key={i}>{tag}</Badge>
                   ))}
                   {image.tags.length > 3 && (
                      <TooltipProvider>
                         <Tooltip>
                            <TooltipTrigger className={`cursor-auto`}>
-                              <Badge className={`text-nowrap`} variant={`outline`} key={`more`}>+{image.tags.length - 3} more</Badge>
+                              <Badge className={`text-nowrap`} variant={`outline`}
+                                     key={`more`}>+{image.tags.length - 3} more</Badge>
                            </TooltipTrigger>
-                           <TooltipContent className={`!text-xs rounded-lg bg-black text-white flex gap-1`}>
+                           <TooltipContent
+                              className={`!text-xs rounded-lg bg-white dark:bg-black text-white flex gap-1`}>
                               {image.tags.slice(3).sort().map((tag, i) => (
-                                 <Badge variant={`secondary`} key={i}>{tag}</Badge>
+                                 <Badge className={`bg-slate-100 border-none`} variant={darkMode  ? `secondary` : `outline`} key={i}>
+                                    {tag}
+                                 </Badge>
                               ))}
                            </TooltipContent>
                         </Tooltip>
@@ -83,7 +89,8 @@ const AccountMediaItem = ({ image }: AccountMediaItemProps) => {
          </div>
          <Dialog onOpenChange={setEditMediaModalOpen} open={editMediaModalOpen}>
             <DialogTrigger></DialogTrigger>
-            <DialogContent className="min-h-[70vh] !h-fit !w-[40vw] sm:!w-[70vw] !max-w-[40vw] sm:!max-w-[70vw] flex gap-4 !p-0 rounded-xl">
+            <DialogContent
+               className="min-h-[70vh] !h-fit !w-[40vw] sm:!w-[70vw] !max-w-[40vw] sm:!max-w-[70vw] flex gap-4 !p-0 rounded-xl">
                <DialogHeader>
                   <div ref={imageRef} style={{
                      backgroundImage: `url(${imageSrc})`,

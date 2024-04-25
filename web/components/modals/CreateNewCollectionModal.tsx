@@ -16,7 +16,6 @@ import { Button } from "../ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { EyeOff } from "lucide-react";
 import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
-import { useQsImageId } from "@/hooks/useQsImageId";
 import { ApiResponse } from "@/lib/utils";
 import { toast } from "sonner";
 

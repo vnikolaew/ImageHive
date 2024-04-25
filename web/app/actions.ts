@@ -27,6 +27,7 @@ export async function handleLikeImage(imageId: string): Promise<ApiResponse> {
    console.log({ imageLike });
 
    revalidatePath(`/`);
+   revalidatePath(`/photos/${imageId}`);
    return { imageLike, success: true };
 }
 
@@ -46,6 +47,7 @@ export async function handleUnlikeImage(imageId: string): Promise<ApiResponse> {
    console.log({ imageLike });
 
    revalidatePath(`/`);
+   revalidatePath(`/photos/${imageId}`);
    return { success: true };
 }
 

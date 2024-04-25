@@ -140,3 +140,24 @@ export function getFileName(fileName: string) {
 export async function sleep(duration: number) {
    return await new Promise(res => setTimeout(res, duration));
 }
+
+export function isAbsoluteUrl(url: string) {
+
+   // Regular expression for absolute URL
+   var absoluteUrlPattern = /^(?:https?:\/\/)?(?:\w+\.)+\w{2,}(?:\/.*)?$/;
+
+   // Test the string against the pattern
+   return absoluteUrlPattern.test(url);
+}
+
+export function downloadImage(image: HTMLImageElement , name: string) {
+   const imgUrl = image.src;
+
+   const a = document.createElement("a");
+
+   a.href = imgUrl;
+   a.download = name;
+   a.click();
+
+   a.remove()
+}

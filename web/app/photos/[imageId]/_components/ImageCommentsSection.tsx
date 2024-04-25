@@ -39,11 +39,9 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
       },
    });
 
-   console.log({ imageComments, total });
-
    return (
-      <div className={`mt-8`}>
-         <h2 className="text-xl font-bold text-gray-900">
+      <div className={`mt-8 text-white`}>
+         <h2 className="text-xl font-bold text-white ">
             {imageComments.length + 10} comments.
          </h2>
          <AddCommentSection imageId={imageId} />

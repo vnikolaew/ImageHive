@@ -14,6 +14,7 @@ import ImageDescription from "@/app/photos/[imageId]/_components/ImageDescriptio
 import ImageCommentsSection from "@/app/photos/[imageId]/_components/ImageCommentsSection";
 import ImageTagsSection from "@/app/photos/[imageId]/_components/ImageTagsSection";
 import RelatedImagesSection from "@/app/photos/[imageId]/_components/RelatedImagesSection";
+import { getImageLikes } from "@/app/_components/HomeFeedSection";
 
 export interface PageProps {
    params: { imageId: string };
@@ -44,10 +45,12 @@ const getImage = cache(async (id: string) => {
 
 const Page = async ({ params }: PageProps) => {
    const image = await getImage(params.imageId);
-   console.log({ image });
-
    if (!image) return notFound();
 
+
+   const likedImages = await getImageLikes();
+   const haveILiked = new Set<string>(likedImages.map(i => i.imageId))
+      .has(image.id);
 
    const { verifyPassword, updatePassword, ...rest } = image.owner;
    // @ts-ignore
@@ -55,7 +58,7 @@ const Page = async ({ params }: PageProps) => {
 
    return (
       <main className="m-8 grid gap-12 grid-cols-[5fr_2fr] min-h-[70vh]">
-         <div className={`bg-white/30 h-full`}>
+         <div className={`bg-transparent h-full`}>
             <div className={`w-full flex flex-col items-center mx-auto !h-[70vh]`}>
                <div
                   className={`!h-full relative group aspect-[5/3] z-10 overflow-hidden hover:opacity-80 transition-opacity duration-200`}>
@@ -81,6 +84,7 @@ const Page = async ({ params }: PageProps) => {
                      </TooltipProvider>
                   </div>
                   <Image
+                     id={`image-${image.id}`}
                      objectFit={`cover`}
                      layout="responsive"
                      width={600}
@@ -103,7 +107,7 @@ const Page = async ({ params }: PageProps) => {
             </div>
          </div>
          <div className={`h-full relative`}>
-            <ImageSummary image={image} />
+            <ImageSummary haveILiked={haveILiked} image={image} />
          </div>
       </main>
    );

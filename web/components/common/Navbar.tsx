@@ -20,7 +20,7 @@ import { cn } from "@/lib/utils";
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
 import { usePromise } from "@/hooks/usePromise";
 import { SignedIn, SignedOut } from "@/components/common/Auth";
-import { Upload } from "lucide-react";
+import { LogOut, Upload } from "lucide-react";
 import NavSearchBar from "@/components/common/NavSearchBar";
 import { useWindowScroll } from "@uidotdev/usehooks";
 import { useMemo, useRef } from "react";
@@ -38,7 +38,7 @@ const Navbar = () => {
    const navRef = useRef<HTMLElement>(null!);
    const [{ y }] = useWindowScroll();
    const showNavbarBackground = useMemo(() => {
-      return  y! >= navRef?.current?.clientHeight;
+      return y! >= navRef?.current?.clientHeight;
    }, [y]);
 
    return (
@@ -71,12 +71,17 @@ const Navbar = () => {
                               !data?.user?.image && `p-1`)}
                            height={36}
                            width={36}
+
                            src={data?.user?.image ?? DefaultAvatar} alt={``} />
                      </DropdownMenuTrigger>
                      <DropdownMenuContent className={`min-w-[200px] p-1 -left-1/2`}>
-                        <DropdownMenuLabel>Signed in as {data?.user?.name}</DropdownMenuLabel>
+                        <DropdownMenuLabel className={`font-normal`}>
+                           Signed in as <b>
+                           {data?.user?.name}
+                        </b>
+                        </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <Link href={`/account/profile`}>
+                        <Link href={`/users/${data?.user?.id}`}>
                            <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
                               Profile
                            </DropdownMenuItem>
@@ -91,11 +96,12 @@ const Navbar = () => {
                               Team
                            </DropdownMenuItem>
                         </Link>
-                        <DropdownMenuItem className={`flex mt-2 justify-center w-full hover:!bg-transparent`}>
+                        <DropdownMenuItem className={`flex my-2 justify-center w-full hover:!bg-transparent`}>
                            <Button
                               disabled={loading}
-                              className={`!px-6 rounded-lg !py-2 shadow-md`} variant={`destructive`}
+                              className={`!px-8 rounded-full gap-3 !py-2 shadow-md`} variant={`destructive`}
                               onClick={() => signOutAction()}>
+                              <LogOut size={14} />
                               Sign out
                            </Button>
                         </DropdownMenuItem>

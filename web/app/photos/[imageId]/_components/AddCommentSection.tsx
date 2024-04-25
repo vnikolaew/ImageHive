@@ -38,7 +38,7 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
    return (
       <div className={`w-full h-fit mt-4 flex items-start justify-between gap-4`}>
          <Image height={36} width={36}
-                className={`rounded-full cursor-pointer shadow-md w-10 h-10 hover:opacity-80 transition-opacity duration-200`}
+                className={`rounded-full p-1 border-white bg-white border-[1px] cursor-pointer shadow-md w-10 h-10 hover:opacity-80 transition-opacity duration-200`}
                 src={session!.user?.image! ?? DefaultAvatar}
                 alt={session!.user?.name! ?? ``} />
          <div className={`flex h-auto flex-1 flex-col gap-2 items-start`}>
@@ -49,13 +49,14 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
                placeholder={`Add your comment`}
                className={cn(`rounded-2xl resize-none !min-h-[10px] !pl-6 !py-3 border-none bg-neutral-100 text-black flex-1 focus-visible:outline-none focus-visible:border-none focus-visible:ring-0 placeholder:text-neutral-400 transition-all duration-200`,
                   expandComment && `!h-[70px]`)} />
-            {comment.length !== 0 && (
-               <Button onClick={handleSubmitComment} disabled={comment.length === 0 || loading} className={`px-12`}
+            {expandComment && (
+               <Button onClick={handleSubmitComment} disabled={comment.length === 0 || loading}
+                       className={`px-12 rounded-xl mt-2`}
                        variant={`secondary`}>
                   {loading ? (
                      <LoadingSpinner text={`Sending ...`} />
                   ) : (
-                    `Submit`
+                     `Submit`
                   )}
                </Button>
             )}

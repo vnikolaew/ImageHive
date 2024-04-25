@@ -5,7 +5,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { Input } from "@/components/ui/input";
 import { UseFormReturn } from "react-hook-form";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { CircleHelp, X } from "lucide-react";
+import { CircleHelp, Sparkles, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { ImageUpload } from "@/app/upload/_store/imageUploadsStore";
@@ -25,7 +25,7 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
 
    return (
       <div id={`form-${id}`}
-           className={`flex p-0 gap-8 items-start rounded-lg border-[1px] border-neutral-600 bg-white`}>
+           className={`flex p-0 gap-8 items-start rounded-lg border-[1px] dark:border-neutral-600 bg-white`}>
          <div className={`bg-neutral-100 rounded-l-lg !min-h-[360px] flex items-center justify-center`}>
             <Image className={`rounded-md border-[1px] border-neutral-200`} width={320} height={1000} src={imagePreview}
                    alt={inputFile?.name ?? id} />
@@ -67,19 +67,20 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                                        <X onClick={_ => {
                                           console.log(field.value, field.name, tag);
 
+                                          // @ts-ignore
                                           form.setValue(`imageUploads.${index}.tags`, field?.value?.filter(s => s !== tag));
-                                       }} className={`cursor-pointer text-muted hover:text-neutral-800`} size={12} />
+                                       }} className={`cursor-pointer dark:text-muted hover:text-neutral-800`}
+                                          size={12} />
                                     </Badge>
                                  ))}
                               </div>
                               <Input
-                                 className={`text-black !py-0 bg-white flex-0 !border-0 !shadow-none !outline-none focus:!outline-none focus:!border-0 focus:!ring-0 !h-7`}
+                                 className={`text-black !py-0 !px-0 bg-white flex-0 !border-0 !shadow-none !outline-none focus:!outline-none focus:!border-0 focus:!ring-0 !h-7`}
                                  type={`text`}
                                  required
                                  placeholder="e.g. jack123 or jack123@example.com"
                                  {...field}
                                  onChange={e => {
-                                    console.log(`we are here`);
                                     field.onChange(e);
                                     form.setValue(`imageUploads.${index}.tags`, e.target.value.split(`,`).map(s => s.trim()));
                                     form.trigger(`imageUploads.${index}.tags`);
@@ -147,8 +148,11 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                               onCheckedChange={field.onChange}
                            />
                         </FormControl>
-                        <FormLabel className={`text-neutral-500 !mt-0 font-normal text-md`}>
+                        <FormLabel className={`text-neutral-500 flex items-center gap-1 !mt-0 font-normal text-md`}>
+                           <Sparkles className={`inline`} size={16} />
+                           <span>
                            This media is AI generated
+                          </span>
                         </FormLabel>
                         <TooltipProvider>
                            <Tooltip>

@@ -1,6 +1,7 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button, ButtonProps } from "@/components/ui/button";
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface ImageActionProps extends ButtonProps {
    icon?: React.ReactNode;
@@ -10,6 +11,7 @@ export interface ImageActionProps extends ButtonProps {
 }
 
 export const ImageAction = ({ action, tooltipText, text, icon, ...rest }: ImageActionProps) => {
+   const { className, ...xrest } = rest;
    return (
       <TooltipProvider>
          <Tooltip>
@@ -19,8 +21,8 @@ export const ImageAction = ({ action, tooltipText, text, icon, ...rest }: ImageA
                      action?.();
                   }}
                   variant={`outline`}
-                  className={`bg-transparent gap-2 dark:text-neutral-300 hover:bg-transparent border-neutral-300 dark:hover:text-neutral-500 hover:border-neutral-500`}
-                  {...rest}
+                  className={cn(`bg-transparent gap-2 dark:text-neutral-300 hover:bg-transparent border-neutral-300 dark:hover:text-neutral-500 hover:border-neutral-500`, className)}
+                  {...xrest}
                >
                   {icon}
                   {text}

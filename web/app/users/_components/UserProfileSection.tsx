@@ -2,14 +2,10 @@
 import React, { Fragment } from "react";
 import Image from "next/image";
 import DefaultAvatar from "@/public/default-avatar.png";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { UserPlus } from "lucide-react";
 import moment from "moment/moment";
 import { User, Image as IImage, Account } from "@prisma/client";
-import { usePromise } from "@/hooks/usePromise";
-import { handleFollowUser } from "@/app/users/[userId]/actions";
-import { LoadingSpinner } from "@/components/modals/SocialLogins";
+import RightSection from "@/app/users/_components/RightSection";
+import FollowUserButton from "@/app/users/_components/FollowUserButton";
 
 export interface UserProfileSectionProps {
    user: User & {
@@ -17,40 +13,30 @@ export interface UserProfileSectionProps {
       accounts: Account[]
       _count: { followedBy: number, imageDownloads: number, imageLikes: number, following: number }
    },
+   amIFollower: boolean;
+   isMe: boolean;
 };
 
-const UserProfileSection = ({ user }: UserProfileSectionProps) => {
-   const { loading, action: followUser } = usePromise(async () => {
-      await handleFollowUser(user.id!).then(console.log).catch(console.error);
-   });
-
-
+const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps) => {
    return (
       <Fragment>
-         <div className={`absolute -top-[60px] text-white z-30`}>
+         <div className={`absolute -top-[60px] text-white !z-10`}>
             <Image
-               height={120} width={120} className={`rounded-full bg-white p-2 border-white border-[2px]`}
+               height={120} width={120}
+               className={`rounded-full bg-white p-1 2xl:p-1 border-white border-[1px] xl:border-[1px]`}
                src={user.image ?? DefaultAvatar}
                alt={user.name!} />
          </div>
          <div className={`mt-[80px] w-full flex items-center justify-between`}>
             <div className={`flex items-start gap-8`}>
                <h2 className={`text-3xl font-bold`}>{user.name}</h2>
-               <Button disabled={loading} onClick={() => followUser()}
-                       className={cn(`gap-2 rounded-full !px-6  transition-colors duration-200`,
-                          `dark:hover:bg-neutral-600`)}
-                       variant={`secondary`}>
-                  {loading ? (
-                     <LoadingSpinner text={`Loading ...`} />
-                  ) : (
-                     <>
-                        <UserPlus size={16} />
-                        Follow
-                     </>
-                  )}
-               </Button>
+               {!isMe &&
+                  (
+                     <FollowUserButton userId={user.id} isMe={isMe} amIFollower={amIFollower} />
+                  )
+               }
             </div>
-            <div>End section.</div>
+            <RightSection isMe={isMe} />
          </div>
          <div className={`flex items-center mt-4 gap-4`}>
             <div>

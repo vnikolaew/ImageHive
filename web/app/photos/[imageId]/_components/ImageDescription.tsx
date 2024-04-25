@@ -12,7 +12,7 @@ function upperCase(str: string): string {
 const ImageDescription = ({image}: ImageDescriptionProps) => {
    return (
       <div className={`mt-8`}>
-         <p>{image.tags.map(upperCase).slice(0, 3).join(`, `)} image. Free for use.</p>
+         <p className={`text-md`}>{image.tags.map(upperCase).slice(0, 3).join(`, `)} image. Free for use.</p>
       </div>
    );
 };

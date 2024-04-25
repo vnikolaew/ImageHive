@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils";
 import { GridColumn } from "@/app/_components/GridColumn";
 import { getImageLikes } from "@/app/_components/HomeFeedSection";
 import UserProfileSection from "@/app/users/_components/UserProfileSection";
+import { auth } from "@/auth";
 
 export interface PageProps {
    params: { userId: string };
 }
 
 const Page = async ({ params: { userId } }: PageProps) => {
+   const session = await auth();
    const user = await xprisma.user.findUnique({
       where: { id: userId },
       include: {
@@ -24,7 +26,12 @@ const Page = async ({ params: { userId } }: PageProps) => {
       },
    });
    if (!user) return notFound();
-   console.log(JSON.stringify(user, null, 2));
+
+   const amIFollower = (await xprisma.follows.count({
+      where: { followerId: session?.user?.id, followingId: user.id },
+   })) > 0;
+
+   const isMe = user.id === session?.user?.id as string;
 
    const likedImages = await getImageLikes();
    const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
@@ -37,23 +44,25 @@ const Page = async ({ params: { userId } }: PageProps) => {
    const { verifyPassword, updatePassword, ...rest } = user;
    //@ts-ignore
    rest.accounts = rest.accounts.map(a => {
-      const { deleteResetToken, ...rest } = a
+      const { deleteResetToken, ...rest } = a;
       return rest;
-   })
-   console.log({ accounts : rest.accounts });
+   });
 
    return (
       <main className="flex min-h-screen flex-col items-center justify-start ">
-         <div style={{
+         <div
+            style={{
             background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))`,
             backgroundImage: `url('/dark-banner.png')`,
             backgroundPosition: `center center`,
             backgroundSize: `cover`,
             // opacity: `50%`
-         }} className="w-full h-[300px] !z-10 flex items-center relative justify-center flex-col">
+         }}
+            className="w-full h-[300px] !z-10 flex items-center relative justify-center flex-col"
+         >
          </div>
          <div className={`w-5/6 relative min-h-[60vh]`}>
-            <UserProfileSection user={rest} />
+            <UserProfileSection isMe={isMe} amIFollower={amIFollower} user={rest} />
             <div className={`mt-12`}>
                <Button size={`lg`} variant={`secondary`}
                        className={cn(`gap-2 rounded-full !px-6 shadow-sm transition-colors duration-200`)}>Images</Button>

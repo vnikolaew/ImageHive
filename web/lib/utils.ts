@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { NextResponse } from "next/server";
+import path from "path";
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs));
@@ -133,7 +134,13 @@ export function getFileExtension(fileName: string) {
 }
 
 export function getFileName(fileName: string) {
-   return fileName.split(`\\`).at(-1)?.trim();
+   if(fileName?.includes(`\\`))  return fileName?.split(`\\`).at(-1)?.trim();
+    return fileName?.split(`/`)?.at(-1)?.trim();
+}
+
+
+export function getSessionImageSrc(image: string) {
+   return isAbsoluteUrl(image) ? image : path.join(`/profile-pictures`, getFileName(image) ?? ``).replaceAll(`\\`, `/`);
 }
 
 

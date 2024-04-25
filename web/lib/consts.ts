@@ -74,6 +74,16 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   CHANGE_PROFILE_PICTURE_SUCCESS: {
+      message: `Profile picture changed.`,
+      description: `You've successfully changed your profile picture.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
 } as const;
 
 export const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+export const PROFILE_PICS_DIR = path.join(process.cwd(), "public", "profile-pictures");

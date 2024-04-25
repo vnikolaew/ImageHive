@@ -46,7 +46,7 @@ export let xprisma = prisma.$extends({
             needs: { image: true },
             compute({ image }) {
                if (!image) return null;
-               return isAbsoluteUrl(image) ? image : path.join(`/uploads`, getFileName(image)!).replaceAll(`\\`, `/`);
+               return isAbsoluteUrl(image) ? image : path.join(`/profile-pictures`, getFileName(image)!).replaceAll(`\\`, `/`);
             },
          },
          verifyPassword: {

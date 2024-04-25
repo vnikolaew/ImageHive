@@ -14,7 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FormField, Form, FormItem, FormControl, FormDescription, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "../ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { EyeOff } from "lucide-react";
+import { Check, EyeOff } from "lucide-react";
 import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
 import { ApiResponse } from "@/lib/utils";
 import { toast } from "sonner";
@@ -55,7 +55,8 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
             console.log({ res });
             if(res.success) {
                closeModal(ModalType.CREATE_NEW_COLLECTION);
-               toast(TOASTS.CREATE_COLLECTION_SUCCESS);
+               const { message, ...rest } = TOASTS.CREATE_COLLECTION_SUCCESS;
+               toast(message, { ...rest, icon: <Check size={16} /> });
             }
          })
          .catch(console.error);
@@ -123,7 +124,7 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
                      />
                      <div className="flex items-center space-x-3">
                         <EyeOff size={12} />
-                        <span className={`text-neutral-300 text-sm`}>This collection will only be visible to you</span>
+                        <span className={`dark:text-neutral-300 text-sm`}>This collection will only be visible to you</span>
                      </div>
                      <div className={`w-full flex flex-1 justify-end gap-2 justify-self-end`}>
                         <Button variant={`outline`} onClick={_ => {

@@ -1,4 +1,4 @@
-"use server"
+"use server";
 import { auth } from "@/auth";
 import { xprisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -22,4 +22,33 @@ export async function handleCommentOnImage(imageId: string, commentText: string)
 
    revalidatePath(`/photos/${imageId}`);
    return { success: true, data: comment };
+}
+
+
+export async function handleDownloadImage(imageId: string): Promise<ActionApiResponse> {
+   const session = await auth();
+   if (!session) return { success: false };
+
+   await sleep(2000);
+
+   let download = await xprisma.imageDownload.findFirst({
+      where: {
+         imageId,
+         userId: session.user?.id as string,
+      },
+   });
+
+   if (!download) {
+      download = await xprisma.imageDownload.create({
+         data: {
+            metadata: {},
+            imageId,
+            userId: session.user?.id as string,
+         },
+      });
+
+   }
+
+   revalidatePath(`/photos/${imageId}`);
+   return { success: true, data: download };
 }

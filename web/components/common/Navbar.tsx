@@ -16,7 +16,7 @@ import LogoDark from "@/public/ImageHive-logo-dark.png";
 import DefaultAvatar from "@/public/default-avatar.png";
 import { Button } from "@/components/ui/button";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
-import { cn } from "@/lib/utils";
+import { cn, getSessionImageSrc } from "@/lib/utils";
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
 import { usePromise } from "@/hooks/usePromise";
 import { SignedIn, SignedOut } from "@/components/common/Auth";
@@ -67,12 +67,11 @@ const Navbar = () => {
                   <DropdownMenu modal>
                      <DropdownMenuTrigger asChild>
                         <Image
-                           className={cn(`rounded-full cursor-pointer bg-white border-neutral-200`,
+                           className={cn(`rounded-full cursor-pointer bg-white border-neutral-200 !h-9 !w-9`,
                               !data?.user?.image && `p-1`)}
                            height={36}
                            width={36}
-
-                           src={data?.user?.image ?? DefaultAvatar} alt={``} />
+                           src={data?.user?.image ? getSessionImageSrc(data.user.image) : DefaultAvatar} alt={``} />
                      </DropdownMenuTrigger>
                      <DropdownMenuContent className={`min-w-[200px] p-1 -left-1/2`}>
                         <DropdownMenuLabel className={`font-normal`}>
@@ -91,9 +90,24 @@ const Navbar = () => {
                               My images
                            </DropdownMenuItem>
                         </Link>
-                        <Link href={`/`}>
+                        <Link href={`/upload`}>
                            <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Team
+                              Upload
+                           </DropdownMenuItem>
+                        </Link>
+                        <Link href={`/account/statistics`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              Statistics
+                           </DropdownMenuItem>
+                        </Link>
+                        <Link href={`/account/collections`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              Collections
+                           </DropdownMenuItem>
+                        </Link>
+                        <Link href={`/account/following`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              Following
                            </DropdownMenuItem>
                         </Link>
                         <DropdownMenuItem className={`flex my-2 justify-center w-full hover:!bg-transparent`}>
@@ -107,6 +121,8 @@ const Navbar = () => {
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>
+                  <div className={cn(`text-sm font-semibold`,
+                     showNavbarBackground ? `text-black` : `text-white`)}>{data?.user?.name}</div>
                   <Button asChild variant={`default`} className={`gap-3 text-default !px-5 rounded-lg`}>
                      <Link href={`/upload`}>
                         <Upload size={16} />

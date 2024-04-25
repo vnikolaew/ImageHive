@@ -12,14 +12,21 @@ import { cn, downloadImage } from "@/lib/utils";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
 import { usePromise } from "@/hooks/usePromise";
 import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
+import { handleDownloadImage } from "@/app/photos/[imageId]/actions";
+import { LoadingSpinner } from "@/components/modals/SocialLogins";
+import { useQsImageId } from "@/hooks/useQsImageId";
 
 export interface ImageSummaryProps {
-   image: IImageSummary;
-   haveILiked: boolean;
+   image: IImageSummary,
+   haveILiked: boolean,
+   haveIDownloaded: boolean,
+   haveISaved: boolean,
+   haveIFollowed: boolean
 }
 
-const ImageSummary = ({ image, haveILiked }: ImageSummaryProps) => {
+const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFollowed }: ImageSummaryProps) => {
    const { openModal } = useModals();
+   const [, setImageId] = useQsImageId();
    const { loading, action: handleLike } = usePromise(() => {
       if (haveILiked) {
          return handleUnlikeImage(image.id).then(console.log).catch(console.error);
@@ -27,16 +34,30 @@ const ImageSummary = ({ image, haveILiked }: ImageSummaryProps) => {
          return handleLikeImage(image.id).then(console.log).catch(console.error);
       }
    });
+   const { loading: downloadLoading, action: handleDownload } = usePromise(async () => {
+      await handleDownloadImage(image.id).then(console.log).catch(console.error);
+   });
 
-   async function handleDownloadImage() {
+
+   async function handleDownloadImageClient() {
       const imgElement = document.getElementById(`image-${image.id}`);
       if (imgElement) downloadImage(imgElement as HTMLImageElement, image.original_file_name);
+
+      if (!haveIDownloaded) {
+         await handleDownload();
+      }
+   }
+
+   async function handleAddToCollection() {
+      setImageId(image.id).then(_ => {
+         setTimeout(_ => openModal(ModalType.ADD_IMAGE_TO_COLLECTION), 100);
+      });
    }
 
    return (
       <div
          className="w-full h-fit sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-lg p-6">
-         <div className={`w-full flex items-center gap-2`}>
+         <div className={`w-full flex items-center gap-2 justify-center`}>
             <CircleCheck className={`dark:text-neutral-200`} size={16} />
             <span className={`dark:text-neutral-300 text-sm`}>  Free for use under the ImageHive <Link
                className={`hover:underline font-semibold`} href={`/`}>
@@ -44,9 +65,16 @@ const ImageSummary = ({ image, haveILiked }: ImageSummaryProps) => {
             </Link> </span>
          </div>
          <div className={`w-full mt-4 flex items-center justify-center gap-2`}>
-            <Button onClick={handleDownloadImage} variant={`default`} className={`px-16 gap-2 rounded-full shadow-md`}>
-               <Download size={16} />
-               Download
+            <Button
+               disabled={downloadLoading} onClick={handleDownloadImageClient} variant={`default`}
+               className={`px-16 gap-2 rounded-full shadow-md`}>
+               {downloadLoading ? (
+                  <LoadingSpinner text="Downloading..." />
+               ) : <>
+                  <Download size={16} />
+                  Download
+               </>
+               }
             </Button>
          </div>
          <Separator className={`w-full mt-6 dark:bg-neutral-500`} />
@@ -57,18 +85,31 @@ const ImageSummary = ({ image, haveILiked }: ImageSummaryProps) => {
                text={
                   <span className={cn(haveILiked && `text-primary`)}>{image._count.likes}</span>
                }
-               className={haveILiked && `!border-primary`}
+               className={cn(haveILiked && `!border-primary !border-[2px]`)}
                tooltipText={`Like`} />
-            <ImageAction icon={<Bookmark size={20} />} text={`Saved`} tooltipText={`Add to collection`} />
-            <ImageAction icon={<MessageSquare size={18} />} text={``} tooltipText={`Comment`} />
-            <ImageAction action={() => openModal(ModalType.SHARE_PROFILE)} icon={<Share2 size={20} />} text={``}
+            <ImageAction
+               action={handleAddToCollection}
+               className={cn(haveISaved && `!border-primary !border-[2px]`)}
+               icon={<Bookmark className={cn(haveISaved && `text-primary`)}
+                               size={20} />}
+               text={
+                  <span className={cn(haveISaved && `text-primary`)}>Saved</span>
+               }
+               tooltipText={`Add to collection`} />
+            <ImageAction action={() => {
+               const element = document.getElementById(`comment-area`) as HTMLTextAreaElement;
+               element?.focus({ preventScroll: false });
+               element?.scrollIntoView({ behavior: `smooth` });
+            }} icon={<MessageSquare size={18} />} text={``} tooltipText={`Comment`} />
+            <ImageAction
+               action={() => openModal(ModalType.SHARE_PROFILE)} icon={<Share2 size={20} />} text={``}
                          tooltipText={`Share`} />
          </div>
          <div className={`w-full`}>
             <ImageStatistics image={image} />
          </div>
          <Separator className={`w-full mt-6 dark:bg-neutral-500`} />
-         <ImageOwnerSection owner={image.owner} />
+         <ImageOwnerSection haveIFollowed={haveIFollowed} owner={image.owner} />
       </div>
    );
 };

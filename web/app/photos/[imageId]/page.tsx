@@ -15,13 +15,14 @@ import ImageCommentsSection from "@/app/photos/[imageId]/_components/ImageCommen
 import ImageTagsSection from "@/app/photos/[imageId]/_components/ImageTagsSection";
 import RelatedImagesSection from "@/app/photos/[imageId]/_components/RelatedImagesSection";
 import { getImageLikes } from "@/app/_components/HomeFeedSection";
+import { auth } from "@/auth";
 
 export interface PageProps {
    params: { imageId: string };
 }
 
 export type ImageSummary = IImage & {
-   owner: User & { _count: { followedBy: number } },
+   owner: User & { _count: { followedBy: number, following: number } },
    _count: { likes: number, comments: number, downloads: number, collections: number }
 };
 
@@ -32,7 +33,7 @@ const getImage = cache(async (id: string) => {
          include: {
             owner: {
                include: {
-                  _count: { select: { followedBy: true } },
+                  _count: { select: { followedBy: true, following: true } },
                },
             },
             _count: { select: { likes: true, comments: true, downloads: true, collections: true } },
@@ -46,11 +47,38 @@ const getImage = cache(async (id: string) => {
 const Page = async ({ params }: PageProps) => {
    const image = await getImage(params.imageId);
    if (!image) return notFound();
+   console.log({ _counts: image.owner._count });
 
 
    const likedImages = await getImageLikes();
+   const session = await auth();
    const haveILiked = new Set<string>(likedImages.map(i => i.imageId))
       .has(image.id);
+
+   const haveIDownloaded = (await xprisma.imageDownload.count({
+      where: {
+         imageId: image.id,
+         userId: session?.user?.id,
+      },
+   })) > 0;
+
+   const collections = await xprisma.imageCollection.findMany({
+      where: {
+         userId: session?.user?.id,
+         images: {
+            some: {
+               imageId: image.id,
+            },
+         },
+      },
+   });
+   const haveISaved = collections.length > 0;
+   const haveIFollowed = (await xprisma.follows.count({
+      where: {
+         followerId: session?.user?.id,
+         followingId: image.owner.id,
+      },
+   })) > 0;
 
    const { verifyPassword, updatePassword, ...rest } = image.owner;
    // @ts-ignore
@@ -107,7 +135,12 @@ const Page = async ({ params }: PageProps) => {
             </div>
          </div>
          <div className={`h-full relative`}>
-            <ImageSummary haveILiked={haveILiked} image={image} />
+            <ImageSummary
+               haveIFollowed={haveIFollowed}
+               haveISaved={haveISaved}
+               haveIDownloaded={haveIDownloaded}
+               haveILiked={haveILiked}
+               image={image} />
          </div>
       </main>
    );

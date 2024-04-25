@@ -16,6 +16,8 @@ export enum ModalType {
    ADD_IMAGE_TO_COLLECTION = 5,
    CREATE_NEW_COLLECTION = 6,
    SHARE_PROFILE = 7,
+   CHANGE_PROFILE_PICTURE = 8,
+   REMOVE_IMAGE_FROM_COLLECTION = 9,
 }
 
 const ModalsContext = createContext<[ModalType | null, Dispatch<SetStateAction<ModalType | null>>]>(null!);

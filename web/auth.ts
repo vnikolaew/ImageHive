@@ -75,10 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         OR: [
                            {
                               email: email as string,
-                           },
-                           {
-                              name: username as string,
-                           },
+                           }
                         ],
                      },
                   });

@@ -132,13 +132,13 @@ const ShareProfileModal = ({}: ShareProfileModalProps) => {
          onOpenChange={_ => toggleModal(ModalType.CREATE_NEW_COLLECTION)}
          open>
          <DialogTrigger></DialogTrigger>
-         <DialogContent className="sm:max-w-[700px] w-[50vw] !p-8 !pb-2 min-h-[60vh] !h-fit flex flex-col items-start">
+         <DialogContent className="sm:max-w-[700px] w-[50vw] !p-8 !pb-2 !h-fit flex flex-col items-start">
             <DialogHeader className="">
                <DialogTitle className={`text-left text-2xl`}>Share</DialogTitle>
             </DialogHeader>
             <ShareButtons url={window.location.href} />
             <div className={`w-full mx-auto mt-4`}>
-               <div className={`relative w-2/3 mx-auto`}>
+               <div className={`relative w-2/3 mx-auto mb-8`}>
                   <Input className={`w-full`} value={window.location.href} />
                   <Button
                      onClick={_ => {

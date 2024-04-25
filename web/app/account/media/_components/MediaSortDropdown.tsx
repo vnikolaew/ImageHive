@@ -23,14 +23,12 @@ const MediaSortDropdown = ({ sort }: MediaSortDropdownProps) => {
       }
       return `UploadedLatest`;
    });
-   console.log({ selectedSortOption });
 
    return (
       <div>
          <Select onValueChange={value => {
             const sp = new URLSearchParams(window.location.search);
             sp.set(`sort`, value);
-
             window.location.href = `${window.location.pathname}?${sp.toString()}`;
 
          }} value={selectedSortOption}>

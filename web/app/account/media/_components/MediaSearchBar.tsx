@@ -6,9 +6,10 @@ import { useRouter } from "next/navigation";
 
 interface MediaSearchBarProps {
    qs: string;
+   placeholder?: string
 }
 
-const MediaSearchBar = ({ qs }: MediaSearchBarProps) => {
+const MediaSearchBar = ({ qs, placeholder }: MediaSearchBarProps) => {
    const inputRef = useRef<HTMLInputElement>(null!);
    const [searchValue, setSearchValue] = useState(qs);
    const router = useRouter();
@@ -37,7 +38,7 @@ const MediaSearchBar = ({ qs }: MediaSearchBarProps) => {
                setSearchValue(e.target.value);
             }}
             ref={inputRef}
-            placeholder={`Search by tag ...`}
+            placeholder={placeholder ?? `Search by tag ...`}
             className={`rounded-full pl-10 w-full dark:bg-neutral-800 focus-visible:ring-0 outline-none focus:outline-none focus:border-none`} />
 
          {!!searchValue?.length && (

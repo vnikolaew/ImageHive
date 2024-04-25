@@ -3,9 +3,12 @@ import React, { Fragment } from "react";
 import Image from "next/image";
 import DefaultAvatar from "@/public/default-avatar.png";
 import moment from "moment/moment";
-import { User, Image as IImage, Account } from "@prisma/client";
+import { Account, Image as IImage, User } from "@prisma/client";
 import RightSection from "@/app/users/_components/RightSection";
 import FollowUserButton from "@/app/users/_components/FollowUserButton";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
+import { ModalType, useModals } from "@/providers/ModalsProvider";
 
 export interface UserProfileSectionProps {
    user: User & {
@@ -18,21 +21,32 @@ export interface UserProfileSectionProps {
 };
 
 const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps) => {
+   const { openModal } = useModals();
+
    return (
       <Fragment>
-         <div className={`absolute -top-[60px] text-white !z-10`}>
+         <div className={`absolute group -top-[60px] text-white !z-10`}>
+            <div className={`relative hidden group-hover:block w-full h-full`}>
+               <div className={`absolute text-black -top-2 -right-2 !z-30`}>
+                  <Button
+                     onClick={_ => openModal(ModalType.CHANGE_PROFILE_PICTURE)} variant={`ghost`}
+                     className={`rounded-full !h-fit bg-white !p-3`}><Pencil
+                     className={`fill-black`} size={18} /></Button>
+               </div>
+            </div>
             <Image
-               height={120} width={120}
-               className={`rounded-full bg-white p-1 2xl:p-1 border-white border-[1px] xl:border-[1px]`}
-               src={user.image ?? DefaultAvatar}
+               height={120}
+               width={120}
+               className={`rounded-full peer bg-white p-1 2xl:p-1 border-white border-[1px] xl:border-[1px] !w-36 !h-36`}
+               src={user.profilePictureImageSrc ?? DefaultAvatar}
                alt={user.name!} />
          </div>
-         <div className={`mt-[80px] w-full flex items-center justify-between`}>
+         <div className={`mt-[90px] w-full flex items-center justify-between`}>
             <div className={`flex items-start gap-8`}>
                <h2 className={`text-3xl font-bold`}>{user.name}</h2>
                {!isMe &&
                   (
-                     <FollowUserButton userId={user.id} isMe={isMe} amIFollower={amIFollower} />
+                     <FollowUserButton userId={user.id} amIFollower={amIFollower} />
                   )
                }
             </div>

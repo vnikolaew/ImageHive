@@ -11,6 +11,22 @@ export interface ImageCommentsSectionProps {
    imageId: string;
 }
 
+const DEFAULT_COMMENTS = (imageId: string) => [
+   ...Array.from({ length: 10 }).map((_, i) => (
+      {
+         imageId,
+         user: { image: `https://randomuser.me/api/portraits/men/34.jpg`, id: randomUUID(), name: `John` },
+         userId: randomUUID(),
+         metadata: {},
+         createdAt: moment(new Date()).subtract(3, `day`).toDate(),
+         updatedAt: new Date(),
+         id: randomUUID(),
+         is_deleted: false,
+         raw_text: `Some cool comment ${i + 1}`,
+      }
+   ))
+]
+
 export interface ImageComment {
    imageId: string;
    user: { image: string | null; id: string; name: string | null };
@@ -40,25 +56,13 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
    });
 
    return (
-      <div className={`mt-8 text-white`}>
-         <h2 className="text-xl font-bold text-white ">
+      <div className={`mt-8 dark:text-white`}>
+         <h2 className="text-xl font-bold ">
             {imageComments.length + 10} comments.
          </h2>
          <AddCommentSection imageId={imageId} />
          <ImageComments hasMore comments={[
-            ...Array.from({ length: 10 }).map((_, i) => (
-               {
-                  imageId,
-                  user: { image: `https://randomuser.me/api/portraits/men/34.jpg`, id: randomUUID(), name: `John` },
-                  userId: randomUUID(),
-                  metadata: {},
-                  createdAt: moment(new Date()).subtract(3, `day`).toDate(),
-                  updatedAt: new Date(),
-                  id: randomUUID(),
-                  is_deleted: false,
-                  raw_text: `Some cool comment ${i + 1}`,
-               }
-            )),
+            ...DEFAULT_COMMENTS(imageId),
          ]} />
       </div>
    );

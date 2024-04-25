@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import React from "react";
+import React, { Fragment } from "react";
 import { useHover } from "@uidotdev/usehooks";
 import { usePromise } from "@/hooks/usePromise";
 import { handleFollowUser, handleUnfollowUser } from "@/app/users/[userId]/actions";
@@ -10,11 +10,10 @@ import { cn } from "@/lib/utils";
 
 export interface FollowUserButtonProps {
    userId: string;
-   isMe: boolean;
-   amIFollower: boolean
+   amIFollower: boolean;
 }
 
-const FollowUserButton = ({ isMe, userId, amIFollower }: FollowUserButtonProps) => {
+const FollowUserButton = ({ userId, amIFollower }: FollowUserButtonProps) => {
    const [followButtonRef, hovering] = useHover();
 
    const { loading, action: followUser } = usePromise(async () => {
@@ -28,22 +27,21 @@ const FollowUserButton = ({ isMe, userId, amIFollower }: FollowUserButtonProps) 
    return (
       <Button
          ref={followButtonRef} disabled={loading} onClick={() => followUser()}
-         className={cn(`gap-2 rounded-full !px-6 transition-colors duration-200`,
-            ``)}
+         className={cn(`gap-2 rounded-full !px-6 transition-colors duration-200`
+            )}
          variant={`secondary`}>
          {loading ? (
             <LoadingSpinner text={`Loading ...`} />
          ) : amIFollower ? (
-            <>
-               {hovering ? <X size={16} /> : <UserCheck size={16} />}
-
+            <Fragment>
+               {hovering ? <X size={16} /> : <UserCheck className={`text-green-700 stroke-[3px]`} size={16} />}
                {hovering ? `Unfollow` : `Following`}
-            </>
+            </Fragment>
          ) : (
-            <>
+            <Fragment>
                <UserPlus size={16} />
                Follow
-            </>
+            </Fragment>
          )}
       </Button>
    );

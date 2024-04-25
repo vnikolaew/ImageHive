@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Fragment } from "react";
 import { Image } from "@prisma/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,15 @@ export interface GridColumnImageProps {
    imageUrl: string;
    likedByMe: boolean;
    imageKey: string;
+   topContent?: React.ReactNode;
+   bottomContent?: React.ReactNode;
 }
 
 const GridColumnImage = ({
                             imageUrl,
                             likedByMe,
-                            image: { tags, id, absolute_url, dimensions_set },
+                            topContent, bottomContent,
+                            image: { tags, id, dimensions_set },
                          }: GridColumnImageProps) => {
    const IMAGE_WIDTH = 340;
    const { openModal } = useModals();
@@ -39,6 +42,8 @@ const GridColumnImage = ({
       else handleLikeImage(id).then(console.log).catch(console.error);
    }
 
+   console.log( {topContent, bottomContent});
+
    return (
       <Link href={`/photos/${id}`}>
          <div
@@ -52,22 +57,30 @@ const GridColumnImage = ({
             }}
             className={`cursor-pointer group rounded-lg hover:opacity-80 transition-opacity duration-200 overflow-hidden`}
          >
-            <div className={`absolute flex gap-2 items-center justify-start w-5/6 top-3 left-3`}>
-               <ActionButton text={`Add to collection`} icon={<Bookmark className={`text-white`} size={18} />} action={handleAddToCollection} />
-               <ActionButton
-                  active={likedByMe}
-                  text={likedByMe ? `Unlike` : `Like`} icon={<Heart className={`text-white`} size={18} />}
-                  action={() => handleLikeImageClient(id)} />
+            <div className={`absolute hidden group-hover:flex gap-2 items-center justify-start w-5/6 top-3 left-3`}>
+               {topContent !== undefined ? topContent : (
+                  <Fragment>
+                     <ActionButton text={`Add to collection`} icon={<Bookmark className={`text-white`} size={18} />}
+                                   action={handleAddToCollection} />
+                     <ActionButton
+                        active={likedByMe}
+                        text={likedByMe ? `Unlike` : `Like`} icon={<Heart className={`text-white`} size={18} />}
+                        action={() => handleLikeImageClient(id)} />
+                  </Fragment>
+               )}
             </div>
             <div
                className={`absolute items-center gap-2 hidden group-hover:flex text-sm lg:text-md bottom-2 left-4 `}>
-               {tags.sort().slice(0, 4).map((tag, i) => (
-                  <span className={`text-sm lg:text-md text-neutral-100`} key={i}>{tag}</span>
-               ))}
+               {bottomContent !== undefined ? bottomContent : (
+                  tags.sort().slice(0, 4).map((tag, i) => (
+                     <span className={`text-sm lg:text-md text-neutral-100`} key={i}>{tag}</span>
+                  ))
+               )}
             </div>
          </div>
       </Link>
-   );
+   )
+      ;
 };
 
 interface ActionButtonProps {
@@ -77,27 +90,32 @@ interface ActionButtonProps {
    active?: boolean;
 }
 
-const ActionButton = ({ action, active, icon, text }: ActionButtonProps) => {
-   return (
-      <TooltipProvider delayDuration={100}>
-         <Tooltip>
-            <TooltipTrigger className={`cursor-auto`}>
-               <Button onClick={e => {
-                  e.preventDefault()
-                  action?.()
-               }}
-                       className={cn(`bg-transparent border-neutral-500 hover:border-neutral-300 hover:bg-transparent`,
-                          active && `bg-green-500 hover:bg-green-600`)}
-                       size={`icon`} variant={`outline`}>
-                  {icon}
-               </Button>
-            </TooltipTrigger>
-            <TooltipContent side={`bottom`} className={`!text-xs rounded-lg bg-black text-white`}>
-               {text}
-            </TooltipContent>
-         </Tooltip>
-      </TooltipProvider>
-   );
-};
+export const ActionButton = ({
+                         action, active, icon, text,
+                      }:
+                         ActionButtonProps,
+   ) => {
+      return (
+         <TooltipProvider delayDuration={100}>
+            <Tooltip>
+               <TooltipTrigger className={`cursor-auto`}>
+                  <Button onClick={e => {
+                     e.preventDefault();
+                     action?.();
+                  }}
+                          className={cn(`bg-transparent border-neutral-500 hover:border-neutral-300 hover:bg-transparent`,
+                             active && `bg-green-500 hover:bg-green-600`)}
+                          size={`icon`} variant={`outline`}>
+                     {icon}
+                  </Button>
+               </TooltipTrigger>
+               <TooltipContent side={`bottom`} className={`!text-xs rounded-lg bg-black text-white`}>
+                  {text}
+               </TooltipContent>
+            </Tooltip>
+         </TooltipProvider>
+      );
+   }
+;
 
 export default GridColumnImage;

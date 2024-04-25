@@ -2,16 +2,16 @@
 
 import { auth } from "@/auth";
 import { ImageUpload } from "@/app/upload/_store/imageUploadsStore";
-import { ApiResponse, getFileExtension, normalizeFormData } from "@/lib/utils";
+import { ActionApiResponse, getFileExtension, normalizeFormData, sleep } from "@/lib/utils";
 import path from "node:path";
 import probe from "probe-image-size";
 import { randomUUID } from "node:crypto";
 import { writeFile } from "node:fs";
-import { Image, ImageCollection } from "@prisma/client";
+import { Image } from "@prisma/client";
 import { xprisma } from "@/lib/prisma";
 import { Readable } from "node:stream";
 import { revalidatePath } from "next/cache";
-import { UPLOADS_DIR } from "@/lib/consts";
+import { UPLOADS_DIR, PROFILE_PICS_DIR } from "@/lib/consts";
 import { Configuration, ImagesApi } from "@/lib/api";
 import { constants } from "node:http2";
 
@@ -105,5 +105,50 @@ export async function handleUploadImages(formData: FormData) {
    revalidatePath(`/file-upload`);
    return results.every(r => r.success) ?
       { success: true } : { success: false };
+}
+
+export async function handleUpdateProfilePicture(formData: FormData): Promise<ActionApiResponse> {
+   const session = await auth();
+   if (!session) return { success: false };
+   await sleep(2000)
+
+   if (formData.has(`file`)) {
+      const file = formData.get(`file`)! as File;
+      const buffer = Buffer.from(await file.arrayBuffer());
+
+      const name = `${Date.now()}_${randomUUID()}_${file.name.replaceAll(` `, `-`)}`;
+      const filePath = path.join(PROFILE_PICS_DIR, name);
+
+      writeFile(filePath, buffer, { encoding: `utf8` }, (_) => {
+      });
+
+      // Save new profile pic to database:
+      const user = await xprisma.user.update({
+         where: { id: session.user?.id },
+         data: {
+            image: filePath.replaceAll(`\\`, `/`),
+         },
+      });
+      revalidatePath(`/users/${session.user?.id as string}`);
+
+      const { verifyPassword, updatePassword, ...rest } = user;
+      return { success: true, data :rest };
+   } else if (formData.has(`url`)) {
+      const imageUrl = formData.get(`url`)! as string;
+
+      // Save profile pic URL to database:
+      const user = await xprisma.user.update({
+         where: { id: session.user?.id },
+         data: {
+            image: imageUrl,
+         },
+      });
+      const { verifyPassword, updatePassword, ...rest } = user;
+
+      revalidatePath(`/users/${session.user?.id as string}`);
+      return { success: true, data: rest };
+   }
+
+   return { success: false };
 }
 

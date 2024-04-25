@@ -7,6 +7,8 @@ import {
 } from "@/components/modals/AddImageToCollectionModal";
 import CreateNewCollectionModal from "@/components/modals/CreateNewCollectionModal";
 import ShareProfileModal from "@/components/modals/ShareProfileModal";
+import ChangeProfilePictureModal from "@/components/modals/ChangeProfilePictureModal";
+import RemoveImageFromCollectionModal from "@/components/modals/RemoveImageFromCollectionModal";
 
 const Modals = () => {
    return (
@@ -14,8 +16,10 @@ const Modals = () => {
          <SignInModal />
          <ForgotPasswordModal />
          <AddImageToCollectionModalWrapper />
+         <RemoveImageFromCollectionModal />
          <CreateNewCollectionModal />
          <ShareProfileModal />
+         <ChangeProfilePictureModal />
       </Fragment>
    );
 };

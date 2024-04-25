@@ -155,7 +155,7 @@ const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
                   {collection.title}
                </h2>
                <span className={`font-semibold flex items-center gap-1 text-xs text-neutral-300`}>
-                 <Image size={12} /> {collection.images.length} items
+                 <Image size={12} /> {collection.images.length === 0 ? `No` : collection.images.length} items
                </span>
             </div>
          </div>

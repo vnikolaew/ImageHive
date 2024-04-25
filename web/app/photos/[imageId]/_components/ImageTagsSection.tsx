@@ -16,7 +16,7 @@ const ImageTagsSection = ({ image }: ImageTagsSectionProps) => {
       <div className={`mt-8 flex items-center gap-3`}>
          {image.tags.map((tag, index) => (
             <Button asChild key={index}
-                    variant={`secondary`}
+                    variant={darkMode ? `default` : `outline`}
                     className={cn(`rounded-lg `,
                        !darkMode && `hover:border-black hover:bg-white`
                     )}>

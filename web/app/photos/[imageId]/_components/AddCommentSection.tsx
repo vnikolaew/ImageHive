@@ -45,11 +45,13 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
       await handleComment(comment);
    }
 
+   console.log(session.user?.image);
+
    return (
       <div className={`w-full h-fit mt-4 flex items-start justify-between gap-4`}>
          <Image height={36} width={36}
                 className={`rounded-full p-0 border-white bg-white border-[1px] cursor-pointer shadow-md w-10 h-10 hover:opacity-80 transition-opacity duration-200`}
-                src={getSessionImageSrc(session!.user?.image!) ?? DefaultAvatar}
+                src={session.user?.image ? getSessionImageSrc(session!.user?.image!) : DefaultAvatar}
                 alt={session!.user?.name! ?? ``} />
          <div className={`flex flex-1 flex-col gap-2 items-start`}>
             <Textarea

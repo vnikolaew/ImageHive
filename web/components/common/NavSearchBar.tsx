@@ -5,7 +5,6 @@ import { Search } from "lucide-react";
 import { APP_NAME } from "@/lib/consts";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { isDynamicUsageError } from "next/dist/export/helpers/is-dynamic-usage-error";
 
 interface NavSearchBarProps {
    showNavbarBackground: boolean;
@@ -30,7 +29,7 @@ const NavSearchBar = ({ showNavbarBackground }: NavSearchBarProps) => {
 
    return (
       <div className={cn(`w-full rounded-full relative border-[1px] dark:border-neutral-700 dark:bg-neutral-800 z-20`,
-         isUsersPage && `bg-transparent backdrop-blur-sm !border-neutral-500`)}>
+         isUsersPage && `bg-transparent backdrop-blur-sm !border-neutral-700`)}>
          <Search size={16} className={cn(`absolute top-[50%] left-3 -translate-y-1/2 cursor-pointer`,
             isUsersPage && `text-white`,
             isUsersPage && showNavbarBackground && `text-black`)} />

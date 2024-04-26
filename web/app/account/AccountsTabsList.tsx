@@ -19,7 +19,7 @@ const TABS = [
       label: `Statistics`,
    },
    {
-      href: `/account/collections`,
+      href: `/account/collections?tab=collections`,
       label: `Collections`,
    },
    {

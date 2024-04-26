@@ -85,7 +85,11 @@ const ChangeProfilePictureModal = ({}: ChangeProfilePictureModalProps) => {
                      objectFit={`cover`}
                      objectPosition={`center center`}
                      height={100} width={100}
-                     src={!!imagePreview?.length ? imagePreview : !!selectedImagePattern?.length ? selectedImagePattern : getSessionImageSrc(session.data?.user!.image!)} />
+                     src={!!imagePreview?.length
+                        ? imagePreview
+                        : !!selectedImagePattern?.length
+                           ? selectedImagePattern
+                           : getSessionImageSrc(session.data?.user!.image!)} />
                   <div className={`flex flex-col items-start gap-2`}>
                      <h2>
                         Update your profile picture

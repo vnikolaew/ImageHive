@@ -1,13 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
+import { useQsCollectionTab } from "@/hooks/useQsImageId";
 
 export interface TabsProps {
    collectionsLength: number;
 }
 
 const CollectionTabs = ({ collectionsLength }: TabsProps) => {
-   const [selectedTab, setSelectedTab] = useState(`collections`);
+   const [selectedTab, setSelectedTab] = useQsCollectionTab()
 
    return (
       <div className={`text-3xl flex items-center gap-4`}>
@@ -22,7 +23,7 @@ const CollectionTabs = ({ collectionsLength }: TabsProps) => {
             </span>
          </Button>
          <Button
-            onClick={() => setSelectedTab(`history`)}
+            onClick={() => setSelectedTab(`downloads`)}
             variant={selectedTab === `history` ? `secondary` : `ghost`}
             size={`lg`} className={`rounded-full gap-2`}>
             Download history

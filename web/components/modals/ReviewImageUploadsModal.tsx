@@ -103,7 +103,7 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
                      By submitting, I acknowledge this upload adheres to the
                      <Link
                         href="/service/privacy"
-                        className={cn(`underline-offset-4 hover:text-primary !h-auto`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-0`)}
+                        className={cn(`underline-offset-4 !text-white !font-semibold !h-auto`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-0`)}
                      >Content License
                      </Link>
                   </AlertDescription>

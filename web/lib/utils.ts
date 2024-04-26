@@ -2,6 +2,8 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { NextResponse } from "next/server";
 import path from "path";
+import crypto from "crypto";
+import { HTTP } from "@/lib/consts";
 
 export function cn(...inputs: ClassValue[]) {
    return twMerge(clsx(inputs));
@@ -134,12 +136,13 @@ export function getFileExtension(fileName: string) {
 }
 
 export function getFileName(fileName: string) {
-   if(fileName?.includes(`\\`))  return fileName?.split(`\\`).at(-1)?.trim();
-    return fileName?.split(`/`)?.at(-1)?.trim();
+   if (fileName?.includes(`\\`)) return fileName?.split(`\\`).at(-1)?.trim();
+   return fileName?.split(`/`)?.at(-1)?.trim();
 }
 
 
 export function getSessionImageSrc(image: string) {
+   if (!image?.length) return `/default-avatar.png`;
    return isAbsoluteUrl(image) ? image : path.join(`/profile-pictures`, getFileName(image) ?? ``).replaceAll(`\\`, `/`);
 }
 
@@ -157,7 +160,7 @@ export function isAbsoluteUrl(url: string) {
    return absoluteUrlPattern.test(url);
 }
 
-export function downloadImage(image: HTMLImageElement , name: string) {
+export function downloadImage(image: HTMLImageElement, name: string) {
    const imgUrl = image.src;
 
    const a = document.createElement("a");
@@ -166,5 +169,37 @@ export function downloadImage(image: HTMLImageElement , name: string) {
    a.download = name;
    a.click();
 
-   a.remove()
+   a.remove();
+}
+
+export function calculateSHA256(data: string) {
+   const hash = crypto.createHash("sha256");
+   hash.update(data);
+   return hash.digest("hex");
+}
+
+export async function getGravatarImageUrl(email: string) {
+   let imageUrl: string = null!;
+
+   const emailHash = calculateSHA256((email as string).trim().toLowerCase());
+   const url = `https://bg.gravatar.com/${emailHash}.json`;
+   const res = await fetch(url, {
+      method: "GET",
+      headers: {
+         "Accept": HTTP.MEDIA_TYPES.APPLICATION_JSON,
+      },
+   });
+   if (res.ok) {
+      const body = await res.json();
+      if (body[`entry`][`thumbnailUrl`]) imageUrl = body[`thumbnailUrl`];
+      else if (!!body[`entry`][`photos`]?.length) {
+         imageUrl = body[`entry`][`photos`][0].value;
+      }
+
+      if(imageUrl) {
+         imageUrl = `${imageUrl}?s=640`
+      }
+   }
+
+   return imageUrl;
 }

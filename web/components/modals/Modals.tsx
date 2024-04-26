@@ -9,6 +9,7 @@ import CreateNewCollectionModal from "@/components/modals/CreateNewCollectionMod
 import ShareProfileModal from "@/components/modals/ShareProfileModal";
 import ChangeProfilePictureModal from "@/components/modals/ChangeProfilePictureModal";
 import RemoveImageFromCollectionModal from "@/components/modals/RemoveImageFromCollectionModal";
+import EditCollectionModal, { EditCollectionModalWrapper } from "@/components/modals/EditCollectionModal";
 
 const Modals = () => {
    return (
@@ -17,6 +18,8 @@ const Modals = () => {
          <ForgotPasswordModal />
          <AddImageToCollectionModalWrapper />
          <RemoveImageFromCollectionModal />
+         <EditCollectionModalWrapper />
+
          <CreateNewCollectionModal />
          <ShareProfileModal />
          <ChangeProfilePictureModal />

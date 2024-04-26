@@ -15,6 +15,8 @@ import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import { handleDownloadImage } from "@/app/photos/[imageId]/actions";
 import { LoadingSpinner } from "@/components/modals/SocialLogins";
 import { useQsImageId } from "@/hooks/useQsImageId";
+import posthog from "posthog-js"
+import { useSession } from "next-auth/react";
 
 export interface ImageSummaryProps {
    image: IImageSummary,
@@ -27,6 +29,7 @@ export interface ImageSummaryProps {
 const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFollowed }: ImageSummaryProps) => {
    const { openModal } = useModals();
    const [, setImageId] = useQsImageId();
+   const session = useSession()
    const { loading, action: handleLike } = usePromise(() => {
       if (haveILiked) {
          return handleUnlikeImage(image.id).then(console.log).catch(console.error);
@@ -35,7 +38,20 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
       }
    });
    const { loading: downloadLoading, action: handleDownload } = usePromise(async () => {
-      await handleDownloadImage(image.id).then(console.log).catch(console.error);
+      return await handleDownloadImage(image.id)
+         .then(res => {
+            console.log( {res});
+            if(res.success) {
+
+               const result =  posthog.capture(`image_download`, {
+                  $event_type: `image_download`,
+                  imageId: image.id,
+                  userId: session.data?.user?.id,
+                  timestamp: Date.now()
+               })
+               console.log( { result });
+            }
+         }).catch(console.error);
    });
 
 
@@ -43,9 +59,9 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
       const imgElement = document.getElementById(`image-${image.id}`);
       if (imgElement) downloadImage(imgElement as HTMLImageElement, image.original_file_name);
 
-      if (!haveIDownloaded) {
+      // if (!haveIDownloaded) {
          await handleDownload();
-      }
+      // }
    }
 
    async function handleAddToCollection() {

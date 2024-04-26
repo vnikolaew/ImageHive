@@ -42,8 +42,6 @@ const GridColumnImage = ({
       else handleLikeImage(id).then(console.log).catch(console.error);
    }
 
-   console.log( {topContent, bottomContent});
-
    return (
       <Link href={`/photos/${id}`}>
          <div

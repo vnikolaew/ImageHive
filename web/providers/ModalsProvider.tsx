@@ -18,6 +18,7 @@ export enum ModalType {
    SHARE_PROFILE = 7,
    CHANGE_PROFILE_PICTURE = 8,
    REMOVE_IMAGE_FROM_COLLECTION = 9,
+   EDIT_COLLECTION = 10,
 }
 
 const ModalsContext = createContext<[ModalType | null, Dispatch<SetStateAction<ModalType | null>>]>(null!);

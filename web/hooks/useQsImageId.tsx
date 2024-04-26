@@ -18,3 +18,12 @@ export function useQsCollectionId() {
    return [collectionId, setCollectionId] as const;
 }
 
+export function useQsCollectionTab() {
+   const [collectionTab, setCollectionTab] = useQueryState<string>(`tab`,
+      parseAsString.withOptions({
+         history: `push`,
+      }));
+
+   return [collectionTab, setCollectionTab] as const;
+}
+

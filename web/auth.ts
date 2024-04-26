@@ -7,6 +7,8 @@ import { session } from "@/lib/session";
 import ResendProvider from "next-auth/providers/resend";
 import { Resend } from "resend";
 import Credentials from "next-auth/providers/credentials";
+import { HTTP } from "@/lib/consts";
+import { calculateSHA256, getGravatarImageUrl } from "@/lib/utils";
 
 globalForPrisma.prisma ??= new PrismaClient();
 
@@ -71,20 +73,20 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                if (type === `signup`) {
                   // Handle user sign up:
                   const existing = await xprisma.user.findFirst({
-                     where: {
-                        OR: [
-                           {
-                              email: email as string,
-                           }
-                        ],
-                     },
-                  });
+                        where: {
+                           email: email as string,
+                        },
+                     })
+                  ;
                   if (existing) return null!;
 
+                  // Retrieve Gravatar image:
+                  let imageUrl = await getGravatarImageUrl(email as string);
                   const user = await xprisma.user.signUp({
                      email: email as string,
                      password: password as string,
                      username: username as string,
+                     image: imageUrl,
                   }, { image: true });
 
                   return {

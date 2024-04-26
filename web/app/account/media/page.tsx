@@ -5,7 +5,9 @@ import { Image as IImage, Prisma } from "@prisma/client";
 import { Separator } from "@/components/ui/separator";
 import AccountMediaItem from "@/app/account/media/_components/AccountMediaItem";
 import MediaSearchBar from "@/app/account/media/_components/MediaSearchBar";
-import MediaSortDropdown from "@/app/account/media/_components/MediaSortDropdown";
+import {
+   GenericSortDropdown,
+} from "@/app/account/media/_components/MediaSortDropdown";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import Link from "next/link";
@@ -64,10 +66,10 @@ const Page = async ({ searchParams }: { params: any, searchParams: PageSearchPar
             <h2 className={`text-3xl`}>Media</h2>
             <div className={`flex items-center gap-4 w-2/5`}>
                <MediaSearchBar qs={searchParams?.qs ?? ``} />
-               <MediaSortDropdown sort={searchParams?.sort} />
+               <GenericSortDropdown options={Object.values(SortOptions)} />
             </div>
          </div>
-         <Separator className={`w-full my-4 h-[2px]`} />
+         <Separator className={`w-full my-4 h-[1px]`} />
          {filteredImages.length ? (
             <div className={`flex items-start gap-6 mt-8`}>
                {filteredImages.map((image, i) => (

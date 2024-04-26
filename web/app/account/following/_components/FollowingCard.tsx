@@ -19,9 +19,9 @@ const FollowingCard = ({ following }: FollowingCardProps) => {
             // opacity: `50%`
          }}
       >
-         <h2 className={`absolute text-lg text-white bottom-3 left-4`}>{following.name}</h2>
+         <h2 className={`absolute text-base text-neutral-200 bottom-3 left-4`}>{following.name}</h2>
          <div className={`absolute opacity-0 group-hover:opacity-100 group-hover:-translate-y-0 -translate-y-[120%] left-4 top-3 text-white flex items-start flex-col transition-all duration-200`}>
-            <span className={`text-sm`}>
+            <span className={`text-sm flex items-center gap-1`}>
                <FileImage size={16}/>
                {following._count.images}
             </span>

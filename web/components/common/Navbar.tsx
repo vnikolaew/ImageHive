@@ -62,7 +62,7 @@ const Navbar = () => {
          </div>
          <div className="mr-8 flex items-center gap-4">
             <ThemeSwitch showNavbarBackground={showNavbarBackground} />
-            <div className={`flex items-center gap-4`}>
+            <div className={`flex items-center gap-2`}>
                <SignedIn>
                   <DropdownMenu modal>
                      <DropdownMenuTrigger asChild>
@@ -121,8 +121,14 @@ const Navbar = () => {
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>
-                  <div className={cn(`text-sm font-semibold`,
-                     showNavbarBackground ? `text-black` : `text-white`)}>{data?.user?.name}</div>
+                  <div className={cn(`text-sm font-semibold text-black mr-2`,
+                     showNavbarBackground ? `text-black` : `text-white`,
+                     !darkMode && `!text-black`,
+                     pathname.startsWith(`/users`) && `!text-white`,
+                     showNavbarBackground ? `!text-black` : `text-white`,
+                  )}>
+                     {data?.user?.name}
+                  </div>
                   <Button asChild variant={`default`} className={`gap-3 text-default !px-5 rounded-lg`}>
                      <Link href={`/upload`}>
                         <Upload size={16} />

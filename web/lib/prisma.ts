@@ -119,10 +119,11 @@ export let xprisma = prisma.$extends({
 
             return null!;
          },
-         async signUp({ email, password, username }: {
+         async signUp({ email, password, username, image }: {
             email: string;
             password: string,
-            username: string
+            username: string,
+               image?: string
          }, select?: Prisma.UserSelect<InternalArgs>) {
 
             let user = await xprisma.user.create({
@@ -130,6 +131,7 @@ export let xprisma = prisma.$extends({
                   email,
                   password: bcrypt.hashSync(password, 10),
                   name: username,
+                  image
                },
                select: {
                   id: true,

@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { xprisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { ActionApiResponse, sleep } from "@/lib/utils";
+import { headers } from "next/headers";
 
 export async function handleCommentOnImage(imageId: string, commentText: string): Promise<ActionApiResponse> {
    const session = await auth();
@@ -30,18 +31,35 @@ export async function handleDownloadImage(imageId: string): Promise<ActionApiRes
    if (!session) return { success: false };
 
    await sleep(2000);
+   const headers_ = headers();
+   const ua = headers_.get(`user-agent`);
 
-   let download = await xprisma.imageDownload.findFirst({
-      where: {
-         imageId,
-         userId: session.user?.id as string,
-      },
-   });
+   let [download, image] = await Promise.all([
+      xprisma.imageDownload.findFirst({
+         where: {
+            imageId,
+            userId: session.user?.id as string,
+         },
+      }),
+      xprisma.image.findUnique({
+         where: {
+            id: imageId,
+         },
+         select: {
+            id: true, dimensions_set: true, file_format: true,
+         },
+      }),
+   ]);
+   if (!image) return { success: false };
 
    if (!download) {
       download = await xprisma.imageDownload.create({
          data: {
-            metadata: {},
+            metadata: {
+               "user-agent": ua,
+               file_format: image.file_format,
+               dimensions: image.dimensions_set[0].split(`,`).map(x => Number(x)),
+            },
             imageId,
             userId: session.user?.id as string,
          },

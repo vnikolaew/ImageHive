@@ -88,3 +88,36 @@ export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
    return ImageHiveApiResponse.success({ newCollection });
 }
 
+
+const editCollectionSchema = z.object({
+   collectionId: z.string(),
+   title: z.string().max(100, { message: "Title must contain at most 100 characters." }),
+   public: z.union([z.literal(`true`), z.literal(`false`)]),
+});
+
+export async function PUT(req: NextRequest, res: NextResponse): Promise<any> {
+   const session = await auth();
+   if (!session) return ImageHiveApiResponse.unauthenticated();
+
+   const body = await req.json();
+   const editCollectionBody = editCollectionSchema.safeParse(body);
+   if (!editCollectionBody.success) return ImageHiveApiResponse.failure(`Invalid body.`);
+
+   const collection = await xprisma.imageCollection.findUnique({
+      where: { id: editCollectionBody.data.collectionId },
+   });
+   if (!collection) return ImageHiveApiResponse.failure(`Collection not found.`);
+
+   const newCollection = await xprisma.imageCollection.update({
+         where: { id: collection.id },
+         data: {
+            title: editCollectionBody.data.title,
+            public: editCollectionBody.data.public === `true`,
+         },
+      })
+   ;
+
+   console.log({ newCollection });
+   return ImageHiveApiResponse.success({ newCollection });
+}
+

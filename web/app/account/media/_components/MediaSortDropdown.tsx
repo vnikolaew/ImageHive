@@ -1,48 +1,33 @@
 "use client";
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";
-import React, { useState } from "react";
-
-const SortOptions = {
-   UploadedLatest: `Uploaded (Latest)`,
-   UploadedOldest: `Uploaded (Oldest)`,
-   Popularity: `Popularity`,
-   Views: `Views`,
-   Downloads: `Downloads`,
-   Likes: `Likes`,
-   Comments: `Comments`,
-} as const;
+import React from "react";
+import { parseAsString, useQueryState } from "nuqs";
 
 interface MediaSortDropdownProps {
-   sort?: string | undefined;
+   options: string[];
+   qsKey?: string;
 }
 
-const MediaSortDropdown = ({ sort }: MediaSortDropdownProps) => {
-   const [selectedSortOption, setSelectedSortOption] = useState<keyof typeof SortOptions>(() => {
-      if (sort && Object.keys(SortOptions).includes(sort)) {
-         return sort;
-      }
-      return `UploadedLatest`;
-   });
+export const GenericSortDropdown = ({ options, qsKey }: MediaSortDropdownProps) => {
+   const [sort, setSort] = useQueryState<string>(qsKey ?? `sort`,
+      parseAsString.withOptions({
+         history: `push`,
+      }));
 
    return (
       <div>
          <Select onValueChange={value => {
-            const sp = new URLSearchParams(window.location.search);
-            sp.set(`sort`, value);
-            window.location.href = `${window.location.pathname}?${sp.toString()}`;
-
-         }} value={selectedSortOption}>
+            setSort(value);
+         }} value={sort ?? options[0]}>
             <SelectTrigger className="w-[180px] rounded-full pl-4">
-               <SelectValue placeholder={SortOptions.UploadedLatest} />
+               <SelectValue placeholder={sort ?? options[0]} />
             </SelectTrigger>
             <SelectContent className="rounded-lg shadow-lg">
-               {Object.entries(SortOptions).map(([key, value], index) => (
-                  <SelectItem className={`my-1`} key={key} value={key}>{value}</SelectItem>
+               {options.map((o, index) => (
+                  <SelectItem className={`my-1`} key={o} value={o}>{o}</SelectItem>
                ))}
             </SelectContent>
          </Select>
       </div>
    );
 };
-
-export default MediaSortDropdown;

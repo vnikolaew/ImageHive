@@ -1,9 +1,7 @@
 import React, { cache } from "react";
 import { xprisma } from "@/lib/prisma";
-import { Image as IImage } from "@prisma/client";
 import { GridColumn } from "@/app/_components/GridColumn";
 import { auth } from "@/auth";
-import { cloneDeep } from "lodash";
 
 export interface HomeFeedSectionProps {
 }

@@ -23,14 +23,14 @@ export default function RootLayout({
    return (
       <html suppressHydrationWarning lang="en">
       <head><title>{APP_NAME}</title></head>
-      <body className={cn(`min-h-screen font-sans antialiased `, inter.className)}>
       <Providers>
+         <body className={cn(`min-h-screen font-sans antialiased `, inter.className)}>
          <Navbar />
          {children}
          <Toaster />
          <Footer />
+         </body>
       </Providers>
-      </body>
       </html>
    );
 }

@@ -8,9 +8,11 @@ import { Image, ImageCollection, Prisma } from "@prisma/client";
 import CollectionsGrid from "@/app/account/collections/_components/CollectionsGrid";
 import { GenericSortDropdown } from "@/app/account/media/_components/MediaSortDropdown";
 import UserDownloadsHistory from "@/app/account/collections/_components/UserDownloadsHistory";
+import { getImageLikes } from "@/app/_components/HomeFeedSection";
+import * as sea from "node:sea";
 
 export interface PageProps {
-   searchParams: { sort: string, tab?: string };
+   searchParams: { sort: string, tab?: string, qs?: string };
 }
 
 export type ImageCollectionItem
@@ -27,10 +29,10 @@ export type ImageCollectionItem
    }[],
 });
 
-const SortOptions = [
+export const SortOptions = [
    `Last Modified`,
    `Name (A-Z)`,
-];
+] as const;
 
 const Page = async ({ searchParams }: PageProps) => {
    const session = await auth();
@@ -43,11 +45,20 @@ const Page = async ({ searchParams }: PageProps) => {
       orderBy = { title: `desc` };
    }
 
+
+   let titleFilter: string | Prisma.StringFilter<"ImageCollection"> | undefined;
+   if (searchParams.qs?.length) {
+      titleFilter = {
+         contains: searchParams.qs,
+         mode: `insensitive`,
+      };
+   }
    const userCollections = await xprisma
       .imageCollection
       .findMany({
          where: {
             userId: session?.user?.id as string,
+            ...(titleFilter ? { title: titleFilter } : {}),
          },
          ...(orderBy ? { orderBy } : {}),
          include: {
@@ -69,9 +80,18 @@ const Page = async ({ searchParams }: PageProps) => {
          createdAt: "desc",
       },
       include: {
-         image: true,
+         image: {
+            include: { owner: true },
+         },
       },
    });
+   downloads.forEach(d => {
+      const { verifyPassword, updatePassword, ...rest } = d.image.owner;
+      //@ts-ignore
+      d.image.owner = rest;
+   });
+
+   const likedImages = await getImageLikes();
 
    return (
       <div className={`my-12 min-h-[70vh]`}>
@@ -83,8 +103,9 @@ const Page = async ({ searchParams }: PageProps) => {
             </div>
          </div>
          <Separator className={`w-full my-4 h-[1px]`} />
-         <CollectionsGrid userCollections={userCollections} />
-         <UserDownloadsHistory downloads={downloads} open={searchParams.tab === `downloads`} />
+         <CollectionsGrid qs={searchParams.qs} userCollections={userCollections} />
+         <UserDownloadsHistory
+            likedImages={new Set(...likedImages.map(i => i.imageId))} downloads={downloads} />
       </div>
    );
 };

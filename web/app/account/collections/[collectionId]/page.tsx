@@ -11,6 +11,7 @@ import { Image as IImage } from "prisma/prisma-client";
 import { CollectionGridColumn } from "./_components/CollectionGridColumn";
 import { GenericSortDropdown } from "@/app/account/media/_components/MediaSortDropdown";
 import EditCollectionButton from "@/app/account/collections/[collectionId]/_components/EditCollectionButton";
+import Link from "next/link";
 
 export interface PageProps {
    params: { collectionId: string },
@@ -63,8 +64,13 @@ const Page = async (props: PageProps) => {
                <TooltipProvider>
                   <Tooltip>
                      <TooltipTrigger asChild>
-                        <Button variant={`ghost`} className={`rounded-full p-3 !w-10 !h-10`}><ArrowLeft
-                           size={16} /></Button>
+                        <Button asChild variant={`ghost`} className={`rounded-full p-3 !w-10 !h-10`}>
+                           <Link href={`/account/collections?tab=collections`}>
+                              <ArrowLeft
+                                 size={16}
+                              />
+                           </Link>
+                        </Button>
                      </TooltipTrigger>
                      <TooltipContent side={`bottom`}
                                      className={`!px-3 py-[1px] !text-[.7rem] rounded-xl bg-black text-white`}>
@@ -85,7 +91,7 @@ const Page = async (props: PageProps) => {
             <div className={`flex items-center gap-2`}>
                <MediaSearchBar placeholder={`Search`} qs={``} />
                <GenericSortDropdown options={[]} />
-               <EditCollectionButton collectionId={collection.id}/>
+               <EditCollectionButton collectionId={collection.id} />
             </div>
          </div>
          <div className={`w-full mt-8 grid grid-cols-4 items-start gap-8 px-0`}>

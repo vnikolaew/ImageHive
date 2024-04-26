@@ -13,13 +13,26 @@ export const getImageLikes = cache(async () => {
    });
 });
 
+export const getImageSavesIds = cache(async () => {
+   const session = await auth();
+   const collections = await xprisma.imageCollection.findMany({
+      where: { userId: session?.user?.id as string },
+      include: { images: { select: { imageId: true } } },
+   });
+   return new Set(collections.flatMap(c => c.images.map(i => i.imageId)));
+});
+
 
 const HomeFeedSection = async ({}: HomeFeedSectionProps) => {
    let images = await xprisma.image.findMany({
       orderBy: { createdAt: `desc` },
    });
 
-   let likedImages = await getImageLikes();
+   const [likedImages, savedImages] = await Promise.all([
+      getImageLikes(),
+      getImageSavesIds(),
+   ]);
+   console.log({savedImages});
    const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
 
    images = [...images];
@@ -35,10 +48,10 @@ const HomeFeedSection = async ({}: HomeFeedSectionProps) => {
             Home Feed
          </h2>
          <div className={`w-full mt-8 grid grid-cols-4 items-start gap-8 px-12`}>
-            <GridColumn likedImageIds={likedImageIds} key={1} images={firstColumn} />
-            <GridColumn likedImageIds={likedImageIds} key={2} images={secondColumn} />
-            <GridColumn likedImageIds={likedImageIds} key={3} images={thirdColumn} />
-            <GridColumn likedImageIds={likedImageIds} key={4} images={fourthColumn} />
+            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={1} images={firstColumn} />
+            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={2} images={secondColumn} />
+            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={3} images={thirdColumn} />
+            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={4} images={fourthColumn} />
          </div>
       </section>
    );

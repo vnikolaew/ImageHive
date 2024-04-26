@@ -4,7 +4,7 @@ import React from "react";
 import { parseAsString, useQueryState } from "nuqs";
 
 interface MediaSortDropdownProps {
-   options: string[];
+   options: readonly string[];
    qsKey?: string;
 }
 

@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Check, EyeOff } from "lucide-react";
-import useSWR from "swr";
+import useSWR, { MutatorCallback, MutatorOptions } from "swr";
 import { ImageCollectionApiResponse } from "@/app/api/collections/route";
 import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
 import { useQsCollectionId } from "@/hooks/useQsImageId";
@@ -30,7 +30,8 @@ const editCollectionSchema = z.object({
 type FormValues = z.infer<typeof editCollectionSchema>;
 
 export interface EditCollectionModalProps {
-   collection?: ImageCollectionApiResponse[0];
+   collection?: ImageCollectionApiResponse[0],
+   mutate?: <MutationData>(data?: (Promise<MutationData | undefined> | MutatorCallback<MutationData> | MutationData), opts?: (boolean | MutatorOptions<MutationData, MutationData>)) => Promise<MutationData | undefined>
 }
 
 export const EditCollectionModalWrapper = ({}) => {
@@ -68,14 +69,15 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
             Accept: HTTP.MEDIA_TYPES.APPLICATION_JSON,
             "Content-Type": HTTP.MEDIA_TYPES.APPLICATION_JSON,
          },
-         body: JSON.stringify({ collectionId: collection.id, title: values.title, public: values.public }),
+         body: JSON.stringify({ collectionId: collection!.id, title: values.title, public: values.public }),
       }).then(res => res.json())
          .then((res: ApiResponse<any>) => {
             console.log({ res });
-            if(res.success) {
+            if (res.success) {
                closeModal(ModalType.EDIT_COLLECTION);
-               const { message, ...rest } = TOASTS.CREATE_COLLECTION_SUCCESS;
+               const { message, ...rest } = TOASTS.EDIT_COLLECTION_SUCCESS;
                toast(message, { ...rest, icon: <Check size={16} /> });
+
             }
          })
          .catch(console.error);

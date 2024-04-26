@@ -24,7 +24,7 @@ const CollectionTabs = ({ collectionsLength }: TabsProps) => {
          </Button>
          <Button
             onClick={() => setSelectedTab(`downloads`)}
-            variant={selectedTab === `history` ? `secondary` : `ghost`}
+            variant={selectedTab === `downloads` ? `secondary` : `ghost`}
             size={`lg`} className={`rounded-full gap-2`}>
             Download history
          </Button>

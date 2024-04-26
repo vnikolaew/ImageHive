@@ -17,7 +17,11 @@ const MediaSearchBar = ({ qs, placeholder }: MediaSearchBarProps) => {
    useEffect(() => {
       const handler = (e) => {
          if (e.key === `Enter` && document.activeElement === inputRef.current && searchValue?.length) {
-            window.location.href = `/account/media?qs=${encodeURIComponent(searchValue)}`;
+            console.log(window.location);
+            const params = new URLSearchParams(window.location.search);
+            params.set(`qs`, searchValue)
+
+            window.location.href = `${window.location.pathname}?${params.toString()}`;
          }
       };
       document.addEventListener(`keydown`, handler);
@@ -26,7 +30,7 @@ const MediaSearchBar = ({ qs, placeholder }: MediaSearchBarProps) => {
    }, [router, searchValue]);
 
    function handleClearSearch() {
-      window.location.href = `/account/media`;
+      window.location.href = window.location.pathname;
    }
 
    return (

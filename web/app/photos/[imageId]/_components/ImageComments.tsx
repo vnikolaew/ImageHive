@@ -64,7 +64,7 @@ const ImageComments = ({ comments: initialComments }: ImageCommentsProps) => {
    }
 
    function handleTranslateComment(comment: ImageComment) {
-      const url = `https://translate.google.com/?sl=auto&tl=bg&text=${encodeURIComponent(comment.raw_text)}&op=translate`;
+      const url = `https://translate.google.com/?sl=auto&tl=en&text=${encodeURIComponent(comment.raw_text)}&op=translate`;
       window.open(url, "_blank");
    }
 

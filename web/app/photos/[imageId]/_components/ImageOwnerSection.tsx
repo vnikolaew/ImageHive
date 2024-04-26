@@ -34,7 +34,7 @@ const ImageOwnerSection = ({ owner, haveIFollowed }: ImageOwnerSectionProps) => 
             <div className={`flex flex-col justify-center gap-0`}>
                <span className={`font-semibold dark:text-neutral-300`}>{owner.name}</span>
                <span
-                  className={`font-normal text-neutral-500 text-sm`}>{owner._count.following} {`follower${owner._count.following > 1 ? `s` : ``}`}</span>
+                  className={`font-normal text-neutral-500 text-sm`}>{owner._count.following} {`follower${owner._count.following === 1 ? `` : `s`}`}</span>
             </div>
          </div>
          <div>

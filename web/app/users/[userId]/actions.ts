@@ -2,6 +2,7 @@
 import { auth } from "@/auth";
 import { ActionApiResponse } from "@/lib/utils";
 import { xprisma } from "@/lib/prisma";
+import { revalidatePath } from "next/cache";
 
 export async function handleFollowUser(userId: string): Promise<ActionApiResponse> {
    const session = await auth();
@@ -39,5 +40,6 @@ export async function handleUnfollowUser(userId: string): Promise<ActionApiRespo
       },
    });
 
+   revalidatePath(`/users/${userId}`);
    return { success: true };
 }

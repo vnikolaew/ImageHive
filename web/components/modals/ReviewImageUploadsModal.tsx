@@ -65,7 +65,7 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
       <Dialog open onOpenChange={_ => toggleModal(ModalType.REVIEW_UPLOAD_IMAGES)}>
          <DialogTrigger>
          </DialogTrigger>
-         <DialogContent className="sm:max-w-[500px] !h-[100vh] flex flex-col">
+         <DialogContent className="sm:max-w-[500px] !min-h-fit h-[80vh] flex flex-col">
             <DialogHeader className="!flex-0">
                <DialogTitle className={`text-left text-lg tracking-wide`}>Confirm your submission</DialogTitle>
                <DialogDescription className={`text-sm`}>

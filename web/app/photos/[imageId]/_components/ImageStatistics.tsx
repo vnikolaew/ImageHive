@@ -37,7 +37,7 @@ const ImageStatistics = ({ image }: ImageStatisticsProps) => {
          <Collapsible className={`w-full !mt-0`} open={showDetails} onOpenChange={setShowDetails}>
             <CollapsibleContent className={`w-full !mt-0 flex flex-col gap-1`}>
                <ImageStat text={`Saves`} value={image._count.collections} />
-               <ImageStat text={`Media type`} value={image.file_format.toLowerCase()} />
+               <ImageStat text={`Media type`} value={image.file_format.toUpperCase()} />
                <ImageStat text={`Resolution`} value={resolution} />
                <ImageStat text={`Published date`} value={moment(image.createdAt).format(`dddd M, YYYY`)} />
             </CollapsibleContent>

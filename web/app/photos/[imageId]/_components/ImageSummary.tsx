@@ -109,7 +109,7 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
                icon={<Bookmark className={cn(haveISaved && `text-primary`)}
                                size={20} />}
                text={
-                  <span className={cn(haveISaved && `text-primary`)}>Saved</span>
+                  <span className={cn(haveISaved && `text-primary`)}>Save{haveISaved ? `d` : ``}</span>
                }
                tooltipText={`Add to collection`} />
             <ImageAction action={() => {

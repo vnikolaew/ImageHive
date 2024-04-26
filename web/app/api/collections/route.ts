@@ -7,7 +7,8 @@ import { ImageCollection, Prisma } from "@prisma/client";
 import {
    CollectionImageCreateWithoutCollectionInput, CollectionImageUncheckedCreateWithoutCollectionInput,
    XOR,
-} from "prisma-client-5d77d53f158f8e873249ba83246b0a019e69e7d8ad78aa785d168f741cece791";
+} from "@prisma-client";
+import { revalidatePath } from "next/cache";
 
 export const revalidate = 60;
 
@@ -106,7 +107,7 @@ export async function PUT(req: NextRequest, res: NextResponse): Promise<any> {
    const collection = await xprisma.imageCollection.findUnique({
       where: { id: editCollectionBody.data.collectionId },
    });
-   if (!collection) return ImageHiveApiResponse.failure(`Collection not found.`);
+   if (!collection) return ImageHiveApiResponse.failure(`Collection with ID ${editCollectionBody.data.collectionId} not found.`);
 
    const newCollection = await xprisma.imageCollection.update({
          where: { id: collection.id },
@@ -118,6 +119,10 @@ export async function PUT(req: NextRequest, res: NextResponse): Promise<any> {
    ;
 
    console.log({ newCollection });
+
+   revalidatePath(`/account/collections`)
+   revalidatePath(`/account/collections/${newCollection.id}`)
+
    return ImageHiveApiResponse.success({ newCollection });
 }
 

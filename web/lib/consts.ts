@@ -74,6 +74,15 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   EDIT_COLLECTION_SUCCESS: {
+      message: `Collection successfully edited.`,
+      description: `You've successfully edited the collection.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
    CHANGE_PROFILE_PICTURE_SUCCESS: {
       message: `Profile picture changed.`,
       description: `You've successfully changed your profile picture.`,

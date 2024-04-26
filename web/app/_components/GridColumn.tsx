@@ -8,15 +8,17 @@ function getFileName(fullPath: string): string {
 }
 
 export interface GridColumnProps {
-   images: (IImage & { dimensions: number[][] })[];
-   likedImageIds: Set<string>
+   images: (IImage & { dimensions: number[][] })[],
+   likedImageIds: Set<string>,
+   savedImages?: Set<string>
 }
 
-export const GridColumn = async ({ images, likedImageIds }: GridColumnProps) => {
+export const GridColumn = async ({ images, likedImageIds, savedImages }: GridColumnProps) => {
    return (
       <div className={`grid gap-8`}>
          {images.map((image, i) => (
             <GridColumnImage
+               savedByMe={savedImages?.has(image.id)}
                likedByMe={likedImageIds.has(image.id)}
                imageUrl={`/uploads/${getFileName(image.absolute_url)}`}
                image={image}

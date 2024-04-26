@@ -43,7 +43,7 @@ const AccountsTabsList = () => {
                   href={tab.label === `Profile` ? tab.href.replace(`{userId}`, session.data?.user?.id!) : tab.href}>
                <div
                   className={cn(`border-b-[2px] border-transparent hover:border-slate-600 py-6 transition-colors duration-100`,
-                     pathname === tab.href && `border-slate-600`)} key={index}>
+                     tab.href.startsWith(pathname) && `border-slate-600`)} key={index}>
                   {tab.label}
                </div>
             </Link>

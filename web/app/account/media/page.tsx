@@ -71,7 +71,7 @@ const Page = async ({ searchParams }: { params: any, searchParams: PageSearchPar
          </div>
          <Separator className={`w-full my-4 h-[1px]`} />
          {filteredImages.length ? (
-            <div className={`flex items-start gap-6 mt-8`}>
+            <div className={`flex items-start flex-wrap gap-6 mt-8`}>
                {filteredImages.map((image, i) => (
                   <AccountMediaItem key={i} image={image} />
                ))}

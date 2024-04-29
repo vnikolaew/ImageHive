@@ -1,6 +1,7 @@
 from pgvector.sqlalchemy import Vector
 from sqlalchemy import Text, Column, Integer, TIMESTAMP, ARRAY, UUID, Boolean, String, text, func
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import DeclarativeBase
 
 from modules.db import Base
 
@@ -19,8 +20,12 @@ class Image(Base):
     title = Column(String(200))
 
 
-class Tag(Base):
+class TagBase(DeclarativeBase):
+    pass
+
+
+class Tag(TagBase):
     __tablename__ = 'Tag'
 
-    name = Column(Text(), unique=True, nullable=False)
+    name = Column(Text(), unique=True, nullable=False, primary_key=True)
     embedding = Column(Vector(384), nullable=False)

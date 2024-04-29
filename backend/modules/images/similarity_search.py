@@ -27,7 +27,7 @@ class SimilaritySearch:
         filtered_sentences = list(filter(lambda x: x != query, sentences))
 
         cross_encoder_inputs = [(query, c) for c in filtered_sentences]
-        cross_scores = self.cross_encoder.predict(cross_encoder_inputs, show_progress_bar=False, )
+        cross_scores = self.cross_encoder.predict(cross_encoder_inputs, show_progress_bar=False)
 
         float_cross_scores = [{'label': c, 'score': score} for c, score in
                               sorted(zip(filtered_sentences, [float(score) for score in cross_scores]),

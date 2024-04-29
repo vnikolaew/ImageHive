@@ -50,7 +50,7 @@ class SimilarTagModel(BaseModel):
 
 
 class SimilarTagsResponse(BaseModel):
-    similar_tags: list[SimilarTagModel]
+    similar_tags: list[str]
 
 
 @router.get("/tags/similar/{tag}",
@@ -60,12 +60,10 @@ class SimilarTagsResponse(BaseModel):
 async def get_similar_tags(
         tag: str,
         image_service: ImageService = Depends(ImageService.get_self),
-        image_classifier: ImageClassifier = Depends(ImageClassifier.get_self),
 ) -> SimilarTagsResponse:
     with image_service:
-        tags = image_service.get_all_tags()
+        tags = image_service.get_similar_tags(tag)
         if not tags:
             raise HTTPException(status_code=404)
 
-        similar_tags = image_classifier.get_similar_tags(tag, list(tags))
-        return SimilarTagsResponse(similar_tags=[SimilarTagModel(tag=x['tag'], score=x['score']) for x in similar_tags])
+        return SimilarTagsResponse(similar_tags=tags)

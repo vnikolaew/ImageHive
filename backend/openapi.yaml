@@ -104,24 +104,11 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
-    SimilarTagModel:
-      properties:
-        tag:
-          type: string
-          title: Tag
-        score:
-          type: number
-          title: Score
-      type: object
-      required:
-      - tag
-      - score
-      title: SimilarTagModel
     SimilarTagsResponse:
       properties:
         similar_tags:
           items:
-            $ref: '#/components/schemas/SimilarTagModel'
+            type: string
           type: array
           title: Similar Tags
       type: object

@@ -1,3 +1,4 @@
+import numpy as np
 from PIL import Image
 from sentence_transformers import SentenceTransformer
 from transformers import pipeline, CLIPProcessor, CLIPModel
@@ -32,17 +33,21 @@ class ImageClassifier:
     def get_self():
         return ImageClassifier()
 
-    def __get_predictions(self, probs) -> list[dict]:
-
+    def __get_predictions(self, probs: list[float], probs_tags: list[float], initial_tags: list[str]) -> list[dict]:
         predictions = [{'label': label, 'score': score} for label, score in
-                       list(sorted(zip(CATEGORIES, probs.tolist()[0]), key=lambda x: -x[1]))[:5]]
+                       list(sorted(zip(CATEGORIES, probs), key=lambda x: -x[1]))[:5]]
 
         embeddings = self.embeddings_model.encode([x['label'] for x in predictions])
 
-        return [{'label': pred['label'], 'score': pred['score'], 'embedding': e.tolist()} for pred, e in
-                zip(predictions, embeddings)]
+        predictions_two = [{'label': label, 'score': score} for label, score in
+                           list(sorted(zip(initial_tags, probs_tags), key=lambda x: -x[1]))[:5]]
 
-    def process(self, image_full_path: str) -> list[dict[str, any]]:
+        embeddings_two = self.embeddings_model.encode([x['label'] for x in predictions_two])
+
+        return [{'label': pred['label'], 'score': pred['score'], 'embedding': e.tolist()} for pred, e in
+                zip(predictions + predictions_two, np.concatenate((embeddings, embeddings_two), axis=0))]
+
+    def process(self, image_full_path: str, initial_tags: list[str]) -> list[dict[str, any]]:
         logger.info(f"Processing image '{image_full_path}' ...")
 
         try:
@@ -53,7 +58,13 @@ class ImageClassifier:
             logits_per_image = outputs.logits_per_image
             probs = logits_per_image.softmax(dim=1)  # we can take the softmax to get the label probabilities
 
-            predictions = self.__get_predictions(probs)
+            initial_tags_inputs = self.processor(text=initial_tags, images=image, return_tensors="pt", padding=True)
+
+            outputs = self.model(**initial_tags_inputs)
+            logits_per_image_tags = outputs.logits_per_image
+            probs_tags = logits_per_image_tags.softmax(dim=1)  # we can take the softmax to get the label probabilities
+
+            predictions = self.__get_predictions(probs.tolist()[0], probs_tags.tolist()[0], initial_tags)
 
             logger.info(f"Predictions for image with path '{image_full_path}': ")
 

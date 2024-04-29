@@ -1,15 +1,26 @@
 import uuid
-from contextlib import contextmanager
 from datetime import datetime
 from typing import Optional, Set
 
-from sqlalchemy import select, text, insert, values
+from sentence_transformers import SentenceTransformer
+from sqlalchemy import text, values
+from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Session
 
 from modules.db import SessionLocal
 from modules.images.categories import CATEGORIES
 from modules.images.models import Image, Tag
 from modules.images.similarity_search import SimilaritySearch
+
+EMBEDDINGS_MODEL = 'sentence-transformers/multi-qa-MiniLM-L6-cos-v1'
+
+
+class TextEmbedder:
+    def __init__(self):
+        self.model = SentenceTransformer(EMBEDDINGS_MODEL)
+
+    def get_embedding(self, query: str) -> list[float]:
+        return self.model.encode(query).tolist()
 
 
 class ServiceBase(object):
@@ -29,6 +40,7 @@ class ServiceBase(object):
 class ImageService(ServiceBase):
     session: Session
     similarity_search: SimilaritySearch
+    embedder: TextEmbedder
 
     @staticmethod
     # @contextmanager
@@ -38,6 +50,7 @@ class ImageService(ServiceBase):
     def __init__(self):
         super().__init__()
         self.similarity_search = SimilaritySearch()
+        self.embedder = TextEmbedder()
 
     def add_image(self, file_name: str, file_path: str, file_extension: str, width: int, height: int, timestamp: int,
                   tags: list[str]) -> Image:
@@ -91,28 +104,21 @@ class ImageService(ServiceBase):
         tags = tag_or_tags if isinstance(tag_or_tags, list) else [tag_or_tags]
         return self.session.query(Image).filter(Image.tags.contains(tags)).all()
 
-    def get_similar_tags(self, image: Image) -> list[dict[str, any]]:
-        similar_tags: dict[str, float] = {}
+    def get_similar_tags(self, tag: str) -> set[str]:
+        sim_tags: set[str] = set()
+        embedding = self.embedder.get_embedding(tag)
+        rows = self.session.execute(text('SELECT name FROM "Tag" ORDER BY embedding <=> :e LIMIT 5'),
+                                    params={'e': f'[{str.join(",", [str(x) for x in embedding])}]'}).fetchall()
+        for row in rows:
+            sim_tags.add(row[0])
 
-        for tag in image.tags:
-            s_tags = self.similarity_search.find_similar(tag, CATEGORIES)
-
-            for s_tag in s_tags:
-                label = s_tag['label']
-                score = s_tag['score']
-
-                if label not in similar_tags:
-                    similar_tags[label] = score
-                else:
-                    similar_tags[label] = max(similar_tags[label], score)
-
-        return [{'label': k, 'score': v} for k, v in
-                sorted(similar_tags.items(), key=lambda x: x[1], reverse=True)[:10]]
+        return sim_tags
 
     def update_image_embeddings(self, tags_embeddings: list[dict[str, any]]):
         for tags_embedding in tags_embeddings:
             self.session.execute(
-                insert(Tag)
-                .values(name=tags_embedding['label'], embedding=tags_embedding['embedding'])
+                insert(Tag).values(name=tags_embedding['label'],
+                                   embedding=tags_embedding['embedding'])
                 .on_conflict_do_nothing()
             )
+        self.session.commit()

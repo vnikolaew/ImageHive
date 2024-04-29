@@ -86,6 +86,12 @@ export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
    ;
 
    console.log({ newCollection });
+   if (!!newCollectionBody.data.imageId?.length) {
+      revalidatePath(`/photos/${newCollectionBody.data.imageId}`);
+   }
+
+   revalidatePath(`/account/collections`);
+   revalidatePath(`/account/collections/${newCollection.id}`);
    return ImageHiveApiResponse.success({ newCollection });
 }
 
@@ -120,8 +126,8 @@ export async function PUT(req: NextRequest, res: NextResponse): Promise<any> {
 
    console.log({ newCollection });
 
-   revalidatePath(`/account/collections`)
-   revalidatePath(`/account/collections/${newCollection.id}`)
+   revalidatePath(`/account/collections`);
+   revalidatePath(`/account/collections/${newCollection.id}`);
 
    return ImageHiveApiResponse.success({ newCollection });
 }

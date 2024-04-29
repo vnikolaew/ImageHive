@@ -9,7 +9,7 @@ export interface CookieConsentBannerProps {
 
 const CookieConsentBanner = async ({}: CookieConsentBannerProps) => {
    const session = await auth();
-   if (!session) return { success: false };
+   if (!session) return null;
 
    const metadata = (await xprisma.account.findFirst({
       where: { userId: session.user?.id },

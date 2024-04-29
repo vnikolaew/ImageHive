@@ -12,7 +12,7 @@ import { ModalType, useModals } from "@/providers/ModalsProvider";
 
 export interface UserProfileSectionProps {
    user: User & {
-      images: IImage[];
+      images: (IImage & { _count: { likes: number } })[];
       accounts: Account[]
       _count: { followedBy: number, imageDownloads: number, imageLikes: number, following: number }
       profile: Profile;
@@ -28,12 +28,14 @@ const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps
       <Fragment>
          <div className={`absolute group -top-[60px] text-white !z-10`}>
             <div className={`relative hidden group-hover:block w-full h-full`}>
-               <div className={`absolute text-black -top-2 -right-2 !z-30`}>
-                  <Button
-                     onClick={_ => openModal(ModalType.CHANGE_PROFILE_PICTURE)} variant={`ghost`}
-                     className={`rounded-full !h-fit bg-white !p-3`}><Pencil
-                     className={`fill-black`} size={18} /></Button>
-               </div>
+               {isMe && (
+                  <div className={`absolute text-black -top-2 -right-2 !z-30`}>
+                     <Button
+                        onClick={_ => openModal(ModalType.CHANGE_PROFILE_PICTURE)} variant={`ghost`}
+                        className={`rounded-full !h-fit bg-white !p-3`}><Pencil
+                        className={`fill-black`} size={18} /></Button>
+                  </div>
+               )}
             </div>
             <Image
                height={120}
@@ -59,10 +61,10 @@ const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps
          </div>
          <div className={`flex items-center mt-4 gap-4`}>
             <div>
-               <b>{user._count.followedBy}</b> <span className={`text-neutral-500`}>Followers</span>
+               <b>{user._count.following}</b> <span className={`text-neutral-500`}>Followers</span>
             </div>
             <div>
-               <b>{user._count.following}</b> <span className={`text-neutral-500`}>Following</span>
+               <b>{user._count.followedBy}</b> <span className={`text-neutral-500`}>Following</span>
             </div>
          </div>
          <div className={`flex text-neutral-500 items-center mt-4 gap-2`}>
@@ -70,17 +72,21 @@ const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps
                {user.name}
             </div>
             &bull;
-            <div>
-               {user.profile.country}
-            </div>
-            &bull;
+            {!!user.profile.country?.length && (
+               <Fragment>
+                  <div>
+                     {user.profile.country}
+                  </div>
+                  &bull;
+               </Fragment>
+            )}
             <div className={`text-neutral-500 text-sm`}>
                Joined {moment(user.createdAt).format(`MMMM DD, YYYY`)}
             </div>
          </div>
          <div className={`flex items-center mt-2 gap-8`}>
             <div className={`flex flex-col items-start gap-0`}>
-               <span>{user._count.imageLikes}</span>
+               <span>{user.images.reduce((a, b) => b._count.likes + a, 0)}</span>
                <span className={`text-xs text-neutral-500`}>Likes</span>
             </div>
             <div className={`flex flex-col items-start gap-0`}>

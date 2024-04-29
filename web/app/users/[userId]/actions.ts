@@ -16,6 +16,8 @@ export async function handleFollowUser(userId: string): Promise<ActionApiRespons
    });
 
    if (!follow) return { success: false };
+
+   revalidatePath(`/users/${userId}`);
    return { success: true, data: follow };
 }
 

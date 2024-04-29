@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { GridColumn } from "@/app/_components/GridColumn";
-import { getImageLikes } from "@/app/_components/HomeFeedSection";
+import { getImageLikes, getImageSavesIds } from "@/app/_components/HomeFeedSection";
 import UserProfileSection from "@/app/users/_components/UserProfileSection";
 import { auth } from "@/auth";
 
@@ -20,6 +20,9 @@ const Page = async ({ params: { userId } }: PageProps) => {
       include: {
          images: {
             take: 20,
+            include: {
+               _count: { select: { likes: true } },
+            },
          },
          profile: true,
          accounts: true,
@@ -34,7 +37,11 @@ const Page = async ({ params: { userId } }: PageProps) => {
 
    const isMe = user.id === session?.user?.id as string;
 
-   const likedImages = await getImageLikes();
+   const [likedImages, savedImageIds] = await Promise.all([
+      getImageLikes(),
+      getImageSavesIds()
+   ])
+
    const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
 
    const firstColumn = user.images.filter((_, index) => index % 4 === 0);
@@ -53,12 +60,12 @@ const Page = async ({ params: { userId } }: PageProps) => {
       <main className="flex min-h-screen flex-col items-center justify-start ">
          <div
             style={{
-            background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))`,
-            backgroundImage: `url('/dark-banner.png')`,
-            backgroundPosition: `center center`,
-            backgroundSize: `cover`,
-            // opacity: `50%`
-         }}
+               background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))`,
+               backgroundImage: `url('/dark-banner.png')`,
+               backgroundPosition: `center center`,
+               backgroundSize: `cover`,
+               // opacity: `50%`
+            }}
             className="w-full h-[300px] !z-10 flex items-center relative justify-center flex-col"
          >
          </div>
@@ -68,10 +75,9 @@ const Page = async ({ params: { userId } }: PageProps) => {
                <Button size={`lg`} variant={`secondary`}
                        className={cn(`gap-2 rounded-full !px-6 shadow-sm transition-colors duration-200`)}>Images</Button>
                <div className={`w-full mt-6 grid grid-cols-4 items-start gap-8 px-0`}>
-                  <GridColumn likedImageIds={likedImageIds} key={1} images={firstColumn} />
-                  <GridColumn likedImageIds={likedImageIds} key={2} images={secondColumn} />
-                  <GridColumn likedImageIds={likedImageIds} key={3} images={thirdColumn} />
-                  <GridColumn likedImageIds={likedImageIds} key={4} images={fourthColumn} />
+                  {[firstColumn,secondColumn, thirdColumn, fourthColumn].map((column, index) => (
+                     <GridColumn savedImages={savedImageIds} likedImageIds={likedImageIds} key={index} images={column} />
+                  ))}
                </div>
             </div>
          </div>

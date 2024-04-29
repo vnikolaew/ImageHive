@@ -45,8 +45,6 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
       await handleComment(comment);
    }
 
-   console.log(session.user?.image);
-
    return (
       <div className={`w-full h-fit mt-4 flex items-start justify-between gap-4`}>
          <Image height={36} width={36}

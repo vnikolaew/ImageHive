@@ -13,13 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { SimilarTagModel } from './SimilarTagModel';
-import {
-    SimilarTagModelFromJSON,
-    SimilarTagModelFromJSONTyped,
-    SimilarTagModelToJSON,
-} from './SimilarTagModel';
-
 /**
  * 
  * @export
@@ -28,10 +21,10 @@ import {
 export interface SimilarTagsResponse {
     /**
      * 
-     * @type {Array<SimilarTagModel>}
+     * @type {Array<string>}
      * @memberof SimilarTagsResponse
      */
-    similarTags: Array<SimilarTagModel>;
+    similarTags: Array<string>;
 }
 
 /**
@@ -52,7 +45,7 @@ export function SimilarTagsResponseFromJSONTyped(json: any, ignoreDiscriminator:
     }
     return {
         
-        'similarTags': ((json['similar_tags'] as Array<any>).map(SimilarTagModelFromJSON)),
+        'similarTags': json['similar_tags'],
     };
 }
 
@@ -62,7 +55,7 @@ export function SimilarTagsResponseToJSON(value?: SimilarTagsResponse | null): a
     }
     return {
         
-        'similar_tags': ((value['similarTags'] as Array<any>).map(SimilarTagModelToJSON)),
+        'similar_tags': value['similarTags'],
     };
 }
 

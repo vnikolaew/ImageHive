@@ -8,7 +8,7 @@ import {
    DialogTitle,
    DialogTrigger,
 } from "@/components/ui/dialog";
-import { useQsCollectionId, useQsImageId } from "@/hooks/useQsImageId";
+import { useQsCollectionId, useQueryString } from "@/hooks/useQueryString";
 import { Button } from "@/components/ui/button";
 import { handleRemoveImageFromCollection } from "@/app/actions";
 
@@ -17,7 +17,7 @@ export interface RemoveImageFromCollectionModalProps {
 
 const RemoveImageFromCollectionModal = ({}: RemoveImageFromCollectionModalProps) => {
    const { modal, toggleModal, closeModal } = useModals();
-   const [imageId] = useQsImageId();
+   const [imageId] = useQueryString();
    const [collectionId] = useQsCollectionId();
    if (modal !== ModalType.REMOVE_IMAGE_FROM_COLLECTION) return null;
 

@@ -87,6 +87,7 @@ export async function updateCookiePreferences(cookiePreferences: CookiePreferenc
          metadata: {
             ...account.metadata as Record<string, any>,
             "cookie-preferences": cookiePreferences,
+            "cookie-consent": true,
          },
       },
    });

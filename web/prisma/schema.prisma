@@ -31,6 +31,7 @@ model User {
 
   profileId String?
   profile   Profile?
+  ImageView ImageView[]
 }
 
 model Profile {
@@ -132,6 +133,7 @@ model Image {
   comments    ImageComment[]
   collections CollectionImage[]
   downloads   ImageDownload[]
+  views       ImageView[]
 }
 
 model Tag {
@@ -211,4 +213,17 @@ model ImageDownload {
   userId String
 
   createdAt DateTime @default(now())
+}
+
+model ImageView {
+  image    Image  @relation(fields: [imageId], references: [id])
+  imageId  String @db.Uuid
+  metadata Json   @db.JsonB
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@id([userId, imageId])
 }

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import React from "react";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
-import { useQsCollectionId } from "@/hooks/useQsImageId";
+import { useQsCollectionId } from "@/hooks/useQueryString";
 
 interface EditCollectionButtonProps {
    collectionId: string;

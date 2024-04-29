@@ -18,7 +18,7 @@ import { Check, EyeOff } from "lucide-react";
 import useSWR, { MutatorCallback, MutatorOptions } from "swr";
 import { ImageCollectionApiResponse } from "@/app/api/collections/route";
 import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
-import { useQsCollectionId } from "@/hooks/useQsImageId";
+import { useQsCollectionId } from "@/hooks/useQueryString";
 import { ApiResponse } from "@/lib/utils";
 import { toast } from "sonner";
 

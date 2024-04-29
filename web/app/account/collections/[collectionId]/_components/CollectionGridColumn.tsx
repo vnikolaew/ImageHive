@@ -1,5 +1,5 @@
 "use client";
-import { useQsCollectionId, useQsImageId } from "@/hooks/useQsImageId";
+import { useQsCollectionId, useQueryString } from "@/hooks/useQueryString";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
 import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import React, { Fragment } from "react";
@@ -30,7 +30,7 @@ export const CollectionGridColumnImage = ({ image, collectionId, haveILiked }: {
    collectionId: string,
    haveILiked: boolean
 }) => {
-   const [, setImageId] = useQsImageId();
+   const [, setImageId] = useQueryString();
    const [, setCollectionId] = useQsCollectionId();
    const { openModal } = useModals();
 

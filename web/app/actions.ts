@@ -73,6 +73,8 @@ export async function handleAddImageToCollection(imageId: string, collectionId: 
       },
    });
 
+   revalidatePath(`/`);
+   revalidatePath(`/photos/${imageId}`);
    return { success: true, collectionImage };
 }
 
@@ -96,5 +98,7 @@ export async function handleRemoveImageFromCollection(imageId: string, collectio
       },
    });
 
+   revalidatePath(`/`);
+   revalidatePath(`/photos/${imageId}`);
    return { success: true, collectionImage };
 }

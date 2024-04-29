@@ -1,6 +1,6 @@
 import { parseAsString, useQueryState } from "nuqs";
 
-export function useQsImageId() {
+export function useQueryString() {
    const [imageId, setImageId] = useQueryState<string>(`imageId`,
       parseAsString.withOptions({
          history: `push`,

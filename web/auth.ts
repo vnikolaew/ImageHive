@@ -8,8 +8,12 @@ import ResendProvider from "next-auth/providers/resend";
 import { Resend } from "resend";
 import Credentials from "next-auth/providers/credentials";
 import { getGravatarImageUrl } from "@/lib/utils";
+import { APP_NAME, RESEND_ONBOARDING_EMAIL } from "@/lib/consts";
+import WelcomeEmail from "@/emails/WelcomeEmail";
 
 globalForPrisma.prisma ??= new PrismaClient();
+
+const resend = new Resend(process.env.AUTH_RESEND_KEY!);
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
    adapter: PrismaAdapter(prisma),
@@ -29,6 +33,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                gender: `UNSPECIFIED`,
             },
          });
+
+         // Send a welcome e-mail:
+         try {
+            const { error, data } = await resend.emails.send({
+               from: RESEND_ONBOARDING_EMAIL,
+               to: user.user.email,
+               subject: `Welcome to ${APP_NAME}`,
+               react: WelcomeEmail({ username: user.user.name! }),
+            });
+            console.log(`Welcome e-mail successfully sent to: ${user.user.email} with ID: ${data?.id}`);
+         } catch (err) {
+            console.error(`An error occurred while sending a Welcome e-mail to: ${user.user.email}: ${err}`);
+         }
          console.log({ profile });
       },
    },
@@ -56,15 +73,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       //    return profile;
       // },
    }), ResendProvider({
-      from: `onboarding@resend.dev`,
+      from: RESEND_ONBOARDING_EMAIL,
       generateVerificationToken() {
          return crypto.randomUUID();
       },
       async sendVerificationRequest({ request, url, identifier, provider, token }) {
          try {
-            console.log({ url, identifier, provider, token, request });
-
-            const resend = new Resend(process.env.AUTH_RESEND_KEY!);
             await resend.emails.send({
                from: provider.from,
                to: identifier,

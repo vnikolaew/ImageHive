@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { auth } from "@/auth";
-import { useQsCollectionTab } from "@/hooks/useQsImageId";
+import { useQsCollectionTab } from "@/hooks/useQueryString";
 import { ImageDownload, Image } from "@prisma/client";
 import { CollectionGridColumnImage } from "@/app/account/collections/[collectionId]/_components/CollectionGridColumn";
 import { useSession } from "next-auth/react";

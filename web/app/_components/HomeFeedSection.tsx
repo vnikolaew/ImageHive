@@ -2,15 +2,20 @@ import React, { cache } from "react";
 import { xprisma } from "@/lib/prisma";
 import { GridColumn } from "@/app/_components/GridColumn";
 import { auth } from "@/auth";
-
-export interface HomeFeedSectionProps {
-}
+import { sleep } from "@/lib/utils";
+import { images } from "next/dist/build/webpack/config/blocks/images";
+import { i } from "nuqs/dist/serializer-_rJbONuT";
 
 export const getImageLikes = cache(async () => {
    const session = await auth();
    return await xprisma.imageLike.findMany({
       where: { userId: session?.user?.id as string },
    });
+});
+
+export const getLikedImageIds = cache(async () => {
+   const likedImages = await getImageLikes();
+   return new Set<string>(likedImages.map(i => i.imageId));
 });
 
 export const getImageSavesIds = cache(async () => {
@@ -23,19 +28,33 @@ export const getImageSavesIds = cache(async () => {
 });
 
 
-const HomeFeedSection = async ({}: HomeFeedSectionProps) => {
+interface HomeFeedSectionProps {
+   hideAi?: boolean;
+}
+
+const HomeFeedSection = async ({ hideAi }: HomeFeedSectionProps) => {
+   await sleep(1000);
    let images = await xprisma.image.findMany({
       orderBy: { createdAt: `desc` },
+      take: 20,
+      include: {
+         _count: {
+            select: {
+               likes: true,
+               comments: true,
+               downloads: true,
+               collections: true
+            },
+         },
+      },
    });
+   console.log({ imagesInfos : images.map(i => i._count) });
 
-   const [likedImages, savedImages] = await Promise.all([
-      getImageLikes(),
+   const [likedImageIds, savedImages] = await Promise.all([
+      getLikedImageIds(),
       getImageSavesIds(),
    ]);
-   console.log({savedImages});
-   const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
-
-   images = [...images];
+   images = hideAi ? [...images].filter(i => !i.metadata?.aiGenerated) : images;
 
    const firstColumn = images.filter((_, index) => index % 4 === 0);
    const secondColumn = images.filter((_, index) => index % 4 === 1);
@@ -48,10 +67,9 @@ const HomeFeedSection = async ({}: HomeFeedSectionProps) => {
             Home Feed
          </h2>
          <div className={`w-full mt-8 grid grid-cols-4 items-start gap-8 px-12`}>
-            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={1} images={firstColumn} />
-            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={2} images={secondColumn} />
-            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={3} images={thirdColumn} />
-            <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={4} images={fourthColumn} />
+            {[firstColumn, secondColumn, thirdColumn, fourthColumn].map((column, index) => (
+               <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={index} images={column} />
+            ))}
          </div>
       </section>
    );

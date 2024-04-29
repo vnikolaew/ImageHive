@@ -14,7 +14,7 @@ import { usePromise } from "@/hooks/usePromise";
 import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import { handleDownloadImage } from "@/app/photos/[imageId]/actions";
 import { LoadingSpinner } from "@/components/modals/SocialLogins";
-import { useQsImageId } from "@/hooks/useQsImageId";
+import { useQueryString } from "@/hooks/useQueryString";
 import posthog from "posthog-js"
 import { useSession } from "next-auth/react";
 
@@ -28,7 +28,7 @@ export interface ImageSummaryProps {
 
 const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFollowed }: ImageSummaryProps) => {
    const { openModal } = useModals();
-   const [, setImageId] = useQsImageId();
+   const [, setImageId] = useQueryString();
    const session = useSession()
    const { loading, action: handleLike } = usePromise(() => {
       if (haveILiked) {

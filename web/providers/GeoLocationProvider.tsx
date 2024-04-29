@@ -35,7 +35,7 @@ const GeoLocationProvider = ({ children }: GeoLocationScriptProps) => {
    const [geoLocation, setGeoLocation] = useState<GeoLocationInfo>(null!);
    return (
       <Fragment>
-         <Script onLoad={_ => {
+         <Script defer onLoad={_ => {
             const pluginFunctions = Object
                .keys(window)
                .filter(x => x.startsWith("geoplugin_") && typeof window[x] === "function");

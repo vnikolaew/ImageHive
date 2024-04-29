@@ -9,11 +9,11 @@ import {
 } from "@/components/ui/dialog";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
 import { API_ROUTES, HTTP } from "@/lib/consts";
-import useSWR, { KeyedMutator } from "swr";
+import useSWR, { KeyedMutator, useSWRConfig } from "swr";
 import { Search, Image, Check, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useQsImageId } from "@/hooks/useQsImageId";
+import { useQueryString } from "@/hooks/useQueryString";
 import { ImageCollectionApiResponse } from "@/app/api/collections/route";
 import { getFileName } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,9 +49,7 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
       return searchValue?.length ? data?.collections.filter(c => c.title?.toLowerCase().includes(searchValue.toLowerCase())) : (data?.collections ?? []);
    }, [data?.collections, searchValue]);
 
-   const [imageId] = useQsImageId();
-
-   console.log({ collections: data?.collections });
+   const [imageId] = useQueryString();
 
    useEffect(() => {
       if (data !== undefined && !isLoading && !data?.collections?.length && imageId?.length && modal === ModalType.ADD_IMAGE_TO_COLLECTION) {
@@ -62,16 +60,15 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
                Accept: HTTP.MEDIA_TYPES.APPLICATION_JSON,
                "Content-Type": HTTP.MEDIA_TYPES.APPLICATION_JSON,
             },
-            body: JSON.stringify({ imageId, title: `Saved` }),
+            body: JSON.stringify({ imageId, title: `Saved`, public: `false` }),
 
          }).then(res => res.json())
             .then(res => {
                console.log({ res });
-               mutate();
             })
             .catch(console.error);
       }
-   }, [data, data?.collections?.length, imageId, isLoading, modal, mutate]);
+   }, [data, data?.collections?.length, imageId, isLoading, modal]);
 
    return (
       <Dialog onOpenChange={_ => toggleModal(ModalType.ADD_IMAGE_TO_COLLECTION)}
@@ -120,7 +117,8 @@ interface ImageCollectionProps {
 const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
    const firstCollectionImageSrc = `/uploads/${getFileName(collection.images.at(0)?.image?.absolute_url ?? ``)}`;
    const [imageWidth, imageHeight] = collection?.images?.at(0)?.image?.dimensions?.at(0) ?? [200, 200];
-   const [imageId] = useQsImageId();
+   const [imageId] = useQueryString();
+   const { mutate } = useSWRConfig();
 
    const isCurrentImageSaved = useMemo(() => {
       return collection.images.some(i => i.imageId === imageId);
@@ -128,11 +126,20 @@ const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
 
 
    async function handleRemove() {
-      await handleRemoveImageFromCollection(imageId!, collection.id).then(console.log).catch(console.error);
+      await handleRemoveImageFromCollection(imageId!, collection.id).then(res => {
+         if (res.success) {
+            mutate(API_ROUTES.COLLECTIONS);
+         }
+
+      }).catch(console.error);
    }
 
    async function handleAdd() {
-      await handleAddImageToCollection(imageId!, collection.id).then(console.log).catch(console.error);
+      await handleAddImageToCollection(imageId!, collection.id).then(res => {
+         if (res.success) {
+            mutate(API_ROUTES.COLLECTIONS);
+         }
+      }).catch(console.error);
    }
 
    return (

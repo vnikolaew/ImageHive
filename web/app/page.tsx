@@ -4,8 +4,15 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import TopTagsSection from "@/app/_components/TopTagsSection";
 import HomeFeedSection from "@/app/_components/HomeFeedSection";
+import { Suspense } from "react";
+import { LoadingSpinner } from "@/components/modals/SocialLogins";
 
-export default async function Home() {
+interface HomeProps {
+   searchParams: { hideAi?: string };
+}
+
+export default async function Home(props: HomeProps) {
+   const hideAi = props.searchParams.hideAi === `true`
    const imagesCount = await xprisma.image.count();
 
    return (
@@ -34,8 +41,10 @@ export default async function Home() {
             </div>
          </div>
          <div className={`w-3/4`}>
-            <TopTagsSection />
-            <HomeFeedSection/>
+            <TopTagsSection hideAi={hideAi}  />
+            <Suspense fallback={<LoadingSpinner text={``} />}>
+               <HomeFeedSection hideAi={hideAi} />
+            </Suspense>
          </div>
       </main>
 

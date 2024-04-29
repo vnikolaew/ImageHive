@@ -32,7 +32,7 @@ const ImageStatistics = ({ image }: ImageStatisticsProps) => {
 
    return (
       <div className={`w-full flex flex-col items-start gap-1 text-neutral-400`}>
-         <ImageStat text={`Views`} value={0} />
+         <ImageStat text={`Views`} value={image._count.views} />
          <ImageStat text={`Downloads`} value={image._count.downloads} />
          <Collapsible className={`w-full !mt-0`} open={showDetails} onOpenChange={setShowDetails}>
             <CollapsibleContent className={`w-full !mt-0 flex flex-col gap-1`}>

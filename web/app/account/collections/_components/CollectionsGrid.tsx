@@ -2,7 +2,7 @@
 import React, { useCallback } from "react";
 import { ImageCollectionItem, SortOptions } from "@/app/account/collections/page";
 import CollectionsGridItem from "./CollectionsGridItem";
-import { useQsCollectionTab } from "@/hooks/useQsImageId";
+import { useQsCollectionTab } from "@/hooks/useQueryString";
 import { parseAsString, useQueryState } from "nuqs";
 
 export interface CollectionsGridProps {

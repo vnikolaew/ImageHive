@@ -3,7 +3,6 @@ apis/ImagesApi.ts
 apis/index.ts
 index.ts
 models/HTTPValidationError.ts
-models/SimilarTagModel.ts
 models/SimilarTagsResponse.ts
 models/ValidationError.ts
 models/ValidationErrorLocInner.ts

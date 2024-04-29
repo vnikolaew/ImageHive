@@ -13,14 +13,13 @@ import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 
-export interface SearchSettingsProps {
+interface SearchSettingsProps {
+   hideAi?: boolean | undefined;
 }
 
-const SearchSettings = ({}: SearchSettingsProps) => {
+const SearchSettings = ({ hideAi }: SearchSettingsProps) => {
    const [open, setOpen] = useState(false);
-   const [hideAiChecked, setHideAiChecked] = useState(false);
-
-   const router = useRouter()
+   const [hideAiChecked, setHideAiChecked] = useState(hideAi);
 
    return (
       <DropdownMenu onOpenChange={setOpen} open={open}>
@@ -61,13 +60,12 @@ const SearchSettings = ({}: SearchSettingsProps) => {
                      e.preventDefault();
                      setHideAiChecked(!hideAiChecked);
 
-                     router.push(`/?hideAi=true`)
-                     window.location.reload()
+                     window.location.href = `/?hideAi=${!hideAiChecked}`;
                      setOpen(true);
                   }}
                   onCheckedChange={value => {
                      console.log({ value });
-                     setOpen(true)
+                     setOpen(true);
                   }} />
                <span>Hide AI generated</span>
                <TooltipProvider>

@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { APP_NAME, TOASTS } from "@/lib/consts";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Check, Cookie, ExternalLink, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, Cookie, ExternalLink, SlidersHorizontal } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
@@ -42,8 +42,8 @@ const CookieConsentBannerClient = ({ cookiePreferences, cookieConsent }: CookieC
             enableDeclineButton
             flipButtons
             location="bottom"
-            buttonText={acceptLoading ? <LoadingSpinner text={`Loading ...`} /> : <div className={`flex items-center gap-2`}>
-               <Cookie size={16} />
+            buttonText={acceptLoading ? <LoadingSpinner text={`Loading ...`} /> : <div className={`flex items-center gap-2 `}>
+               <Cookie className={`text-orange-800 group-hover:text-white`} size={16} />
                {ACCEPT_ALL}
             </div>}
             declineButtonText={loading ? <LoadingSpinner text={`Loading ...`} /> : <div className={`flex items-center gap-2`}>
@@ -54,14 +54,15 @@ const CookieConsentBannerClient = ({ cookiePreferences, cookieConsent }: CookieC
             cookieName="CookieConsent"
             contentClasses={`!h-fit !text-black !w-full !mx-auto !flex-[1_0_60px] !mb-0`}
             hideOnAccept={false}
-            containerClasses={cn(`!bg-white !z-10 !text-black !w-3/5 !bottom-8 !left-[20%] !mx-auto !shadow-xl flex flex-col gap-2 p-4 !rounded-xl`)}
+            containerClasses={cn(`!bg-white !z-10 !text-black !w-3/5 !max-w-[800px] !bottom-8 !left-[50%] !-translate-x-[50%] !mx-auto !shadow-xl flex flex-col gap-2 p-4 !rounded-xl`)}
             buttonClasses={cn(
-               `!bg-white flex items-center gap-2 !text-black !rounded-lg !px-4 !shadow-md`,
-               acceptLoading && `opacity-50`,
+               `!bg-white flex items-center gap-2 !text-black !rounded-lg group !px-4 !shadow-md  transitions-colors duration-200`,
+               !acceptLoading && `hover:!bg-orange-800 hover:!text-white`,
+               acceptLoading && `opacity-50 `,
             )}
             customButtonProps={{ disabled: acceptLoading }}
             customDeclineButtonProps={{ disabled: loading }}
-            declineButtonClasses={cn(`!bg-primary flex items-center gap-2 !text-white !rounded-lg !px-4 !shadow-md`,
+            declineButtonClasses={cn(`!bg-primary flex items-center gap-2 !text-white !rounded-lg !px-4 !shadow-md hover:!opacity-80 transitions-colors duration-200`,
                loading && `opacity-50`,
             )}
             buttonWrapperClasses={`flex w-full items-center gap-2 justify-center`}

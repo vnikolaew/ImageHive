@@ -5,10 +5,12 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import SearchSettings from "@/app/_components/SearchSettings";
 
-export interface TopTagsSectionProps {
+
+interface TopTagsSectionProps {
+   hideAi?: boolean;
 }
 
-const TopTagsSection = async ({}: TopTagsSectionProps) => {
+const TopTagsSection = async ({ hideAi }: TopTagsSectionProps) => {
    const topTags = await xprisma.image.mostUsedTags(10);
 
    return (
@@ -24,7 +26,7 @@ const TopTagsSection = async ({}: TopTagsSectionProps) => {
          </div>
          <div className={`flex items-center gap-8`}>
             <Separator className={`bg-neutral-700 dark:bg-neutral-200 !h-8`} orientation="vertical" />
-            <SearchSettings />
+            <SearchSettings hideAi={hideAi} />
          </div>
       </div>
    );

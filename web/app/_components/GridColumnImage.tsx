@@ -7,7 +7,7 @@ import { Bookmark, Bot, Heart } from "lucide-react";
 import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import { cn } from "@/lib/utils";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
-import { useQsImageId } from "@/hooks/useQsImageId";
+import { useQueryString } from "@/hooks/useQueryString";
 import Link from "next/link";
 import { TooltipTriggerProps } from "@radix-ui/react-tooltip";
 
@@ -31,10 +31,9 @@ const GridColumnImage = ({
                          }: GridColumnImageProps) => {
    const IMAGE_WIDTH = 340;
    const { openModal } = useModals();
-   const [, setImageId] = useQsImageId();
+   const [, setImageId] = useQueryString();
 
    const [x, y] = dimensions_set[0].split(`,`).map(x => Number(x));
-   console.log({ metadata });
 
    async function handleAddToCollection() {
       setImageId(id).then(_ => {

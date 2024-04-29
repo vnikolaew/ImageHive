@@ -37,3 +37,4 @@ pillow~=10.3.0
 torch~=2.2.2
 python-dotenv~=1.0.1
 PyYAML~=6.0.1
+FlagEmbedding~=1.2.9

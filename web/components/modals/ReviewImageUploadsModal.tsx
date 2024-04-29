@@ -65,28 +65,27 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
       <Dialog open onOpenChange={_ => toggleModal(ModalType.REVIEW_UPLOAD_IMAGES)}>
          <DialogTrigger>
          </DialogTrigger>
-         <DialogContent className="sm:max-w-[500px] !min-h-fit h-[80vh] flex flex-col">
+         <DialogContent className="sm:max-w-[500px] !min-h-fit flex flex-col">
             <DialogHeader className="!flex-0">
                <DialogTitle className={`text-left text-lg tracking-wide`}>Confirm your submission</DialogTitle>
                <DialogDescription className={`text-sm`}>
                   Take a moment to review your files before submitting for review
-                  {/*<Separator className={`w-5/6 mr-auto mt-2 bg-neutral-700 rounded-full`} />*/}
                </DialogDescription>
             </DialogHeader>
-            <div className={`mt-12 flex-1 rounded-md border-[1px] dark:border-neutral-700 dark:bg-neutral-800`}>
-               <div className={`p-4 px-6 flex items-center border-b-[1px] dark:border-neutral-700`}>
-                  <span className={`dark:text-white`}>
+            <div className={`mt-4 flex-1 rounded-md border-[1px] dark:border-neutral-700 dark:bg-neutral-800`}>
+               <div className={`p-2 px-4 flex items-baseline border-b-[1px] dark:border-neutral-700`}>
+                  <span className={`dark:text-white !text-sm`}>
                      Your submission
                   </span>
-                  <span className={`ml-4 text-neutral-500 text-sm`}>
+                  <span className={`ml-4 text-neutral-500 text-xs`}>
                      {inputFiles.size} {inputFiles.size === 1 ? `file` : `files`}
                   </span>
                </div>
-               <ScrollArea className={`p-4 px-6 !flex items-start gap-2`}>
-                  <div className={`flex items-start gap-2`}>
+               <ScrollArea className={`p-4 px-6 !flex items-start gap-2 !max-h-[100px]`}>
+                  <div className={`flex items-start gap-4`}>
                      {[...imagePreviews.entries()].map(([id, preview], i) => (
                         <Image
-                           className={`rounded-md`}
+                           className={`rounded-md shadow-sm`}
                            height={100}
                            width={100}
                            alt={id} src={preview} key={id} />
@@ -95,28 +94,28 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
                </ScrollArea>
             </div>
             <div>
-               <Alert className={`text-lg px-6 flex !items-center gap-2`}>
+               <Alert className={`text-base px-4 !py-2 flex !items-center gap-4`}>
                   <div className={`h-full flex items-center justify-center`}>
-                     <Check className={``} size={20} />
+                     <Check className={``} size={18} />
                   </div>
-                  <AlertDescription className={`mt-1 leading-tight`}>
+                  <AlertDescription className={`mt-1 !leading-tight !text-sm`}>
                      By submitting, I acknowledge this upload adheres to the
                      <Link
                         href="/service/privacy"
-                        className={cn(`underline-offset-4 !text-white !font-semibold !h-auto`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-0`)}
+                        className={cn(`underline-offset-4 !text-black dark:text-white !font-semibold !h-auto`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-0 !text-sm`)}
                      >Content License
                      </Link>
                   </AlertDescription>
                </Alert>
             </div>
-            <DialogFooter className={`my-2 flex-0 w-full flex items-center !justify-between`}>
+            <DialogFooter className={`my-0 flex-0 w-full flex items-center !justify-between`}>
                <Button
                   onClick={_ => closeModal(ModalType.REVIEW_UPLOAD_IMAGES)} variant={`ghost`} size={`default`}>Not
                   yet, take me back</Button>
                <Button
                   disabled={loading}
-                  onClick={handleSubmitUpload} className={`rounded-full`} variant={`default`}
-                  size={`lg`}>
+                  onClick={handleSubmitUpload} className={`rounded-full !px-6`} variant={`default`}
+                  size={`default`}>
                   {loading ? (
                         <LoadingSpinner text={`Submitting ...`} />
                      ) :

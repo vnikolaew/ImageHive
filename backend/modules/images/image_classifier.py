@@ -1,5 +1,7 @@
 from PIL import Image
+from sentence_transformers import SentenceTransformer
 from transformers import pipeline, CLIPProcessor, CLIPModel
+from FlagEmbedding import BGEM3FlagModel
 
 from logger import get_logger
 from .categories import CATEGORIES
@@ -7,20 +9,38 @@ from .categories import CATEGORIES
 CHECKPOINT = "openai/clip-vit-large-patch14"
 TASK_NAME = "zero-shot-image-classification"
 
+IMAGE_CAPTIONING_MODEL = "nlpconnect/vit-gpt2-image-captioning"
+SENTENCE_SIMILARITY_MODEL = 'BAAI/bge-m3'
+
+EMBEDDINGS_MODEL = 'sentence-transformers/multi-qa-MiniLM-L6-cos-v1'
+
 logger = get_logger(__name__)
 
 
 class ImageClassifier:
     def __init__(self):
-        self.pipeline = pipeline(model=CHECKPOINT, task=TASK_NAME)
         self.processor = CLIPProcessor.from_pretrained(CHECKPOINT)
         self.model = CLIPModel.from_pretrained(CHECKPOINT)
 
+        self.image_caption_pipeline = pipeline("image-to-text", model=IMAGE_CAPTIONING_MODEL)
+        self.ss_model = BGEM3FlagModel(SENTENCE_SIMILARITY_MODEL, use_fp16=True)
+
+        self.embeddings_model = SentenceTransformer(EMBEDDINGS_MODEL)
+
     @staticmethod
-    def __get_predictions(probs) -> list[dict]:
+    # @contextmanager
+    def get_self():
+        return ImageClassifier()
+
+    def __get_predictions(self, probs) -> list[dict]:
+
         predictions = [{'label': label, 'score': score} for label, score in
                        list(sorted(zip(CATEGORIES, probs.tolist()[0]), key=lambda x: -x[1]))[:5]]
-        return predictions
+
+        embeddings = self.embeddings_model.encode([x['label'] for x in predictions])
+
+        return [{'label': pred['label'], 'score': pred['score'], 'embedding': e.tolist()} for pred, e in
+                zip(predictions, embeddings)]
 
     def process(self, image_full_path: str) -> list[dict[str, any]]:
         logger.info(f"Processing image '{image_full_path}' ...")
@@ -36,9 +56,53 @@ class ImageClassifier:
             predictions = self.__get_predictions(probs)
 
             logger.info(f"Predictions for image with path '{image_full_path}': ")
+
             for prediction in predictions:
                 logger.info(f"Prediction label: '{prediction['label']}', prediction score: {prediction['score']:.4f}")
             return predictions
 
         except Exception as e:
             logger.error(f'Error while processing image {image_full_path}: {e}', exc_info=e)
+
+    def generate_image_captions(self, image_full_path: str) -> list[dict[str, any]]:
+        logger.info(f"Processing image '{image_full_path}' ...")
+
+        try:
+            image = Image.open(image_full_path)
+            image_to_text = self.image_caption_pipeline(image)
+
+            return image_to_text
+        except Exception as e:
+            logger.error(f'Error while processing image {image_full_path}: {e}', exc_info=e)
+
+    def classify_with_ss(self, image_caption: str) -> list[dict[str, any]]:
+        try:
+            sentences = [image_caption]
+            sentences2 = CATEGORIES
+            sentence_pairs: list[tuple[str, str]] = [(a, b) for a in sentences for b in sentences2]
+            scores = self.ss_model.compute_score(
+                sentence_pairs,
+                max_passage_length=128,
+                weights_for_different_modes=[0.4, 0.2, 0.4])
+
+            return [{'score': score, 'category': category} for score, category in
+                    list(sorted(zip(scores['sparse+dense'], CATEGORIES), key=lambda x: -x[0])[:10])]
+        except Exception as e:
+            logger.error(f'Error while processing image: {e}', exc_info=e)
+
+    def get_similar_tags(self, tag: str, all_tags: list[str]) -> list[dict[str, any]]:
+        try:
+            sentences = [tag]
+            sentences2 = all_tags
+
+            sentence_pairs: list[tuple[str, str]] = [(a, b) for a in sentences for b in sentences2]
+
+            scores = self.ss_model.compute_score(
+                sentence_pairs,
+                max_passage_length=128,
+                weights_for_different_modes=[0.4, 0.2, 0.4])
+
+            return [{'score': score, 'tag': tag} for score, tag in
+                    list(sorted(zip(scores['sparse+dense'], all_tags), key=lambda x: -x[0])[:10])]
+        except Exception as e:
+            logger.error(f'Error while processing image: {e}', exc_info=e)

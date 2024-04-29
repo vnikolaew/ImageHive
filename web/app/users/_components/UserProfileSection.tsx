@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 import Image from "next/image";
 import DefaultAvatar from "@/public/default-avatar.png";
 import moment from "moment/moment";
-import { Account, Image as IImage, User } from "@prisma/client";
+import { Account, Image as IImage, Profile, User } from "@prisma/client";
 import RightSection from "@/app/users/_components/RightSection";
 import FollowUserButton from "@/app/users/_components/FollowUserButton";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ export interface UserProfileSectionProps {
       images: IImage[];
       accounts: Account[]
       _count: { followedBy: number, imageDownloads: number, imageLikes: number, following: number }
+      profile: Profile;
    },
    amIFollower: boolean;
    isMe: boolean;
@@ -52,12 +53,16 @@ const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps
             </div>
             <RightSection isMe={isMe} />
          </div>
+
+         <div className={`flex items-center mt-4 gap-4`}>
+            {user.profile.about}
+         </div>
          <div className={`flex items-center mt-4 gap-4`}>
             <div>
-               {user._count.followedBy} <span className={`text-neutral-500`}>Followers</span>
+               <b>{user._count.followedBy}</b> <span className={`text-neutral-500`}>Followers</span>
             </div>
             <div>
-               {user._count.following} <span className={`text-neutral-500`}>Following</span>
+               <b>{user._count.following}</b> <span className={`text-neutral-500`}>Following</span>
             </div>
          </div>
          <div className={`flex text-neutral-500 items-center mt-4 gap-2`}>
@@ -66,17 +71,22 @@ const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps
             </div>
             &bull;
             <div>
-               Age 20
-            </div>
-            &bull;
-            <div>
-               From
+               {user.profile.country}
             </div>
             &bull;
             <div className={`text-neutral-500 text-sm`}>
                Joined {moment(user.createdAt).format(`MMMM DD, YYYY`)}
             </div>
-
+         </div>
+         <div className={`flex items-center mt-2 gap-8`}>
+            <div className={`flex flex-col items-start gap-0`}>
+               <span>{user._count.imageLikes}</span>
+               <span className={`text-xs text-neutral-500`}>Likes</span>
+            </div>
+            <div className={`flex flex-col items-start gap-0`}>
+               <span>{user._count.imageDownloads}</span>
+               <span className={`text-xs text-neutral-500`}>Downloads</span>
+            </div>
          </div>
       </Fragment>
    );

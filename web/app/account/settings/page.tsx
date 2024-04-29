@@ -1,29 +1,21 @@
 import React from "react";
-import { Separator } from "@/components/ui/separator";
-import PersonalDataSection from "@/app/account/settings/_components/PersonalDataSection";
+import { auth } from "@/auth";
+import { xprisma } from "@/lib/prisma";
+import EditProfileFormWrapper from "@/app/account/settings/_components/EditProfileFormWrapper";
 
-const Page = () => {
+const Page = async () => {
+   const session = await auth();
+   const user = await xprisma.user.findUnique({
+      where: { id: session?.user?.id },
+      include: { profile: true },
+   });
+
+   // @ts-ignore
+   const { verifyPassword, updatePassword, ...rest } = user;
+
    return (
-      <div className={`my-12 min-h-[70vh]`}>
-         <div className={`grid gap-8 grid-cols-2 w-full `}>
-            <div>
-               <h2 className={`text-xl`}>Edit Profile</h2>
-               <Separator className={`w-full my-4 h-[1px]`} />
-               <div>
-                  <PersonalDataSection />
-               </div>
-            </div>
-            <div>
-               <div className={`flex flex-col`}>
-                  <h2 className={`text-xl`}>Online Profiles
-                  </h2>
-                  <Separator className={`w-full my-4 h-[1px]`} />
-                  <div>
-                     <PersonalDataSection />
-                  </div>
-               </div>
-            </div>
-         </div>
+      <div className={`my-8 min-h-[70vh]`}>
+         <EditProfileFormWrapper userProfile={user!.profile!} user={rest!} />
       </div>
    );
 };

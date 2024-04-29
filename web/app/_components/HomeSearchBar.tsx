@@ -24,12 +24,13 @@ const HomeSearchBar = ({}: HomeSearchBarProps) => {
 
    return (
       <div className={`w-full rounded-full relative bg-neutral-100 mt-8 p-1`}>
-         <Search size={18} className={`absolute top-[50%] left-4 -translate-y-1/2 cursor-pointer text-primary`} />
          <Input
             ref={inputRef}
             onChange={e => setSearchValue(e.target.value)}
-            value={searchValue} placeholder={`Search for all images on ${APP_NAME}`}
-            className={`rounded-full dark:bg-neutral-100 focus-visible:ring-0 border-none pl-10 text-neutral-700 placeholder:text-neutral-400 text-md `} />
+            value={searchValue}
+            placeholder={`Search for all images on ${APP_NAME}`}
+            className={`rounded-full peer dark:bg-neutral-100 focus-visible:ring-0 border-none pl-10 text-neutral-700 placeholder:text-neutral-400 !text-base placeholder:!text-base`} />
+         <Search size={18} className={`absolute peer-focus-visible:text-green-700 top-[50%] left-4 -translate-y-1/2 cursor-pointer text-neutral-500 !stroke-[3px]`} />
       </div>
    );
 };

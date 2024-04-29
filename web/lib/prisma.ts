@@ -123,7 +123,7 @@ export let xprisma = prisma.$extends({
             email: string;
             password: string,
             username: string,
-               image?: string
+            image?: string
          }, select?: Prisma.UserSelect<InternalArgs>) {
 
             let user = await xprisma.user.create({
@@ -131,7 +131,16 @@ export let xprisma = prisma.$extends({
                   email,
                   password: bcrypt.hashSync(password, 10),
                   name: username,
-                  image
+                  image,
+                  profile: {
+                     create: {
+                        about: ``, city: ``, country: ``,
+                        firstName: ``,
+                        lastName: ``,
+                        dateOfBirth: null!,
+                        gender: `UNSPECIFIED`,
+                     },
+                  },
                },
                select: {
                   id: true,
@@ -154,14 +163,15 @@ export let xprisma = prisma.$extends({
       },
       image: {
          async search(searchValue: string, limit: number = 10): Promise<Image[]> {
+            const iLikeSearch = `%${searchValue}%`
+
             const result = await xprisma.$queryRaw`
                 SELECT *,
-                       unnested_tag                                     AS tag_match,
-                       levenshtein(LOWER(unnested_tag), ${searchValue}) AS distance,
-                       levenshtein(LOWER(title), ${searchValue})        AS title_distance
-                FROM (SELECT *, unnest(tags) AS unnested_tag
-                      FROM "Image") AS unnested_tags
-                ORDER BY distance
+                       unnested_tag                          AS tag_match,
+                       levenshtein(LOWER(title), ${searchValue}) AS title_distance
+                FROM (SELECT * FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
+                WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                ORDER BY title_distance
                 LIMIT ${limit};
             `;
 

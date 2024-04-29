@@ -1,4 +1,3 @@
-import { ToasterToast } from "@/components/ui/use-toast";
 import path from "path";
 import { ExternalToast } from "sonner";
 
@@ -83,9 +82,27 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   EDIT_PROFILE_SUCCESS: {
+      message: `Profile successfully edited.`,
+      description: `You've successfully edited your profile details.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
    CHANGE_PROFILE_PICTURE_SUCCESS: {
       message: `Profile picture changed.`,
       description: `You've successfully changed your profile picture.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+   CHANGE_COOKIE_PREFERENCES_SUCCESS: {
+      message: `Cookie preferences changed.`,
+      description: `You've successfully changed your cookies preferences.`,
       className: ``,
       classNames: {
          title: `text-lg`, description: `text-md`,

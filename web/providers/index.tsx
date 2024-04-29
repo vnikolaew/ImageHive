@@ -6,6 +6,7 @@ import ErrorBoundary from "@/components/common/ErrorBoundary";
 import { ToastProvider } from "@/components/ui/toast";
 import SwrProvider from "@/providers/SWRProvider";
 import { CSPostHogProvider } from "@/providers/PostHogProvider";
+import GeoLocationProvider from "@/app/_scripts/GeoLocationScript";
 
 const Providers = ({ children }: PropsWithChildren) => {
    return (
@@ -17,11 +18,13 @@ const Providers = ({ children }: PropsWithChildren) => {
                   disableTransitionOnChange
                   defaultTheme={`system`} attribute={`class`}>
                   <SwrProvider>
-                     <ModalsProvider>
-                        <ToastProvider swipeDirection={"right"}>
-                           {children}
-                        </ToastProvider>
-                     </ModalsProvider>
+                     <GeoLocationProvider>
+                        <ModalsProvider>
+                           <ToastProvider swipeDirection={"right"}>
+                              {children}
+                           </ToastProvider>
+                        </ModalsProvider>
+                     </GeoLocationProvider>
                   </SwrProvider>
                </ThemeProvider>
             </SessionProvider>

@@ -1,3 +1,4 @@
+from pgvector.sqlalchemy import Vector
 from sqlalchemy import Text, Column, Integer, TIMESTAMP, ARRAY, UUID, Boolean, String, text, func
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -16,3 +17,10 @@ class Image(Base):
     dimensions_set = Column(ARRAY(Text))
     original_file_name = Column(Text, nullable=False)
     title = Column(String(200))
+
+
+class Tag(Base):
+    __tablename__ = 'Tag'
+
+    name = Column(Text(), unique=True, nullable=False)
+    embedding = Column(Vector(384), nullable=False)

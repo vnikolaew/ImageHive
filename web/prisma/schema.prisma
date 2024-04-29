@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [pgcrypto]
+  extensions = [pgcrypto, pgvector(map: "vector", schema: "public")]
 }
 
 model User {
@@ -28,6 +28,33 @@ model User {
   imageComments    ImageComment[]
   imageCollections ImageCollection[]
   imageDownloads   ImageDownload[]
+
+  profileId String?
+  profile   Profile?
+}
+
+model Profile {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String @unique
+
+  gender         Gender    @default(UNSPECIFIED)
+  firstName      String?
+  lastName       String?
+  city           String?
+  country        String?
+  dateOfBirth    DateTime?
+  about          String?
+  onlineProfiles Json?     @default("null") @db.JsonB
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  UNSPECIFIED
 }
 
 model Follows {
@@ -105,6 +132,11 @@ model Image {
   comments    ImageComment[]
   collections CollectionImage[]
   downloads   ImageDownload[]
+}
+
+model Tag {
+  name      String                     @unique
+  embedding Unsupported("vector(384)")
 }
 
 model ImageLike {

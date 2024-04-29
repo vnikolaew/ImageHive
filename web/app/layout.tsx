@@ -7,6 +7,7 @@ import Providers from "@/providers";
 import "./globals.css";
 import Footer from "@/components/common/Footer";
 import { Toaster } from "@/components/ui/sonner";
+import CookieConsentBanner from "@/components/common/CookieConsentBanner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -28,6 +29,7 @@ export default function RootLayout({
          <Navbar />
          {children}
          <Toaster />
+         <CookieConsentBanner />
          <Footer />
          </body>
       </Providers>

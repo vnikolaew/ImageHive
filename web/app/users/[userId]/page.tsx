@@ -21,6 +21,7 @@ const Page = async ({ params: { userId } }: PageProps) => {
          images: {
             take: 20,
          },
+         profile: true,
          accounts: true,
          _count: { select: { followedBy: true, imageDownloads: true, imageLikes: true, following: true } },
       },

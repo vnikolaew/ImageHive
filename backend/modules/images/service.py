@@ -1,13 +1,14 @@
 import uuid
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Set
 
+from sqlalchemy import select, text, insert, values
 from sqlalchemy.orm import Session
 
 from modules.db import SessionLocal
 from modules.images.categories import CATEGORIES
-from modules.images.models import Image
+from modules.images.models import Image, Tag
 from modules.images.similarity_search import SimilaritySearch
 
 
@@ -63,10 +64,25 @@ class ImageService(ServiceBase):
     def get_by_id(self, image_id: uuid.UUID) -> Optional[Image]:
         return Image.get_by_id(image_id)
 
+    def get_all_tags(self) -> set[str]:
+        tags = self.session.execute(text("SELECT DISTINCT(unnest(tags)) FROM \"Image\";")).fetchall()
+        return set([str(tag[0]) for tag in tags])
+
     def update_image_tags(self, image: Image, tags: list[str]) -> Image:
         image.tags = list(set(tags).union(set(image.tags)))
         if image not in self.session:
             self.session.add(image)
+
+        self.session.commit()
+        return image
+
+    def update_image_variants(self, image: Image, variants: list[tuple[int, int, str]]) -> Image:
+        if image not in self.session:
+            self.session.add(image)
+
+        for variant in variants:
+            width, height, file_name = variant
+            pass
 
         self.session.commit()
         return image
@@ -92,3 +108,11 @@ class ImageService(ServiceBase):
 
         return [{'label': k, 'score': v} for k, v in
                 sorted(similar_tags.items(), key=lambda x: x[1], reverse=True)[:10]]
+
+    def update_image_embeddings(self, tags_embeddings: list[dict[str, any]]):
+        for tags_embedding in tags_embeddings:
+            self.session.execute(
+                insert(Tag)
+                .values(name=tags_embedding['label'], embedding=tags_embedding['embedding'])
+                .on_conflict_do_nothing()
+            )

@@ -32,6 +32,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /images/tags/similar/{tag}:
+    get:
+      tags:
+      - Images
+      summary: Get Similar Tags
+      operationId: get_similar_tags_images_tags_similar__tag__get
+      parameters:
+      - name: tag
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Tag
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimilarTagsResponse'
+        '404':
+          description: Not Found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /:
     get:
       summary: Root
@@ -76,6 +104,30 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    SimilarTagModel:
+      properties:
+        tag:
+          type: string
+          title: Tag
+        score:
+          type: number
+          title: Score
+      type: object
+      required:
+      - tag
+      - score
+      title: SimilarTagModel
+    SimilarTagsResponse:
+      properties:
+        similar_tags:
+          items:
+            $ref: '#/components/schemas/SimilarTagModel'
+          type: array
+          title: Similar Tags
+      type: object
+      required:
+      - similar_tags
+      title: SimilarTagsResponse
     ValidationError:
       properties:
         loc:

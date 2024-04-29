@@ -2,18 +2,36 @@ import NextAuth from "next-auth";
 import Google from "@auth/core/providers/google";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma, globalForPrisma, xprisma } from "@/lib/prisma";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, User } from "@prisma/client";
 import { session } from "@/lib/session";
 import ResendProvider from "next-auth/providers/resend";
 import { Resend } from "resend";
 import Credentials from "next-auth/providers/credentials";
-import { HTTP } from "@/lib/consts";
-import { calculateSHA256, getGravatarImageUrl } from "@/lib/utils";
+import { getGravatarImageUrl } from "@/lib/utils";
 
 globalForPrisma.prisma ??= new PrismaClient();
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
    adapter: PrismaAdapter(prisma),
+   events: {
+      // @ts-ignore
+      createUser: async (user: { user: User }) => {
+         console.log({ user });
+
+         // Create user profile:
+         const profile = await xprisma.profile.create({
+            data: {
+               user: { connect: { id: user.user.id } },
+               about: ``, city: ``, country: ``,
+               firstName: ``,
+               lastName: ``,
+               dateOfBirth: null!,
+               gender: `UNSPECIFIED`,
+            },
+         });
+         console.log({ profile });
+      },
+   },
    debug: false,
    callbacks: {
       session,
@@ -32,7 +50,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
    },
    session: { strategy: `jwt` },
    secret: process.env.AUTH_SECRET ?? `sdfsdfdsfwerwe`,
-   providers: [Google, ResendProvider({
+   providers: [Google({
+      // profile: (profile, tokens) => {
+      //    console.log({ profile });
+      //    return profile;
+      // },
+   }), ResendProvider({
       from: `onboarding@resend.dev`,
       generateVerificationToken() {
          return crypto.randomUUID();

@@ -110,6 +110,11 @@ const Navbar = () => {
                               Following
                            </DropdownMenuItem>
                         </Link>
+                        <Link href={`/account/settings`}>
+                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
+                              Settings
+                           </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuItem className={`flex my-2 justify-center w-full hover:!bg-transparent`}>
                            <Button
                               disabled={loading}
@@ -121,7 +126,7 @@ const Navbar = () => {
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>
-                  <div className={cn(`text-sm font-semibold text-black mr-2`,
+                  <div className={cn(`text-sm font-normal text-black mr-2`,
                      showNavbarBackground ? `text-black` : `text-white`,
                      !darkMode && `!text-black`,
                      pathname.startsWith(`/users`) && `!text-white`,

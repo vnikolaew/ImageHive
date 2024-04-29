@@ -16,14 +16,21 @@
 import * as runtime from '../runtime';
 import type {
   HTTPValidationError,
+  SimilarTagsResponse,
 } from '../models/index';
 import {
     HTTPValidationErrorFromJSON,
     HTTPValidationErrorToJSON,
+    SimilarTagsResponseFromJSON,
+    SimilarTagsResponseToJSON,
 } from '../models/index';
 
 export interface ClassifyNewImageImagesClassifyImageIdPostRequest {
     imageId: string;
+}
+
+export interface GetSimilarTagsImagesTagsSimilarTagGetRequest {
+    tag: string;
 }
 
 /**
@@ -65,6 +72,39 @@ export class ImagesApi extends runtime.BaseAPI {
      */
     async classifyNewImageImagesClassifyImageIdPost(requestParameters: ClassifyNewImageImagesClassifyImageIdPostRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<any> {
         const response = await this.classifyNewImageImagesClassifyImageIdPostRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get Similar Tags
+     */
+    async getSimilarTagsImagesTagsSimilarTagGetRaw(requestParameters: GetSimilarTagsImagesTagsSimilarTagGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SimilarTagsResponse>> {
+        if (requestParameters['tag'] == null) {
+            throw new runtime.RequiredError(
+                'tag',
+                'Required parameter "tag" was null or undefined when calling getSimilarTagsImagesTagsSimilarTagGet().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/images/tags/similar/{tag}`.replace(`{${"tag"}}`, encodeURIComponent(String(requestParameters['tag']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SimilarTagsResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Get Similar Tags
+     */
+    async getSimilarTagsImagesTagsSimilarTagGet(requestParameters: GetSimilarTagsImagesTagsSimilarTagGetRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SimilarTagsResponse> {
+        const response = await this.getSimilarTagsImagesTagsSimilarTagGetRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

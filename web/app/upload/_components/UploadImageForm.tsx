@@ -78,7 +78,7 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                                  className={`text-black !py-0 !px-0 bg-white flex-0 !border-0 !shadow-none !outline-none focus:!outline-none focus:!border-0 focus:!ring-0 !h-7`}
                                  type={`text`}
                                  required
-                                 placeholder="e.g. jack123 or jack123@example.com"
+                                 placeholder="e.g. nature, animals, people"
                                  {...field}
                                  onChange={e => {
                                     field.onChange(e);

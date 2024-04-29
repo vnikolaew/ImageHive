@@ -1,170 +1,219 @@
 "use client";
-import React from "react";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FormField, Form, FormItem, FormControl, FormDescription, FormLabel, FormMessage } from "@/components/ui/form";
-import { useSession } from "next-auth/react";
-import { getSessionImageSrc } from "@/lib/utils";
+import React, { useRef } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { FormField, FormItem, FormControl, FormDescription, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useSingleFileImagePreview } from "@/hooks/useFileImagePreviews";
+import Image from "next/image";
+import { Profile, User } from "@prisma/client";
+import { EditProfileFormValues } from "@/app/account/settings/_components/EditProfileFormWrapper";
+import { Select, SelectTrigger, SelectItem, SelectValue, SelectContent } from "@/components/ui/select";
 
-export interface PersonalDataSectionProps {
+const MONTHS = [
+   "January", "February", "March", "April", "May", "June",
+   "July", "August", "September", "October", "November", "December",
+] as const;
+
+const DAYS = Array.from({ length: 31 }).map((_, i) => i + 1);
+
+const YEARS = Array.from({ length: 2011 - 1934 + 1 }).map((_, i) => i + 1934);
+
+interface PersonalDataSectionProps {
+   user?: User & { profile: Profile },
+   form: UseFormReturn<EditProfileFormValues>
 }
 
-const formSchema = z.object({
-   username: z.string(),
-   profileImage: z.instanceof(File).nullable(),
-   gender: z.union([
-      z.literal(`Male`), z.literal(`Female`),
-      z.literal(`Unspecified`),
-   ]),
-   firstName: z.string(),
-   lastName: z.string(),
-   city: z.string(),
-   country: z.string(),
-   dob: z.date().nullable(),
-   aboutMe: z.string(),
-});
-
-type FormValues = z.infer<typeof formSchema>
-
-const PersonalDataSection = ({}: PersonalDataSectionProps) => {
-   const session = useSession();
-   const form = useForm<FormValues>({
-      resolver: zodResolver(formSchema),
-      reValidateMode: `onChange`,
-      defaultValues: {
-         username: session.data?.user?.name!,
-         profileImage: getSessionImageSrc(session.data?.user?.image!),
-         firstName: ``,
-         lastName: ``,
-         city: ``,
-         country: ``,
-         dob: null,
-         aboutMe: ``,
-         gender: `Unspecified`,
-      },
-   });
-
-   function onSubmit() {
-
-   }
+const PersonalDataSection = ({ user, form }: PersonalDataSectionProps) => {
+   const { inputFiles, addImage, imagePreview, removeImage } = useSingleFileImagePreview();
+   const inputRef = useRef<HTMLInputElement>(null!);
 
    return (
       <div>
-         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 !h-full">
-               <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel className={`min-w-[100px] text-right`}>Username</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <Input placeholder="" {...field} />
+         <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-center gap-4`}>
+                  <FormLabel className={`min-w-[100px] text-right`}>Username</FormLabel>
+                  <FormControl className={`!mt-0`}>
+                     <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={form.control}
+            name="profileImage"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-center gap-4`}>
+                  <FormLabel className={`min-w-[100px] text-right`}>Profile image</FormLabel>
+                  <input accept={`image/*`} onChange={e => {
+                     if (!!e.target.files?.length) {
+                        const file = e.target.files![0];
+                        addImage(file);
+                        form.setValue(`profileImage`, file);
+
+                     }
+                  }} ref={inputRef} hidden type={`file`} placeholder="" />
+                  <FormControl className={`!mt-0`}>
+                     <Image
+                        onClick={_ => inputRef?.current?.click()}
+                        className={`rounded-full shadow-sm cursor-pointer w-40 h-40`}
+                        objectFit={`cover`}
+                        height={160}
+                        width={160}
+                        src={imagePreview ?? field.value}
+                        alt={`${user?.name}'s profile picture`} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={form.control}
+            name="firstName"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-center gap-4`}>
+                  <FormLabel className={`min-w-[100px] text-nowrap text-right`}>First name</FormLabel>
+                  <FormControl className={`!mt-0`}>
+                     <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={form.control}
+            name="lastName"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-center gap-4`}>
+                  <FormLabel className={`min-w-[100px] text-nowrap text-right`}>Last name</FormLabel>
+                  <FormControl className={`!mt-0`}>
+                     <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={form.control}
+            name="city"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-center gap-4`}>
+                  <FormLabel className={`min-w-[100px] text-nowrap text-right`}>City</FormLabel>
+                  <FormControl className={`!mt-0`}>
+                     <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-start gap-4`}>
+                  <FormLabel className={`min-w-[100px] text-nowrap mt-2 text-right`}>Country</FormLabel>
+                  <FormControl className={`!mt-0`}>
+                     <Input placeholder="" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <div className={`flex items-center gap-0`}>
+            <FormField
+               control={form.control}
+               name="dob"
+               render={({ field }) => (
+                  <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-start`}>
+                     <FormLabel className={`min-w-[100px] text-nowrap mt-2 mr-4 text-right`}>Date of birth</FormLabel>
+                     <Select
+                        defaultValue={form.getValues(`dob.month`)? (Number(form.getValues(`dob.month`)) - 1).toString() : null}
+                        onValueChange={value => {
+                        form.setValue(`dob.month`, value ?  Number(value) : null!)
+                     }}>
+                        <FormControl className={`w-1/4`}>
+                           <SelectTrigger>
+                              <SelectValue placeholder="----" />
+                           </SelectTrigger>
                         </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="profileImage"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel  className={`min-w-[100px] text-right`}>Profile image</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <input hidden type={`fil`} placeholder="" />
+                        <SelectContent>
+                           {[`---`, ...MONTHS].map((month, i) => (
+                              <SelectItem key={i} value={i === 0 ? null : (i - 1).toString()}>{month}</SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                     <Select
+                        defaultValue={form.getValues(`dob.day`)? (Number(form.getValues(`dob.day`)) - 1).toString() : null}
+                        onValueChange={value => {
+                        form.setValue(`dob.day`, value ?  Number(value) + 1 : null!)
+                     }}>
+                        <FormControl className={`w-1/5`}>
+                           <SelectTrigger>
+                              <SelectValue placeholder="----" />
+                           </SelectTrigger>
                         </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="firstName"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel className={`min-w-[100px] text-nowrap text-right`} >First name</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <Input placeholder="" {...field} />
+                        <SelectContent>
+                           {[`---`, ...DAYS].map((day, i) => (
+                              <SelectItem key={i} value={i === 0 ? null : day.toString()}>
+                                 {day.toString()}
+                              </SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                     <Select
+                     defaultValue={form.getValues(`dob.year`)? (Number(form.getValues(`dob.year`))).toString() : null}
+                     onValueChange={value=> {
+                        form.setValue(`dob.year`, value ?  Number(value) : null!)
+                     }} >
+                        <FormControl className={`w-1/5`}>
+                           <SelectTrigger>
+                              <SelectValue placeholder="----" />
+                           </SelectTrigger>
                         </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="lastName"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel className={`min-w-[100px] text-nowrap text-right`}>Last name</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <Input placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="city"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel className={`min-w-[100px] text-nowrap text-right`}>City</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <Input placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel className={`min-w-[100px] text-nowrap text-right`}>Country</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <Input placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <FormField
-                  control={form.control}
-                  name="aboutMe"
-                  render={({ field }) => (
-                     <FormItem className={`!mt-8 w-2/3 mx-auto flex items-center gap-4`}>
-                        <FormLabel className={`min-w-[100px] text-nowrap text-right`}>About</FormLabel>
-                        <FormControl className={`!mt-0`}>
-                           <Textarea placeholder="" {...field} />
-                        </FormControl>
-                        <FormDescription>
-                        </FormDescription>
-                        <FormMessage />
-                     </FormItem>
-                  )}
-               />
-               <div className={`w-full flex flex-1 justify-end gap-2 justify-self-end`}>
-               </div>
-            </form>
-         </Form>
+                        <SelectContent>
+                           {[`---`, ...YEARS].map((year, i) => (
+                              <SelectItem key={i} value={i === 0 ? null : year.toString()}>{year}</SelectItem>
+                           ))}
+                        </SelectContent>
+                     </Select>
+                  </FormItem>
+               )}
+            />
+         </div>
+         <FormField
+            control={form.control}
+            name="aboutMe"
+            render={({ field }) => (
+               <FormItem className={`!mt-8 min-w-[400px] w-2/3 mx-auto flex items-start gap-4`}>
+                  <FormLabel className={`min-w-[100px] mt-2 text-nowrap text-right`}>About</FormLabel>
+                  <FormControl className={`!mt-0`}>
+                     <Textarea className={`resize-none`}
+                               placeholder="In a few words, tell us about yourself" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                  </FormDescription>
+                  <FormMessage />
+               </FormItem>
+            )}
+         />
+         <div className={`w-full flex flex-1 justify-end gap-2 justify-self-end`}>
+         </div>
       </div>
    );
 };

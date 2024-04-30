@@ -6,7 +6,6 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from modules.db import time_now
-from modules.images.image_classifier import ImageClassifier
 from modules.images.service import ImageService
 from modules.images.tasks.classify_image_job import ClassifyImageJob
 
@@ -28,7 +27,7 @@ async def classify_new_image(
             raise HTTPException(status_code=404)
 
         # Tags classification
-        scheduler.add_job(
+        classify_job = scheduler.add_job(
             ClassifyImageJob(image, image_service),
             args=[],
             id=f'classify_image_job-{image_id}_{uuid.uuid4()}')

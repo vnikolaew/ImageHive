@@ -162,15 +162,106 @@ export let xprisma = prisma.$extends({
          },
       },
       image: {
-         async search(searchValue: string, limit: number = 10): Promise<Image[]> {
-            const iLikeSearch = `%${searchValue}%`
+         async homeFeedRaw(limit: number = 20): Promise<Image[]> {
+            const images = await xprisma.$queryRaw<Image[]>`
+                SELECT "Image".*,
+                       COALESCE(il.likes * 1.0, 0)
+                           + COALESCE(ic.comments * 1.2, 0)
+                           + COALESCE(id.downloads * 1.5, 0)
+                           + COALESCE(icc.collections * 0.7, 0) +
+                       COALESCE(vc.views * 0.4, 0)
+                           as feed_score
+                FROM "Image"
+                         LEFT JOIN (SELECT "imageId",
+                                           COUNT(*) AS likes
+                                    FROM "ImageLike"
+                                    GROUP BY "imageId") AS il ON "Image".id = il."imageId"
+                         LEFT JOIN (SELECT "imageId",
+                                           COUNT(*) AS comments
+                                    FROM "ImageComment"
+                                    GROUP BY "imageId") ic ON "Image".id = ic."imageId"
+                         LEFT JOIN (SELECT "imageId",
+                                           COUNT(*) AS downloads
+                                    FROM "ImageDownload"
+                                    GROUP BY "imageId") id ON "Image".id = id."imageId"
+                         LEFT JOIN (SELECT "imageId",
+                                           COUNT(*) AS collections
+                                    FROM "CollectionImage"
+                                    GROUP BY "imageId") icc ON "Image".id = icc."imageId"
+                         LEFT JOIN (SELECT "imageId",
+                                           COUNT(*) AS views
+                                    FROM "ImageView"
+                                    GROUP BY "imageId") vc ON "Image".id = vc."imageId"
+                ORDER BY feed_score DESC, "createdAt" DESC
+                LIMIT ${limit};
+            `;
+
+            return images;
+         },
+         async search_Trending(searchValue: string, limit: number = 10): Promise<Image[]> {
+            const iLikeSearch = `%${searchValue}%`;
 
             const result = await xprisma.$queryRaw`
                 SELECT *,
-                       unnested_tag                          AS tag_match,
+                       unnested_tag                              AS tag_match,
                        levenshtein(LOWER(title), ${searchValue}) AS title_distance
-                FROM (SELECT * FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
-                WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                FROM (SELECT *
+                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                ORDER BY title_distance
+                LIMIT ${limit};
+            `;
+
+            return Object
+               .entries(groupBy(result as any[], i => i.id))
+               .map(([_, value]) => value[0] as Image);
+         },
+         async search_Latest(searchValue: string, limit: number = 10): Promise<Image[]> {
+            const iLikeSearch = `%${searchValue}%`;
+
+            const result = await xprisma.$queryRaw`
+                SELECT *,
+                       unnested_tag                              AS tag_match,
+                       levenshtein(LOWER(title), ${searchValue}) AS title_distance
+                FROM (SELECT *
+                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                ORDER BY "createdAt" DESC, title_distance
+                LIMIT ${limit};
+            `;
+
+            return Object
+               .entries(groupBy(result as any[], i => i.id))
+               .map(([_, value]) => value[0] as Image);
+         },
+         async search_MostRelevant(searchValue: string, limit: number = 10): Promise<Image[]> {
+            const iLikeSearch = `%${searchValue}%`;
+
+            const result = await xprisma.$queryRaw`
+                SELECT *,
+                       unnested_tag                              AS tag_match,
+                       levenshtein(LOWER(title), ${searchValue}) AS title_distance
+                FROM (SELECT *
+                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                ORDER BY "createdAt" DESC, title_distance
+                LIMIT ${limit};
+            `;
+
+            return Object
+               .entries(groupBy(result as any[], i => i.id))
+               .map(([_, value]) => value[0] as Image);
+         },
+         async search(searchValue: string, limit: number = 10): Promise<Image[]> {
+            const iLikeSearch = `%${searchValue}%`;
+
+            const result = await xprisma.$queryRaw`
+                SELECT *,
+                       unnested_tag                              AS tag_match,
+                       levenshtein(LOWER(title), ${searchValue}) AS title_distance
+                FROM (SELECT *
+                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
                 ORDER BY title_distance
                 LIMIT ${limit};
             `;

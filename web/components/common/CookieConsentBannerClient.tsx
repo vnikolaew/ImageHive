@@ -119,7 +119,7 @@ const CustomizePreferencesModal = ({ open, onBack, cookiePreferences, hideBanner
          hideBanner?.()
 
          const { message, ...rest } = TOASTS.CHANGE_COOKIE_PREFERENCES_SUCCESS;
-         toast(message, { ...rest, icon: <Cookie size={16} /> });
+         toast(message, { ...rest, icon: <Cookie className={`text-orange-800`} size={16} /> });
 
       }).catch(console.error);
    });

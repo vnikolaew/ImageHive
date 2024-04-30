@@ -6,6 +6,8 @@ import { ImageHiveApiResponse } from "@/lib/utils";
 import jwt from "jsonwebtoken";
 import { Resend } from "resend";
 import { User } from "@prisma/client";
+import ResetPasswordEmail from "@/emails/ResetPasswordEmail";
+import { RESEND_ONBOARDING_EMAIL } from "@/lib/consts";
 
 const requestSchema = z.object({
    email: z.string().email({ message: `Please enter valid e-mail address.` }),
@@ -16,11 +18,10 @@ async function sendResetEmailAsync(user: User, user_token: string): Promise<void
    const resend = new Resend(process.env.AUTH_RESEND_KEY!);
 
    await resend.emails.send({
-      from: `onboarding@resend.dev`,
+      from: RESEND_ONBOARDING_EMAIL,
       to: user.email,
       subject: "Password Reset Link for your Account",
-      html: "<p>Click the link below to reset your account password:</p>\
-             <p><a href=\"" + url + "\"><b>Reset</b></a></p>",
+      react: ResetPasswordEmail({ url, username: user.name! }),
    });
 }
 
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
       return ImageHiveApiResponse.success({
          user,
-         account
+         account,
       });
    } catch (err: any) {
       return ImageHiveApiResponse.badRequest({

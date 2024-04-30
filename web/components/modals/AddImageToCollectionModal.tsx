@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useQueryString } from "@/hooks/useQueryString";
 import { ImageCollectionApiResponse } from "@/app/api/collections/route";
-import { getFileName } from "@/lib/utils";
+import { cn, getFileName } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { handleAddImageToCollection, handleRemoveImageFromCollection } from "@/app/actions";
 
@@ -46,29 +46,14 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
    const [searchValue, setSearchValue] = useState(``);
 
    const filteredCollections = useMemo(() => {
-      return searchValue?.length ? data?.collections.filter(c => c.title?.toLowerCase().includes(searchValue.toLowerCase())) : (data?.collections ?? []);
+      return searchValue?.length
+         ? data?.collections.filter(c => c.title?.toLowerCase().includes(searchValue.toLowerCase()))
+         : (data?.collections ?? []);
    }, [data?.collections, searchValue]);
 
-   const [imageId] = useQueryString();
-
-   useEffect(() => {
-      if (data !== undefined && !isLoading && !data?.collections?.length && imageId?.length && modal === ModalType.ADD_IMAGE_TO_COLLECTION) {
-         console.log(`Adding image with ID ${imageId} to default Saved collection`);
-         fetch(API_ROUTES.COLLECTIONS, {
-            method: `POST`,
-            headers: {
-               Accept: HTTP.MEDIA_TYPES.APPLICATION_JSON,
-               "Content-Type": HTTP.MEDIA_TYPES.APPLICATION_JSON,
-            },
-            body: JSON.stringify({ imageId, title: `Saved`, public: `false` }),
-
-         }).then(res => res.json())
-            .then(res => {
-               console.log({ res });
-            })
-            .catch(console.error);
-      }
-   }, [data, data?.collections?.length, imageId, isLoading, modal]);
+   const noResultsFound = useMemo(() => {
+      return !!searchValue?.length && !filteredCollections?.length;
+   }, [filteredCollections?.length, searchValue?.length]);
 
    return (
       <Dialog onOpenChange={_ => toggleModal(ModalType.ADD_IMAGE_TO_COLLECTION)}
@@ -91,12 +76,19 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
             <div className={`w-full`}>
                <ImageCollectionSearchModal search={searchValue} setSearch={setSearchValue} />
             </div>
-            <div className={`w-full mt-2 rounded-md p-2 bg-neutral-100/70 min-h-[200px]`}>
-               <ScrollArea>
-                  {filteredCollections?.map((collection, i) => (
-                     <ImageCollectionItem collection={collection} key={i} />
-                  ))}
-               </ScrollArea>
+            <div className={cn(`w-full mt-2 rounded-md p-2 bg-neutral-100/70 min-h-[200px]`,
+               noResultsFound && `!min-h-[100px] flex items-center justify-center`)}>
+               {noResultsFound ? (
+                  <div className={`w-full h-full flex items-center justify-center`}>
+                     No collections found.
+                  </div>
+               ) : (
+                  <ScrollArea className="!h-full">
+                     {filteredCollections?.map((collection, i) => (
+                        <ImageCollectionItem collection={collection} key={i} />
+                     ))}
+                  </ScrollArea>
+               )}
             </div>
          </DialogContent>
       </Dialog>

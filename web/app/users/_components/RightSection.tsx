@@ -2,7 +2,18 @@
 import React, { Fragment } from "react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Earth, Ellipsis, Flag, MessagesSquare, Pencil, Share2 } from "lucide-react";
+import {
+   Earth,
+   Ellipsis,
+   Facebook,
+   Flag,
+   Instagram, LucideIcon,
+   MessagesSquare,
+   Pencil,
+   Share2,
+   Twitter,
+   Youtube,
+} from "lucide-react";
 import {
    DropdownMenu,
    DropdownMenuContent,
@@ -11,19 +22,54 @@ import {
    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { FacebookIcon, FacebookShareButton } from "react-share";
 import { ModalType, useModals } from "@/providers/ModalsProvider";
+import { Account, Image, Profile, User } from "@prisma/client";
 
 interface RightSectionProps {
-   isMe: boolean;
+   isMe: boolean,
+   user: User & {
+      images: (Image & { _count: { likes: number } })[];
+      accounts: Account[];
+      _count: { followedBy: number; imageDownloads: number; imageLikes: number; following: number };
+      profile: Profile
+   }
 }
 
-const RightSection = ({ isMe }: RightSectionProps) => {
+const SOCIAL_ICONS: Record<string, LucideIcon> = {
+   "facebook": Facebook,
+   "instagram": Instagram,
+   "soundCloud": null!,
+   "twitter": Twitter,
+   "youtube": Youtube,
+};
+
+const RightSection = ({ isMe, user }: RightSectionProps) => {
    const { modal, openModal } = useModals();
+   console.log(Object.keys(user.profile?.onlineProfiles));
 
    return (
       <div className={`flex items-center gap-2`}>
          <TooltipProvider>
+            {Object.entries(user.profile?.onlineProfiles ?? {})
+               .filter(x => !!x[1]?.length)
+               .map(([key, value]) => [key, value, SOCIAL_ICONS[key]])
+               .map(([key, value, Icon]) => (
+                  <Tooltip key={key}>
+                     <TooltipTrigger>
+                        <Button
+                           asChild
+                           className={`rounded-full border-[0px] border-neutral-300 !p-3 !h-fit`} variant={`ghost`}
+                        >
+                           <Link target={`_blank`} href={value}>
+                              <Icon size={20} />
+                           </Link>
+                        </Button>
+                     </TooltipTrigger>
+                     <TooltipContent
+                        side={`bottom`}
+                        className={`dark:bg-white dark:text-black bg-black`}>{`${key[0].toUpperCase()}${key.slice(1)}`}</TooltipContent>
+                  </Tooltip>
+               ))}
             <Tooltip>
                <TooltipTrigger>
                   <Button

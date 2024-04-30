@@ -6,7 +6,7 @@ generator client {
 datasource db {
   provider   = "postgresql"
   url        = env("DATABASE_URL")
-  extensions = [pgcrypto, pgvector(map: "vector", schema: "public")]
+  extensions = [pgcrypto, pgvector(map: "vector", schema: "public"), pg_trgm, fuzzystrmatch()]
 }
 
 model User {
@@ -36,7 +36,7 @@ model User {
 
 model Profile {
   id     String @id @default(cuid())
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 
   gender         Gender    @default(UNSPECIFIED)
@@ -144,7 +144,7 @@ model Tag {
 model ImageLike {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  image    Image  @relation(fields: [imageId], references: [id])
+  image    Image  @relation(fields: [imageId], references: [id], onDelete: Cascade)
   imageId  String @db.Uuid
   metadata Json   @db.JsonB
 
@@ -191,7 +191,7 @@ model CollectionImage {
   id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   metadata Json   @db.JsonB
 
-  collection   ImageCollection @relation(fields: [collectionId], references: [id])
+  collection   ImageCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   collectionId String          @db.Uuid
 
   image   Image  @relation(fields: [imageId], references: [id])
@@ -205,7 +205,7 @@ model CollectionImage {
 model ImageDownload {
   id String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 
-  image    Image  @relation(fields: [imageId], references: [id])
+  image    Image  @relation(fields: [imageId], references: [id], onDelete: Cascade)
   imageId  String @db.Uuid
   metadata Json   @db.JsonB
 
@@ -216,7 +216,7 @@ model ImageDownload {
 }
 
 model ImageView {
-  image    Image  @relation(fields: [imageId], references: [id])
+  image    Image  @relation(fields: [imageId], references: [id], onDelete: Cascade)
   imageId  String @db.Uuid
   metadata Json   @db.JsonB
 

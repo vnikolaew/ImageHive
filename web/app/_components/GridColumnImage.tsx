@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment } from "react";
+import React from "react";
 import { Image } from "@prisma/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";

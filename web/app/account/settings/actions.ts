@@ -28,7 +28,7 @@ const editProfileFormSchema = z.object({
    lastName: z.string(),
    city: z.string(),
    country: z.string(),
-   dob: z.date().nullable(),
+   dob: z.date().nullable().or(z.undefined()),
    aboutMe: z.string(),
 });
 

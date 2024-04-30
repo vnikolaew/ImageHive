@@ -84,6 +84,15 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   DELETE_COLLECTION_SUCCESS: {
+      message: `Collection successfully deleted.`,
+      description: `You've successfully deleted the collection.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
    EDIT_PROFILE_SUCCESS: {
       message: `Profile successfully edited.`,
       description: `You've successfully edited your profile details.`,
@@ -103,8 +112,8 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       duration: 10_000,
    },
    CHANGE_COOKIE_PREFERENCES_SUCCESS: {
-      message: `Cookie preferences changed.`,
-      description: `You've successfully changed your cookies preferences.`,
+      message: `Cookie preferences saved.`,
+      description: `You've successfully saved your cookies preferences.`,
       className: ``,
       classNames: {
          title: `text-lg`, description: `text-md`,

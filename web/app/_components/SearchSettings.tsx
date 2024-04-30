@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { changeQsParam, cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 
@@ -60,7 +60,7 @@ const SearchSettings = ({ hideAi }: SearchSettingsProps) => {
                      e.preventDefault();
                      setHideAiChecked(!hideAiChecked);
 
-                     window.location.href = `/?hideAi=${!hideAiChecked}`;
+                     changeQsParam(`hideAi`, !hideAiChecked)
                      setOpen(true);
                   }}
                   onCheckedChange={value => {

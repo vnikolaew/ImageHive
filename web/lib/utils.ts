@@ -196,10 +196,19 @@ export async function getGravatarImageUrl(email: string) {
          imageUrl = body[`entry`][`photos`][0].value;
       }
 
-      if(imageUrl) {
-         imageUrl = `${imageUrl}?s=640`
+      if (imageUrl) {
+         imageUrl = `${imageUrl}?s=640`;
       }
    }
 
    return imageUrl;
+}
+
+export function changeQsParam(key: string, value: any) {
+   const url = new URL(window.location.href);
+   const searchParams = url.searchParams;
+   searchParams.set(key, String(value));
+
+   url.search = searchParams.toString();
+   window.location.href = url.toString();
 }

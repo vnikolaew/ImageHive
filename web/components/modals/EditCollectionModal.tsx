@@ -14,13 +14,15 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Check, EyeOff } from "lucide-react";
+import { Check, EyeOff, TrashIcon } from "lucide-react";
 import useSWR, { MutatorCallback, MutatorOptions } from "swr";
 import { ImageCollectionApiResponse } from "@/app/api/collections/route";
 import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
 import { useQsCollectionId } from "@/hooks/useQueryString";
 import { ApiResponse } from "@/lib/utils";
 import { toast } from "sonner";
+import { usePromise } from "@/hooks/usePromise";
+import { LoadingSpinner } from "@/components/modals/SocialLogins";
 
 const editCollectionSchema = z.object({
    title: z.string().max(100, { message: `Name must not exceed 100 characters.` }),
@@ -58,6 +60,24 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
          public: collection?.public?.toString() ?? `false`,
          title: collection?.title ?? ``,
       },
+   });
+   const { loading: deleteLoading, action: handleDeleteCollection } = usePromise(() => {
+      return fetch(`${API_ROUTES.COLLECTIONS}/${collection!.id}`, {
+         method: `DELETE`,
+         headers: {
+            Accept: HTTP.MEDIA_TYPES.APPLICATION_JSON,
+            "Content-Type": HTTP.MEDIA_TYPES.APPLICATION_JSON,
+         },
+      }).then(res => res.json())
+         .then((res: ApiResponse<any>) => {
+            console.log({ res });
+            if (res.success) {
+               closeModal(ModalType.EDIT_COLLECTION);
+               const { message, ...rest } = TOASTS.DELETE_COLLECTION_SUCCESS;
+               toast(message, { ...rest, icon: <Check size={16} /> });
+            }
+         })
+         .catch(console.error);
    });
    const isPublic = form.watch(`public`);
 
@@ -152,10 +172,29 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
                         </span>
                      </div>
                      <div className={`w-full !mb-4 flex flex-1 justify-between gap-2 justify-self-end`}>
-                        <Button variant={`outline`} onClick={_ => {
-                           toggleModal(ModalType.EDIT_COLLECTION);
-                        }} className={`rounded-full`} type="button">Cancel</Button>
-                        <Button className={`rounded-full !px-6`} type="submit">Save</Button>
+                        <Button variant={`outline`}
+                                onClick={_ => {
+                                   toggleModal(ModalType.EDIT_COLLECTION);
+                                }} className={`rounded-full`} type="button">Cancel</Button>
+                        <div className={`flex items-center gap-2`}>
+                           <Button
+                              disabled={deleteLoading} onClick={async e => {
+                              e.preventDefault();
+                              await handleDeleteCollection();
+
+                           }} variant={"destructive"} className={`rounded-full shadow-sm !px-6 gap-2`}
+                              type="button">
+                              {deleteLoading ? (
+                                 <LoadingSpinner text={`Deleting ...`} />
+                              ) : (
+                                 <>
+                                    <TrashIcon size={14} />
+                                    Delete
+                                 </>
+                              )}
+                           </Button>
+                           <Button className={`rounded-full shadow-sm !px-6`} type="submit">Save</Button>
+                        </div>
                      </div>
                   </form>
                </Form>

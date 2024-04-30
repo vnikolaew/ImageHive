@@ -9,7 +9,6 @@ import CollectionsGrid from "@/app/account/collections/_components/CollectionsGr
 import { GenericSortDropdown } from "@/app/account/media/_components/MediaSortDropdown";
 import UserDownloadsHistory from "@/app/account/collections/_components/UserDownloadsHistory";
 import { getImageLikes } from "@/app/_components/HomeFeedSection";
-import * as sea from "node:sea";
 
 export interface PageProps {
    searchParams: { sort: string, tab?: string, qs?: string };

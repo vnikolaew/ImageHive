@@ -131,4 +131,3 @@ export async function PUT(req: NextRequest, res: NextResponse): Promise<any> {
 
    return ImageHiveApiResponse.success({ newCollection });
 }
-

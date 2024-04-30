@@ -1,20 +1,38 @@
 import React from "react";
 import { xprisma } from "@/lib/prisma";
 import { GridColumn } from "@/app/_components/GridColumn";
-import { getImageLikes } from "@/app/_components/HomeFeedSection";
+import { getImageLikes, getLikedImageIds } from "@/app/_components/HomeFeedSection";
 import SimilarTagsSection from "@/app/search/_components/SimilarTagsSection";
+import { SortOptions } from "@/app/search/_components/SearchSettingsBar";
 
 export interface SearchResultsSectionProps {
    search: string;
+   order?: (typeof SortOptions)[number];
 }
 
-const SearchResultsSection = async ({ search }: SearchResultsSectionProps) => {
+const SearchResultsSection = async ({ search, order }: SearchResultsSectionProps) => {
    search = search.toLowerCase().trim();
-   const imageHits: any[] = await xprisma.image.search(search);
 
-   const tags = await xprisma.image.mostUsedTags();
-   const likedImages = await getImageLikes();
-   const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
+   let imageHits: any[];
+   switch (order) {
+      case `Latest`:
+         imageHits = await xprisma.image.search_Latest(search);
+         break;
+      case `Editor's choice`:
+         imageHits = await xprisma.image.search(search);
+         break;
+      case `Most relevant`:
+         imageHits = await xprisma.image.search_MostRelevant(search);
+         break;
+      case `Trending`:
+         imageHits = await xprisma.image.search_Trending(search);
+         break;
+      default:
+         imageHits = await xprisma.image.search(search);
+         break;
+   }
+
+   const likedImageIds = await getLikedImageIds();
 
    const firstColumn = imageHits.filter((_, index) => index % 4 === 0);
    const secondColumn = imageHits.filter((_, index) => index % 4 === 1);

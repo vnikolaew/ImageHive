@@ -7,9 +7,7 @@ export interface PageProps {
 }
 
 async function getStats() {
-
    const session = await auth();
-
    const userImages = await xprisma.image.findMany({
       where: {
          userId: session?.user?.id as string,
@@ -20,10 +18,15 @@ async function getStats() {
                comments: true,
                likes: true,
                downloads: true,
+               views: true
             },
          },
       },
    });
+
+   const imageViews = userImages
+      .map(i => i._count.views)
+      .reduce((a, b) => a + b, 0);
 
    const imageLikes = userImages
       .map(i => i._count.likes)
@@ -37,16 +40,16 @@ async function getStats() {
       .map(i => i._count.comments)
       .reduce((a, b) => a + b, 0);
 
-   return { imageLikes, imageComments, imageDownloads };
+   return { imageLikes, imageComments, imageDownloads , imageViews };
 }
 
 const Page = async ({}: PageProps) => {
-   const { imageDownloads, imageComments, imageLikes } = await getStats();
+   const { imageDownloads, imageComments, imageLikes, imageViews } = await getStats();
 
    const STATS: StatisticsCardProps[] = [
       {
          title: `Views`,
-         counter: 0,
+         counter: imageViews,
       },
       {
          title: `Downloads`,

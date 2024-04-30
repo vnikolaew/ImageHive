@@ -11,7 +11,7 @@ import useSWRInfinite from "swr/infinite";
 import { cn, fetcher } from "@/lib/utils";
 import { ImageCommentsApiResponse } from "@/app/api/comments/[imageId]/route";
 import { API_ROUTES } from "@/lib/consts";
-import { Ellipsis, Loader2 } from "lucide-react";
+import { Ellipsis } from "lucide-react";
 import { LoadingSpinner } from "@/components/modals/SocialLogins";
 import {
    DropdownMenu,
@@ -34,7 +34,7 @@ function dateSorter(a: ImageComment, b: ImageComment) {
 const DEFAULT_LIMIT = 10;
 
 const ImageComments = ({ comments: initialComments }: ImageCommentsProps) => {
-   const darkMode = useIsDarkMode()
+   const darkMode = useIsDarkMode();
    const imageId = initialComments.at(0)?.imageId;
    const { data, size, isLoading, setSize, mutate } = useSWRInfinite<ImageComment[]>((index, prevData) => {
          if (prevData && !prevData?.length) return null; // reached the end
@@ -106,13 +106,18 @@ const ImageComments = ({ comments: initialComments }: ImageCommentsProps) => {
                   <div className={`mr-4`}>
                      <DropdownMenu>
                         <DropdownMenuTrigger>
-                           <Button className={`rounded-full !py-0 !px-6 !h-7`} variant={darkMode ? `ghost` : `secondary`}>
+                           <Button
+                              className={`rounded-full !py-0 !px-5 !h-7`}
+                              variant={darkMode ? `ghost` : `secondary`}>
                               <Ellipsis size={12} />
                            </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className={`p-2 rounded-lg`}>
-                           <DropdownMenuItem onClick={_ => handleTranslateComment(comment)}
-                                             className={`cursor-pointer min-w-[200px]`}>Translate</DropdownMenuItem>
+                           <DropdownMenuItem
+                              onClick={_ => handleTranslateComment(comment)}
+                              className={`cursor-pointer min-w-[200px]`}>
+                              Translate
+                           </DropdownMenuItem>
                         </DropdownMenuContent>
                      </DropdownMenu>
                   </div>

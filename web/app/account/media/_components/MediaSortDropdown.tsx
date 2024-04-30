@@ -6,9 +6,10 @@ import { parseAsString, useQueryState } from "nuqs";
 interface MediaSortDropdownProps {
    options: readonly string[];
    qsKey?: string;
+   onChange?: (value: string) => void;
 }
 
-export const GenericSortDropdown = ({ options, qsKey }: MediaSortDropdownProps) => {
+export const GenericSortDropdown = ({ options, qsKey, onChange }: MediaSortDropdownProps) => {
    const [sort, setSort] = useQueryState<string>(qsKey ?? `sort`,
       parseAsString.withOptions({
          history: `push`,
@@ -16,9 +17,10 @@ export const GenericSortDropdown = ({ options, qsKey }: MediaSortDropdownProps) 
 
    return (
       <div>
-         <Select onValueChange={value => {
-            setSort(value);
-         }} value={sort ?? options[0]}>
+         <Select
+            onValueChange={value => {
+               setSort(value).then(_ => onChange?.(value));
+            }} value={sort ?? options[0]}>
             <SelectTrigger className="w-[180px] rounded-full pl-4">
                <SelectValue placeholder={sort ?? options[0]} />
             </SelectTrigger>

@@ -3,8 +3,6 @@ import { xprisma } from "@/lib/prisma";
 import { GridColumn } from "@/app/_components/GridColumn";
 import { auth } from "@/auth";
 import { sleep } from "@/lib/utils";
-import { images } from "next/dist/build/webpack/config/blocks/images";
-import { i } from "nuqs/dist/serializer-_rJbONuT";
 
 export const getImageLikes = cache(async () => {
    const session = await auth();
@@ -34,27 +32,15 @@ interface HomeFeedSectionProps {
 
 const HomeFeedSection = async ({ hideAi }: HomeFeedSectionProps) => {
    await sleep(1000);
-   let images = await xprisma.image.findMany({
-      orderBy: { createdAt: `desc` },
-      take: 20,
-      include: {
-         _count: {
-            select: {
-               likes: true,
-               comments: true,
-               downloads: true,
-               collections: true
-            },
-         },
-      },
-   });
-   console.log({ imagesInfos : images.map(i => i._count) });
+   let images = await xprisma.image.homeFeedRaw();
+   console.log({ images });
 
    const [likedImageIds, savedImages] = await Promise.all([
       getLikedImageIds(),
       getImageSavesIds(),
    ]);
-   images = hideAi ? [...images].filter(i => !i.metadata?.aiGenerated) : images;
+
+   images = (hideAi ? [...images].filter(i => !i.metadata?.aiGenerated) : images);
 
    const firstColumn = images.filter((_, index) => index % 4 === 0);
    const secondColumn = images.filter((_, index) => index % 4 === 1);

@@ -53,7 +53,7 @@ const UserProfileSection = ({ user, amIFollower, isMe }: UserProfileSectionProps
                   )
                }
             </div>
-            <RightSection isMe={isMe} />
+            <RightSection user={user} isMe={isMe} />
          </div>
 
          <div className={`flex items-center mt-4 gap-4`}>

@@ -83,7 +83,6 @@ const WelcomeEmail = ({username}: WelcomeEmailProps) => {
          </Tailwind>
       </Html>
    )
-      ;
 };
 
 export default WelcomeEmail;

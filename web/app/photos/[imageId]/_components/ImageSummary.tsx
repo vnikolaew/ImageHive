@@ -15,7 +15,7 @@ import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import { handleDownloadImage } from "@/app/photos/[imageId]/actions";
 import { LoadingSpinner } from "@/components/modals/SocialLogins";
 import { useQueryString } from "@/hooks/useQueryString";
-import posthog from "posthog-js"
+import posthog from "posthog-js";
 import { useSession } from "next-auth/react";
 
 export interface ImageSummaryProps {
@@ -29,7 +29,7 @@ export interface ImageSummaryProps {
 const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFollowed }: ImageSummaryProps) => {
    const { openModal } = useModals();
    const [, setImageId] = useQueryString();
-   const session = useSession()
+   const session = useSession();
    const { loading, action: handleLike } = usePromise(() => {
       if (haveILiked) {
          return handleUnlikeImage(image.id).then(console.log).catch(console.error);
@@ -40,16 +40,16 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
    const { loading: downloadLoading, action: handleDownload } = usePromise(async () => {
       return await handleDownloadImage(image.id)
          .then(res => {
-            console.log( {res});
-            if(res.success) {
+            console.log({ res });
+            if (res.success) {
 
-               const result =  posthog.capture(`image_download`, {
+               const result = posthog.capture(`image_download`, {
                   $event_type: `image_download`,
                   imageId: image.id,
                   userId: session.data?.user?.id,
-                  timestamp: Date.now()
-               })
-               console.log( { result });
+                  timestamp: Date.now(),
+               });
+               console.log({ result });
             }
          }).catch(console.error);
    });
@@ -60,7 +60,7 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
       if (imgElement) downloadImage(imgElement as HTMLImageElement, image.original_file_name);
 
       // if (!haveIDownloaded) {
-         await handleDownload();
+      await handleDownload();
       // }
    }
 
@@ -72,7 +72,7 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
 
    return (
       <div
-         className="w-full h-fit sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-lg p-6">
+         className="w-full h-fit border-[1px] border-neutral-100 sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-lg p-6">
          <div className={`w-full flex items-center gap-2 justify-center`}>
             <CircleCheck className={`dark:text-neutral-200`} size={16} />
             <span className={`dark:text-neutral-300 text-sm`}>  Free for use under the ImageHive <Link
@@ -114,12 +114,14 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
                tooltipText={`Add to collection`} />
             <ImageAction action={() => {
                const element = document.getElementById(`comment-area`) as HTMLTextAreaElement;
-               element?.focus({ preventScroll: false });
-               element?.scrollIntoView({ behavior: `smooth` });
+               element?.scrollIntoView({ behavior: `smooth`, block: `nearest` });
+               setTimeout(() => {
+                  element?.focus({ preventScroll: false });
+               }, 200);
             }} icon={<MessageSquare size={18} />} text={``} tooltipText={`Comment`} />
             <ImageAction
                action={() => openModal(ModalType.SHARE_PROFILE)} icon={<Share2 size={20} />} text={``}
-                         tooltipText={`Share`} />
+               tooltipText={`Share`} />
          </div>
          <div className={`w-full`}>
             <ImageStatistics image={image} />

@@ -30,7 +30,7 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
    const showClearButton = useMemo(() => {
       return !!comment?.length;
    }, [comment?.length]);
-   
+
    const { action: handleComment, loading } = usePromise((comment: string) => {
       return handleCommentOnImage(imageId, comment)
          .then(res => {
@@ -60,6 +60,7 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
             <div className={`relative w-full`}>
                <motion.textarea
                   className={`resize-none relative !text-base placeholder:!text-neutral-400 placeholder:!text-sm p-2 rounded-xl w-full !pl-6 !py-4 border-none bg-neutral-100 text-black focus-visible:outline-none focus-visible:border-none focus-visible:ring-0  shadow-md !min-h-fit overflow-y-auto`}
+                  style={{ scrollBehavior: `smooth` }}
                   placeholder={`Add your comment`}
                   value={comment}
                   onChange={e => setComment(e.target.value)}

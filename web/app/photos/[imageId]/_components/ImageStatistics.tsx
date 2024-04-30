@@ -6,7 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { tsIsDeclarationStart } from "sucrase/dist/types/parser/plugins/typescript";
+import { AnimatePresence, motion } from "framer-motion";
 
 export interface ImageStatisticsProps {
    image: ImageSummary;
@@ -35,14 +35,21 @@ const ImageStatistics = ({ image }: ImageStatisticsProps) => {
          <ImageStat text={`Views`} value={image._count.views} />
          <ImageStat text={`Downloads`} value={image._count.downloads} />
          <Collapsible className={`w-full !mt-0`} open={showDetails} onOpenChange={setShowDetails}>
-            <CollapsibleContent className={`w-full !mt-0 flex flex-col gap-1`}>
-               <ImageStat text={`Saves`} value={image._count.collections} />
-               <ImageStat text={`Media type`} value={image.file_format.toUpperCase()} />
-               <ImageStat text={`Resolution`} value={resolution} />
-               <ImageStat text={`Published date`} value={moment(image.createdAt).format(`dddd M, YYYY`)} />
-            </CollapsibleContent>
+            <AnimatePresence>
+               <CollapsibleContent asChild className={`w-full !mt-0 flex flex-col gap-1`}>
+                  <motion.div
+                     transition={{ duration: 0.2 }} initial={{ height: 0, opacity: 0 }}
+                     animate={{ height: "auto", opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
+                     <ImageStat text={`Saves`} value={image._count.collections} />
+                     <ImageStat text={`Media type`} value={image.file_format.toUpperCase()} />
+                     <ImageStat text={`Resolution`} value={resolution} />
+                     <ImageStat text={`Published date`} value={moment(image.createdAt).format(`dddd M, YYYY`)} />
+                  </motion.div>
+               </CollapsibleContent>
+            </AnimatePresence>
             <CollapsibleTrigger>
-               <Button className={`underline text-neutral-400 font-normal !px-0 text-sm 2xl:text-base mt-2`} variant={`link`}>
+               <Button className={`underline text-neutral-400 font-normal !px-0 text-sm 2xl:text-base mt-2`}
+                       variant={`link`}>
                   {showDetails ? `Hide` : `Show`} details <ChevronDown className={cn(`ml-1 transition-all duration-300`,
                   showDetails && `rotate-180`)} size={16} />
                </Button>
@@ -50,7 +57,8 @@ const ImageStatistics = ({ image }: ImageStatisticsProps) => {
          </Collapsible>
 
       </div>
-   );
+   )
+      ;
 };
 
 export default ImageStatistics;

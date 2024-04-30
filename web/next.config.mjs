@@ -18,6 +18,14 @@ const nextConfig = {
          {
             hostname: 'randomuser.me',
             protocol: `https`,
+         },
+         {
+            hostname: 'cdn.pixabay.com',
+            protocol: `https`,
+         },
+         {
+            hostname: 'pixabay.com',
+            protocol: `https`,
          }
       ]
    }

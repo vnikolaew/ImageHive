@@ -30,7 +30,11 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
    const { openModal } = useModals();
    const [, setImageId] = useQueryString();
    const session = useSession();
-   const { loading, action: handleLike } = usePromise(() => {
+   const { loading, action: handleLike } = usePromise(async () => {
+      if(!session.data)  {
+         openModal(ModalType.SIGN_IN)
+         return
+      }
       if (haveILiked) {
          return handleUnlikeImage(image.id).then(console.log).catch(console.error);
       } else {
@@ -65,6 +69,11 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
    }
 
    async function handleAddToCollection() {
+      if(!session.data) {
+         openModal(ModalType.SIGN_IN)
+         return;
+      }
+
       setImageId(image.id).then(_ => {
          setTimeout(_ => openModal(ModalType.ADD_IMAGE_TO_COLLECTION), 100);
       });
@@ -114,7 +123,8 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
                tooltipText={`Add to collection`} />
             <ImageAction action={() => {
                const element = document.getElementById(`comment-area`) as HTMLTextAreaElement;
-               element?.scrollIntoView({ behavior: `smooth`, block: `nearest` });
+
+               element?.scrollIntoView({ behavior: `smooth`,});
                setTimeout(() => {
                   element?.focus({ preventScroll: false });
                }, 200);

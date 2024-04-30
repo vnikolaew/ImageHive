@@ -9,7 +9,7 @@ import MediaSearchBar from "@/app/account/media/_components/MediaSearchBar";
 import { getImageLikes } from "@/app/_components/HomeFeedSection";
 import { Image as IImage } from "prisma/prisma-client";
 import { CollectionGridColumn } from "./_components/CollectionGridColumn";
-import { GenericSortDropdown } from "@/app/account/media/_components/MediaSortDropdown";
+import { GenericSortDropdown } from "@/app/account/media/_components/GenericSortDropdown";
 import EditCollectionButton from "@/app/account/collections/[collectionId]/_components/EditCollectionButton";
 import Link from "next/link";
 

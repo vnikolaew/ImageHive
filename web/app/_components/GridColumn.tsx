@@ -2,6 +2,7 @@ import React from "react";
 import GridColumnImage from "@/app/_components/GridColumnImage";
 import { randomUUID } from "node:crypto";
 import { Image as IImage } from "@prisma/client";
+import { isAbsoluteUrl } from "@/lib/utils";
 
 function getFileName(fullPath: string): string {
    return fullPath.split(`\\`).at(-1)!.trim();
@@ -20,7 +21,7 @@ export const GridColumn = async ({ images, likedImageIds, savedImages }: GridCol
             <GridColumnImage
                savedByMe={savedImages?.has(image.id)}
                likedByMe={likedImageIds.has(image.id)}
-               imageUrl={`/uploads/${getFileName(image.absolute_url)}`}
+               imageUrl={isAbsoluteUrl(image.absolute_url) ? image.absolute_url : `/uploads/${getFileName(image.absolute_url)}`}
                image={image}
                imageKey={image.id + randomUUID()}
                key={image.id + randomUUID()} />

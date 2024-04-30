@@ -4,16 +4,23 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import TopTagsSection from "@/app/_components/TopTagsSection";
 import HomeFeedSection from "@/app/_components/HomeFeedSection";
-import { Suspense } from "react";
-import { LoadingSpinner } from "@/components/modals/SocialLogins";
+import React, { Suspense } from "react";
+import HomeFeedSectionLoading from "@/app/_components/HomeFeedSectionLoading";
 
 interface HomeProps {
-   searchParams: { hideAi?: string };
+   searchParams: { hideAi?: string, order?: string };
 }
 
+export const FeedSortOptions = [
+   `Latest`,
+   `Trending`,
+   `Editor's choice`,
+] as const;
+
 export default async function Home(props: HomeProps) {
-   const hideAi = props.searchParams.hideAi === `true`
+   const hideAi = props.searchParams.hideAi === `true`;
    const imagesCount = await xprisma.image.count();
+   console.log({ props });
 
    return (
       <main className="flex min-h-screen flex-col items-center justify-start gap-12">
@@ -41,9 +48,9 @@ export default async function Home(props: HomeProps) {
             </div>
          </div>
          <div className={`w-3/4`}>
-            <TopTagsSection hideAi={hideAi}  />
-            <Suspense fallback={<LoadingSpinner text={``} />}>
-               <HomeFeedSection hideAi={hideAi} />
+            <TopTagsSection hideAi={hideAi} />
+            <Suspense fallback={<HomeFeedSectionLoading />}>
+               <HomeFeedSection order={props.searchParams.order as any ?? `Latest`} hideAi={hideAi} />
             </Suspense>
          </div>
       </main>

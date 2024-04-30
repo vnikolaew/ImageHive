@@ -198,8 +198,17 @@ export let xprisma = prisma.$extends({
 
             return images;
          },
-         async search_Trending(searchValue: string, limit: number = 10): Promise<Image[]> {
+
+         async homeFeedRaw_Latest(limit: number = 20): Promise<Image[]> {
+            return await xprisma.image.findMany({
+               orderBy: { createdAt: `desc` },
+               take: limit,
+            });
+         },
+
+         async search_Trending(searchValue: string, filters?: Record<string, any>, limit: number = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
+            const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
             const result = await xprisma.$queryRaw`
                 SELECT *,
@@ -207,7 +216,7 @@ export let xprisma = prisma.$extends({
                        levenshtein(LOWER(title), ${searchValue}) AS title_distance
                 FROM (SELECT *
                       FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
-                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                 ORDER BY title_distance
                 LIMIT ${limit};
             `;
@@ -216,8 +225,9 @@ export let xprisma = prisma.$extends({
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async search_Latest(searchValue: string, limit: number = 10): Promise<Image[]> {
+         async search_Latest(searchValue: string, filters?: Record<string, any>, limit: number = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
+            const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
             const result = await xprisma.$queryRaw`
                 SELECT *,
@@ -225,7 +235,7 @@ export let xprisma = prisma.$extends({
                        levenshtein(LOWER(title), ${searchValue}) AS title_distance
                 FROM (SELECT *
                       FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
-                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                 ORDER BY "createdAt" DESC, title_distance
                 LIMIT ${limit};
             `;
@@ -234,8 +244,9 @@ export let xprisma = prisma.$extends({
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async search_MostRelevant(searchValue: string, limit: number = 10): Promise<Image[]> {
+         async search_MostRelevant(searchValue: string, filters?: Record<string, any>, limit: number = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
+            const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
             const result = await xprisma.$queryRaw`
                 SELECT *,
@@ -243,7 +254,7 @@ export let xprisma = prisma.$extends({
                        levenshtein(LOWER(title), ${searchValue}) AS title_distance
                 FROM (SELECT *
                       FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
-                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                 ORDER BY "createdAt" DESC, title_distance
                 LIMIT ${limit};
             `;
@@ -252,16 +263,16 @@ export let xprisma = prisma.$extends({
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async search(searchValue: string, limit: number = 10): Promise<Image[]> {
+         async search(searchValue: string, filters?: Record<string, any>, limit: number = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
+            const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
             const result = await xprisma.$queryRaw`
-                SELECT *,
-                       unnested_tag                              AS tag_match,
+                SELECT *, unnested_tag                              AS tag_match,
                        levenshtein(LOWER(title), ${searchValue}) AS title_distance
                 FROM (SELECT *
                       FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
-                      WHERE i."unnested_tag" ILIKE ${iLikeSearch}) s
+                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                 ORDER BY title_distance
                 LIMIT ${limit};
             `;

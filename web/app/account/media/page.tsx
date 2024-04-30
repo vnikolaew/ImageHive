@@ -7,7 +7,7 @@ import AccountMediaItem from "@/app/account/media/_components/AccountMediaItem";
 import MediaSearchBar from "@/app/account/media/_components/MediaSearchBar";
 import {
    GenericSortDropdown,
-} from "@/app/account/media/_components/MediaSortDropdown";
+} from "@/app/account/media/_components/GenericSortDropdown";
 import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import Link from "next/link";

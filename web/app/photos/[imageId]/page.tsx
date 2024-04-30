@@ -2,7 +2,7 @@ import React, { cache, Suspense } from "react";
 import { xprisma } from "@/lib/prisma";
 import Image from "next/image";
 import path from "path";
-import { getFileName } from "@/lib/utils";
+import { getFileName, isAbsoluteUrl } from "@/lib/utils";
 import { notFound } from "next/navigation";
 import { Loader2 } from "lucide-react";
 import ImageSummary from "@/app/photos/[imageId]/_components/ImageSummary";
@@ -47,11 +47,14 @@ const getImage = cache(async (id: string) => {
 
 const Page = async ({ params: { imageId } }: PageProps) => {
    const session = await auth();
-   const imageView = await xprisma.imageView.upsert({
-      where: { userId_imageId: { imageId, userId: session?.user?.id as string } },
-      create: { userId: session?.user?.id!, imageId, metadata: {} },
-      update: { userId: session?.user?.id!, imageId, metadata: {} },
-   });
+   if (session) {
+      const imageView = await xprisma.imageView.upsert({
+         where: { userId_imageId: { imageId, userId: session?.user?.id as string } },
+         create: { userId: session?.user?.id!, imageId, metadata: {} },
+         update: { userId: session?.user?.id!, imageId, metadata: {} },
+      });
+
+   }
 
    const image = await getImage(imageId);
    if (!image) return notFound();
@@ -104,7 +107,8 @@ const Page = async ({ params: { imageId } }: PageProps) => {
                      layout="responsive"
                      width={600}
                      height={600}
-                     src={path.join(`/uploads`, getFileName(image?.absolute_url)!).replaceAll(`\\`, `/`)} alt={``} />
+                     src={isAbsoluteUrl(image?.absolute_url) ? image.absolute_url : path.join(`/uploads`, getFileName(image?.absolute_url)!).replaceAll(`\\`, `/`)}
+                     alt={``} />
                </div>
             </div>
             <div className={`mt-4`}>

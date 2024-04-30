@@ -10,6 +10,7 @@ import { ModalType, useModals } from "@/providers/ModalsProvider";
 import { useQueryString } from "@/hooks/useQueryString";
 import Link from "next/link";
 import { TooltipTriggerProps } from "@radix-ui/react-tooltip";
+import { useSession } from "next-auth/react";
 
 export interface GridColumnImageProps {
    image: Image;
@@ -31,17 +32,27 @@ const GridColumnImage = ({
                          }: GridColumnImageProps) => {
    const IMAGE_WIDTH = 340;
    const { openModal } = useModals();
+   const session = useSession();
    const [, setImageId] = useQueryString();
 
    const [x, y] = dimensions_set[0].split(`,`).map(x => Number(x));
 
    async function handleAddToCollection() {
+      if(!session.data)  {
+         openModal(ModalType.SIGN_IN)
+         return
+      }
       setImageId(id).then(_ => {
          setTimeout(_ => openModal(ModalType.ADD_IMAGE_TO_COLLECTION), 100);
       });
    }
 
    async function handleLikeImageClient(id: string) {
+      if(!session.data)  {
+         openModal(ModalType.SIGN_IN)
+         return
+      }
+
       if (likedByMe) handleUnlikeImage(id).then(console.log).catch(console.error);
       else handleLikeImage(id).then(console.log).catch(console.error);
    }

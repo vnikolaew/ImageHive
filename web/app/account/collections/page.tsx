@@ -6,7 +6,7 @@ import { xprisma } from "@/lib/prisma";
 import CollectionTabs from "@/app/account/collections/_components/Tabs";
 import { Image, ImageCollection, Prisma } from "@prisma/client";
 import CollectionsGrid from "@/app/account/collections/_components/CollectionsGrid";
-import { GenericSortDropdown } from "@/app/account/media/_components/MediaSortDropdown";
+import { GenericSortDropdown } from "@/app/account/media/_components/GenericSortDropdown";
 import UserDownloadsHistory from "@/app/account/collections/_components/UserDownloadsHistory";
 import { getImageLikes } from "@/app/_components/HomeFeedSection";
 

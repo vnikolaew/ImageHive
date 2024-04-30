@@ -3,6 +3,7 @@ import { xprisma } from "@/lib/prisma";
 import { GridColumn } from "@/app/_components/GridColumn";
 import { auth } from "@/auth";
 import { sleep } from "@/lib/utils";
+import { FeedSortOptions } from "@/app/page";
 
 export const getImageLikes = cache(async () => {
    const session = await auth();
@@ -27,12 +28,24 @@ export const getImageSavesIds = cache(async () => {
 
 
 interface HomeFeedSectionProps {
-   hideAi?: boolean;
+   hideAi?: boolean,
+   order: (typeof FeedSortOptions)[number]
 }
 
-const HomeFeedSection = async ({ hideAi }: HomeFeedSectionProps) => {
-   await sleep(1000);
-   let images = await xprisma.image.homeFeedRaw();
+const HomeFeedSection = async ({ hideAi, order }: HomeFeedSectionProps) => {
+   await sleep(3_000);
+   let images: any[];
+   switch (order) {
+      case `Latest`:
+         images = await xprisma.image.homeFeedRaw_Latest();
+         break;
+      case `Trending`:
+         images = await xprisma.image.homeFeedRaw();
+         break;
+      default:
+         images = await xprisma.image.homeFeedRaw();
+         break;
+   }
    console.log({ images });
 
    const [likedImageIds, savedImages] = await Promise.all([
@@ -57,6 +70,7 @@ const HomeFeedSection = async ({ hideAi }: HomeFeedSectionProps) => {
                <GridColumn savedImages={savedImages} likedImageIds={likedImageIds} key={index} images={column} />
             ))}
          </div>
+         <div className={`mt-8 w-full flex items-center justify-center`}>Hi</div>
       </section>
    );
 };

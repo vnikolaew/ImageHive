@@ -6,6 +6,8 @@ import { Prisma } from "@prisma/client";
 import ImageComments from "@/app/photos/[imageId]/_components/ImageComments";
 import { randomUUID } from "node:crypto";
 import moment from "moment";
+import { SignedIn, SignedOut } from "@/components/common/Auth";
+import CommentsSectionSignIn from "@/app/photos/[imageId]/_components/CommentsSectionSignIn";
 
 export interface ImageCommentsSectionProps {
    imageId: string;
@@ -24,8 +26,8 @@ const DEFAULT_COMMENTS = (imageId: string) => [
          is_deleted: false,
          raw_text: `Some cool comment ${i + 1}`,
       }
-   ))
-]
+   )),
+];
 
 export interface ImageComment {
    imageId: string;
@@ -60,10 +62,15 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
          <h2 className="text-xl font-bold ">
             {imageComments.length + 10} comments.
          </h2>
-         <AddCommentSection imageId={imageId} />
-         <ImageComments hasMore comments={[
-            ...DEFAULT_COMMENTS(imageId),
-         ]} />
+         <SignedIn>
+            <AddCommentSection imageId={imageId} />
+            <ImageComments hasMore comments={[
+               ...DEFAULT_COMMENTS(imageId),
+            ]} />
+         </SignedIn>
+         <SignedOut>
+            <CommentsSectionSignIn />
+         </SignedOut>
       </div>
    );
 };

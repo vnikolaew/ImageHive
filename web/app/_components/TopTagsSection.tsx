@@ -2,13 +2,13 @@ import React from "react";
 import { xprisma } from "@/lib/prisma";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
-import SearchSettings from "@/app/_components/SearchSettings";
+import FeedSettingsSection from "@/app/_components/FeedSettingsSection";
 
 
 interface TopTagsSectionProps {
    hideAi?: boolean;
 }
+
 
 const TopTagsSection = async ({ hideAi }: TopTagsSectionProps) => {
    const topTags = await xprisma.image.mostUsedTags(10);
@@ -24,10 +24,7 @@ const TopTagsSection = async ({ hideAi }: TopTagsSectionProps) => {
                </Link>
             ))}
          </div>
-         <div className={`flex items-center gap-8`}>
-            <Separator className={`bg-neutral-700 dark:bg-neutral-200 !h-8`} orientation="vertical" />
-            <SearchSettings hideAi={hideAi} />
-         </div>
+         <FeedSettingsSection hideAi={!!hideAi} />
       </div>
    );
 };

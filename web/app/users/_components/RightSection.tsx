@@ -45,7 +45,7 @@ const SOCIAL_ICONS: Record<string, LucideIcon> = {
 
 const RightSection = ({ isMe, user }: RightSectionProps) => {
    const { modal, openModal } = useModals();
-   console.log(Object.keys(user.profile?.onlineProfiles));
+   console.log(Object.keys(user.profile?.onlineProfiles ?? { }));
 
    return (
       <div className={`flex items-center gap-2`}>

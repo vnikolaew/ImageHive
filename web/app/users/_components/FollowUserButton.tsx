@@ -7,6 +7,8 @@ import { handleFollowUser, handleUnfollowUser } from "@/app/users/[userId]/actio
 import { LoadingSpinner } from "@/components/modals/SocialLogins";
 import { UserCheck, UserPlus, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+import { ModalType, useModals } from "@/providers/ModalsProvider";
 
 export interface FollowUserButtonProps {
    userId: string;
@@ -15,8 +17,14 @@ export interface FollowUserButtonProps {
 
 const FollowUserButton = ({ userId, amIFollower }: FollowUserButtonProps) => {
    const [followButtonRef, hovering] = useHover();
+   const {openModal} = useModals()
+   const session = useSession();
 
    const { loading, action: followUser } = usePromise(async () => {
+      if(!session.data) {
+         openModal(ModalType.SIGN_IN)
+         return
+      }
       if (amIFollower) {
          await handleUnfollowUser(userId).then(console.log).catch(console.error);
       } else {

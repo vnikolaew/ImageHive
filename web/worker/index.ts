@@ -7,24 +7,28 @@ async function main() {
       output: process.stdout,
       terminal: true,
    });
-   const worker = new ClassifyImagesWorker()
+   const worker = new ClassifyImagesWorker();
 
    process.on(`SIGINT`, () => {
       worker.disconnect();
-      process.exit(1)
+      process.exit(1);
    });
    process.on(`exit`, () => {
       worker.disconnect();
-      process.exit(1)
+      process.exit(1);
    });
    process.on(`SIGTERM`, () => {
       worker.disconnect();
-      process.exit(1)
+      process.exit(1);
    });
 
    while (true) {
-      await worker.run()
-      const text = await rl.question(``);
+      try {
+         await worker.run();
+         const text = await rl.question(``);
+      } catch (error) {
+         console.error(error);
+      }
    }
 }
 

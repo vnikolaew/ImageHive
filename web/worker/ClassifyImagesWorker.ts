@@ -1,109 +1,25 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Tag } from "@prisma/client";
 import { Job, Worker } from "bullmq";
 import { HfInference } from "@huggingface/inference";
 import * as fs from "node:fs";
+import _ from "lodash";
+import { CATEGORIES } from "@/worker/CATEGORIES";
+import {
+   FeatureExtractionPipeline,
+   pipeline,
+} from "@xenova/transformers";
+import { PrismaVectorStore } from "@langchain/community/vectorstores/prisma";
+import { HuggingFaceInferenceEmbeddings } from "@langchain/community/embeddings/hf";
 
-const CATEGORIES = [
-   "nature",
-   "landscape",
-   "people",
-   "animals",
-   "food",
-   "travel",
-   "architecture",
-   "city",
-   "business",
-   "technology",
-   "art",
-   "health",
-   "fitness",
-   "sports",
-   "music",
-   "education",
-   "science",
-   "history",
-   "culture",
-   "religion",
-   "fashion",
-   "beauty",
-   "home",
-   "family",
-   "friends",
-   "love",
-   "celebration",
-   "holiday",
-   "party",
-   "wedding",
-   "baby",
-   "childhood",
-   "teenager",
-   "adult",
-   "elderly",
-   "community",
-   "environment",
-   "pollution",
-   "climate change",
-   "recycling",
-   "green living",
-   "equality",
-   "justice",
-   "freedom",
-   "peace",
-   "happiness",
-   "success",
-   "challenge",
-   "adventure",
-   "discovery",
-   "creativity",
-   "innovation",
-   "inspiration",
-   "motivation",
-   "ambition",
-   "dream",
-   "goal",
-   "progress",
-   "change",
-   "transformation",
-   "reflection",
-   "self-improvement",
-   "mindfulness",
-   "meditation",
-   "yoga",
-   "spirituality",
-   "faith",
-   "beliefs",
-   "philosophy",
-   "literature",
-   "writing",
-   "reading",
-   "books",
-   "film",
-   "music",
-   "art",
-   "painting",
-   "sculpture",
-   "photography",
-   "design",
-   "fashion",
-   "architecture",
-   "technology",
-   "science fiction",
-   "fantasy",
-   "mystery",
-   "thriller",
-   "horror",
-   "romance",
-   "comedy",
-   "drama",
-   "action",
-   "adventure",
-   "documentary",
-   "biography",
-];
+type JobMessage = { imageId?: string }
 
 export class ClassifyImagesWorker {
    inner: Worker;
    hf: HfInference;
+   ss_model?: FeatureExtractionPipeline;
+   hfi_model?: HuggingFaceInferenceEmbeddings;
+   prisma: PrismaClient;
+   vectorStore: PrismaVectorStore<Tag, string, any, any>;
 
    static REDIS_CONNECTION = {
       host: `localhost`,
@@ -111,6 +27,7 @@ export class ClassifyImagesWorker {
    };
 
    static IMAGE_CLASSIFICATION_MODEL = `openai/clip-vit-large-patch14`;
+   static EMBEDDINGS_MODEL = "sentence-transformers/multi-qa-MiniLM-L6-cos-v1";
 
    constructor() {
       this.hf = new HfInference(`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`, {
@@ -118,12 +35,33 @@ export class ClassifyImagesWorker {
          dont_load_model: false,
          retry_on_error: true,
       });
+      this.prisma = new PrismaClient();
+      this.hfi_model = new HuggingFaceInferenceEmbeddings({
+         model: `Snowflake/snowflake-arctic-embed-s`,
+         apiKey: `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`,
+      });
 
-      this.inner = new Worker(
+      this.vectorStore = PrismaVectorStore.withModel<Tag>(this.prisma).create(
+         this.hfi_model,
+         {
+            prisma: Prisma,
+            tableName: `Tag`,
+            vectorColumnName: `embedding`,
+            columns: {
+               name: PrismaVectorStore.IdColumn,
+               embedding: PrismaVectorStore.ContentColumn
+            },
+         },
+      );
+
+      this.inner = new Worker<JobMessage>(
          "classify_images",
          job => this.process(job),
          { name: `worker-1`, connection: ClassifyImagesWorker.REDIS_CONNECTION, concurrency: 3, autorun: false });
 
+      this.inner.on(`ready`, () => {
+         console.log(`Worker is ready and listening for messages.`);
+      });
       this.inner.on("completed", job => {
          console.log(`Job ${job.id} has completed!`);
       });
@@ -133,12 +71,17 @@ export class ClassifyImagesWorker {
       });
 
       this.inner.on("error", err => {
-         // log the error
          console.error(err);
       });
    }
 
    async run() {
+      this.ss_model = await pipeline(`feature-extraction`, `Snowflake/snowflake-arctic-embed-s`, {
+         quantized: false,
+      });
+      console.log(`Loaded feature extraction model.`);
+      // const ss_model2 = await AutoModel.from_pretrained(ClassifyImagesWorker.EMBEDDINGS_MODEL);
+
       await this.inner.run();
    }
 
@@ -146,14 +89,14 @@ export class ClassifyImagesWorker {
       await this.inner.disconnect();
    }
 
-   private async process(job: Job) {
-      if (!job.data.imageId) return;
+   private async process(job: Job<JobMessage>) {
+      if (!job.data.imageId?.length) return;
 
       const image = await new PrismaClient().image.findUnique({
          where: { id: job.data.imageId },
       });
       if (!image) {
-         console.log(`Image with ID ${job.data.imageId} not found!`);
+         console.log(`Image with ID ${job.data.imageId} not found 1!`);
          return;
       }
 
@@ -180,6 +123,28 @@ export class ClassifyImagesWorker {
          }),
       ]);
 
-      console.log({ res: res.slice(0 , 5), res2: res2.slice(0, 5) });
+      const predictions = _.concat(res, res2).sort(({ score }, { score: scoreB }) => scoreB - score);
+      const result = await this.ss_model?._call(predictions.map(p => p.label), { normalize: true, pooling: `cls` });
+
+      console.log({ predictions, result: result!.tolist() });
+      const tags = _.zip(predictions, result!.tolist() as unknown as any[])
+         .map(([a, b]) => ({ name: a?.label, embedding: (b as any[]).slice(0, 384) }));
+
+      // Insert embeddings in DB:
+      for (let tag of tags) {
+         const ex = await this.prisma.tag.findUnique({
+            where: { name: tag.name },
+            select: { name: true },
+         });
+
+         if (!ex?.length) {
+            await this.vectorStore.addModels(
+               await this.prisma.$transaction([tag].map(tag => this.prisma.tag.createOne({ data: { name: tag.name } }))),
+            );
+
+            // if (affected === 1) console.log(`Inserted ne w tag!`);
+         }
+         // if (ex) await this.prisma.tag.update({ where: { name: ex.name }, data: { embedding: tag.embedding } });
+      }
    }
 }

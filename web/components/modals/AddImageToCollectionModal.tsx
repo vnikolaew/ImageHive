@@ -1,5 +1,7 @@
 "use client";
 import React, { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
+//@ts-ignore
+import { UilFacebook, UilGoogle } from "@iconscout/react-unicons";
 import {
    Dialog, DialogContent,
    DialogDescription,

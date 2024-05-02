@@ -132,6 +132,7 @@ class HuggingFaceInference {
       }, {
          use_cache: true,
       });
+      this.hf.
 
       console.log(`Original sentence: ${source_sentence}`);
       console.log(_.zip(result, CATEGORIES).sort((a, b) => b[0]! - a[0]!).slice(0, 10));

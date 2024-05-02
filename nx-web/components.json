@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": false,
+  "tailwind": {
+    "config": "apps/nx-web/tailwind.config.js",
+    "css": "apps/nx-web/app/global.css",
+    "baseColor": "stone",
+    "cssVariables": true
+  },
+  "aliases": {
+    "components": "@nx-web/shared/components",
+    "utils": "@nx-web/shared/lib/utils"
+  }
+}

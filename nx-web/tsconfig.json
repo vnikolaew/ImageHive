@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@nx-web/shared": [
+        "shared/src/index.ts"
+      ],
+      "@nx-web/shared/*": [
+        "shared/src/*"
+      ]
+    },
+    "allowSyntheticDefaultImports": true
+  }
+}

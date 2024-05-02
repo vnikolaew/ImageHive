@@ -8,6 +8,7 @@ import { randomUUID } from "node:crypto";
 import moment from "moment";
 import { SignedIn, SignedOut } from "@/components/common/Auth";
 import CommentsSectionSignIn from "@/app/photos/[imageId]/_components/CommentsSectionSignIn";
+import { getImageComments } from "@/app/photos/[imageId]/_components/_queries";
 
 export interface ImageCommentsSectionProps {
    imageId: string;
@@ -46,16 +47,7 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
    const total = await xprisma.imageComment.count({
       where: { imageId },
    });
-
-   const imageComments = await xprisma.imageComment.findMany({
-      where: { imageId },
-      orderBy: { createdAt: `desc` },
-      include: {
-         user: {
-            select: { id: true, image: true, name: true },
-         },
-      },
-   });
+   const imageComments = await getImageComments(imageId);
 
    return (
       <div className={`mt-8 dark:text-white`}>

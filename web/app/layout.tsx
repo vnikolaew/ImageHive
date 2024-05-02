@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
    title: APP_NAME,
-   description: "A photo-sharing app",
+   description: "A photo and media sharing platform",
 };
 
 export default function RootLayout({

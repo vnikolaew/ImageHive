@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ImageAction } from "@/app/photos/[imageId]/_components/ImageAction";
-import { ImageSummary as IImageSummary } from "@/app/photos/[imageId]/page";
 import ImageStatistics from "@/app/photos/[imageId]/_components/ImageStatistics";
 import ImageOwnerSection from "@/app/photos/[imageId]/_components/ImageOwnerSection";
 import { cn, downloadImage } from "@/lib/utils";
@@ -17,6 +16,7 @@ import { LoadingSpinner } from "@/components/modals/SocialLogins";
 import { useQueryString } from "@/hooks/useQueryString";
 import posthog from "posthog-js";
 import { useSession } from "next-auth/react";
+import { ImageSummary as IImageSummary  } from "@/app/photos/[imageId]/_queries";
 
 export interface ImageSummaryProps {
    image: IImageSummary,

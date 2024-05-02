@@ -1,12 +1,12 @@
 "use client";
 import React, { useMemo, useState } from "react";
-import { ImageSummary } from "@/app/photos/[imageId]/page";
 import moment from "moment";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { ImageSummary } from "@/app/photos/[imageId]/_queries";
 
 export interface ImageStatisticsProps {
    image: ImageSummary;

@@ -1,13 +1,12 @@
 "use client";
 import React from "react";
-import { auth } from "@/auth";
 import { useQsCollectionTab } from "@/hooks/useQueryString";
-import { ImageDownload, Image } from "@prisma/client";
 import { CollectionGridColumnImage } from "@/app/account/collections/[collectionId]/_components/CollectionGridColumn";
 import { useSession } from "next-auth/react";
+import { ImageDownloadItem } from "@/app/account/collections/_queries";
 
 export interface UserDownloadsHistoryProps {
-   downloads: (ImageDownload & { image: Image })[],
+   downloads: ImageDownloadItem[]
    likedImages: Set<string>
 }
 

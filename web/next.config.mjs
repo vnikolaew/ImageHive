@@ -26,7 +26,11 @@ const nextConfig = {
          {
             hostname: 'pixabay.com',
             protocol: `https`,
-         }
+         },
+         {
+            hostname: 'files.stripe.com',
+            protocol: `https`,
+         },
       ]
    }
 };

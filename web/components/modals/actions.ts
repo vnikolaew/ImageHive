@@ -14,6 +14,7 @@ import { revalidatePath } from "next/cache";
 import { UPLOADS_DIR, PROFILE_PICS_DIR } from "@/lib/consts";
 import { Configuration, ImagesApi } from "@/lib/api";
 import { constants } from "node:http2";
+import { Queue } from "bullmq";
 
 
 export type UploadFileResponse = {
@@ -24,6 +25,15 @@ export type UploadFileResponse = {
 }
 
 export type Dimensions = [number, number]
+
+const REDIS_CONNECTION = {
+   host: `localhost`,
+   port: 6379,
+};
+
+const queue = new Queue(`classify_images`, {
+   connection: REDIS_CONNECTION,
+});
 
 export async function uploadFile(
    imageUpload: ImageUpload,
@@ -79,13 +89,20 @@ export async function handleUploadImage(imageUpload: ImageUpload, userId: string
    );
 
    if (uploadResponse.success) {
-      const response = await new ImagesApi(new Configuration({
-         get basePath(): string {
-            return process.env.BACKEND_API_URL!;
-         },
-      }))
-         .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
-      return { success: response.raw.status === constants.HTTP_STATUS_ACCEPTED };
+      // const response = await new ImagesApi(new Configuration({
+      //    get basePath(): string {
+      //       return process.env.BACKEND_API_URL!;
+      //    },
+      // }))
+      //    .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
+
+      // Post a new Redis job:
+      await queue.add(`classify_image_${uploadResponse.image.id}`,
+         {
+            imageId: uploadResponse.image.id,
+         });
+
+      return { success: true };
    }
 
    return { success: false };
@@ -110,7 +127,7 @@ export async function handleUploadImages(formData: FormData) {
 export async function handleUpdateProfilePicture(formData: FormData): Promise<ActionApiResponse> {
    const session = await auth();
    if (!session) return { success: false };
-   await sleep(2000)
+   await sleep(2000);
 
    if (formData.has(`file`)) {
       const file = formData.get(`file`)! as File;
@@ -132,7 +149,7 @@ export async function handleUpdateProfilePicture(formData: FormData): Promise<Ac
       revalidatePath(`/users/${session.user?.id as string}`);
 
       const { verifyPassword, updatePassword, ...rest } = user;
-      return { success: true, data :rest };
+      return { success: true, data: rest };
    } else if (formData.has(`url`)) {
       const imageUrl = formData.get(`url`)! as string;
 

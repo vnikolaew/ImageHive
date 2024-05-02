@@ -6,7 +6,7 @@ import { getFileName } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import FollowUserButton from "@/app/users/_components/FollowUserButton";
-import { ImageSummary } from "@/app/photos/[imageId]/page";
+import { ImageSummary } from "@/app/photos/[imageId]/_queries";
 
 export interface ImageOwnerSectionProps {
    owner: ImageSummary["owner"];

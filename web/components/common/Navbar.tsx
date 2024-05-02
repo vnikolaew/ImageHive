@@ -126,7 +126,7 @@ const Navbar = () => {
                         </DropdownMenuItem>
                      </DropdownMenuContent>
                   </DropdownMenu>
-                  <div className={cn(`text-sm font-normal text-black mr-2`,
+                  <div className={cn(`text-sm font-semibold text-black mr-4`,
                      showNavbarBackground ? `text-black` : `text-white`,
                      !darkMode && `!text-black`,
                      pathname.startsWith(`/users`) && `!text-white`,

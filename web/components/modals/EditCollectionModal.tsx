@@ -14,7 +14,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { Check, EyeOff, TrashIcon } from "lucide-react";
+import { Check, Eye, EyeOff, TrashIcon } from "lucide-react";
 import useSWR, { MutatorCallback, MutatorOptions } from "swr";
 import { ImageCollectionApiResponse } from "@/app/api/collections/route";
 import { API_ROUTES, HTTP, TOASTS } from "@/lib/consts";
@@ -165,7 +165,9 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
                         )}
                      />
                      <div className="flex items-center space-x-3">
-                        <EyeOff size={12} />
+                        {isPublic !== `false` ? <Eye size={12} /> : (
+                           <EyeOff size={12} />
+                        )}
                         <span
                            className={`dark:text-neutral-300 text-sm`}>
                            {isPublic === `false` ? `This collection will only be visible to you` : `This collection will be visible to everyone on your profile page`}

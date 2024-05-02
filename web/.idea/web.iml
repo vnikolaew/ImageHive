@@ -9,5 +9,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="platform" level="application" />
+    <orderEntry type="library" name="pricing-table" level="application" />
   </component>
 </module>

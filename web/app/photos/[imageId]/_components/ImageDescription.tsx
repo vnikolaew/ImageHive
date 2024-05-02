@@ -1,7 +1,7 @@
 import React from "react";
-import { ImageSummary } from "@/app/photos/[imageId]/page";
 import { Badge } from "@/components/ui/badge";
 import { Bot } from "lucide-react";
+import { ImageSummary } from "@/app/photos/[imageId]/_queries";
 
 export interface ImageDescriptionProps {
    image: ImageSummary

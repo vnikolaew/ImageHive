@@ -1,10 +1,10 @@
 "use client"
 import React from "react";
-import { ImageSummary } from "@/app/photos/[imageId]/page";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useIsDarkMode } from "@/hooks/useIsDarkMode";
+import { ImageSummary } from "@/app/photos/[imageId]/_queries";
 
 export interface ImageTagsSectionProps {
    image: ImageSummary;

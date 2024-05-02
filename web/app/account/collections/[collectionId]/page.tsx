@@ -1,17 +1,16 @@
 import React from "react";
-import { auth } from "@/auth";
-import { xprisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Eye, EyeOff, Pencil } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import MediaSearchBar from "@/app/account/media/_components/MediaSearchBar";
-import { getImageLikes } from "@/app/_components/HomeFeedSection";
 import { Image as IImage } from "prisma/prisma-client";
 import { CollectionGridColumn } from "./_components/CollectionGridColumn";
 import { GenericSortDropdown } from "@/app/account/media/_components/GenericSortDropdown";
 import EditCollectionButton from "@/app/account/collections/[collectionId]/_components/EditCollectionButton";
 import Link from "next/link";
+import { getImageCollectionById } from "@/app/account/collections/[collectionId]/_queries";
+import { getLikedImageIds } from "@/app/_queries";
 
 export interface PageProps {
    params: { collectionId: string },
@@ -19,37 +18,12 @@ export interface PageProps {
 }
 
 const Page = async (props: PageProps) => {
-   const session = await auth();
-   const collection = await xprisma.imageCollection.findFirst({
-      where: {
-         userId: session!.user?.id as string,
-         id: props.params.collectionId,
-      },
-      include: {
-         images: {
-            include: {
-               image: {
-                  include: { owner: true },
-               },
-            },
-         },
-      },
-   });
-
+   const collection = await getImageCollectionById(props.params.collectionId);
    if (!collection) return notFound();
+
    console.log(collection.images);
-   // @ts-ignore
-   collection.images = collection.images.map(i => {
-      const user = i.image.owner;
-      const { updatePassword, verifyPassword, ...rest } = user;
-      // @ts-ignore
-      i.image.owner = rest;
-      return i;
-   });
 
-   const likedImages = await getImageLikes();
-   const likedImageIds = new Set<string>(likedImages.map(i => i.imageId));
-
+   const likedImageIds = await getLikedImageIds();
    const images = collection.images.map(_ => _.image);
 
    const firstColumn = images.filter((_, index) => index % 4 === 0);

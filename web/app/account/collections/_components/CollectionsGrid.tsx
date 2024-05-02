@@ -1,9 +1,10 @@
 "use client";
 import React, { useCallback } from "react";
-import { ImageCollectionItem, SortOptions } from "@/app/account/collections/page";
+import { SortOptions } from "@/app/account/collections/page";
 import CollectionsGridItem from "./CollectionsGridItem";
 import { useQsCollectionTab } from "@/hooks/useQueryString";
 import { parseAsString, useQueryState } from "nuqs";
+import { ImageCollectionItem } from "@/app/account/collections/_queries";
 
 export interface CollectionsGridProps {
    userCollections: ImageCollectionItem[],

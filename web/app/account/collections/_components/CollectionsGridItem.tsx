@@ -2,7 +2,7 @@
 import React from "react";
 import { ImageCollectionItem } from "@/app/account/collections/page";
 import Image from "next/image";
-import { getFileName } from "@/lib/utils";
+import { getFileName, isAbsoluteUrl } from "@/lib/utils";
 import { Bookmark, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,10 @@ export interface CollectionsGridItemProps {
 }
 
 const CollectionsGridItem = ({ userCollection }: CollectionsGridItemProps) => {
-   const hasItems = !!userCollection?.images?.length
+   const hasItems = !!userCollection?.images?.length;
+   const imageUrl = isAbsoluteUrl(userCollection?.images?.[0]?.image?.absolute_url)
+      ? userCollection?.images?.[0]?.image?.absolute_url :
+      `/uploads/${getFileName(userCollection?.images?.[0]?.image?.absolute_url)}`;
 
    return (
       <Link className={`w-fit`} href={`/account/collections/${userCollection.id}`}>
@@ -24,11 +27,13 @@ const CollectionsGridItem = ({ userCollection }: CollectionsGridItemProps) => {
                      className={`rounded-lg shadow-sm group-hover:brightness-75 transition-all duration-200 overflow-hidden`}
                      height={400}
                      width={400}
-                     src={`/uploads/${getFileName(userCollection?.images?.[0]?.image?.absolute_url)}`}
+                     src={imageUrl}
                      alt={``} />
                ) : (
-                  <div style={{ width: `400px`, height: `400px`}} className={`flex items-center justify-center flex-col gap-4 bg-neutral-200 hover:bg-neutral-300 rounded-lg transition-colors duration-200`}>
-                     <Button variant={`secondary`} className={`rounded-full !p-3 !h-fit !w-fit bg-neutral-500 hover:!bg-neutral-500`}>
+                  <div style={{ width: `400px`, height: `400px` }}
+                       className={`flex items-center justify-center flex-col gap-4 bg-neutral-200 hover:bg-neutral-300 rounded-lg transition-colors duration-200`}>
+                     <Button variant={`secondary`}
+                             className={`rounded-full !p-3 !h-fit !w-fit bg-neutral-500 hover:!bg-neutral-500`}>
                         <Bookmark className={`fill-neutral-700`} size={16} />
                      </Button>
                      <span className={`text-base text-neutral-500`}>No elements</span>
@@ -42,7 +47,8 @@ const CollectionsGridItem = ({ userCollection }: CollectionsGridItemProps) => {
                      <TooltipTrigger className={`cursor-auto`}>
                         {userCollection.public ? <Eye size={20} /> : <EyeOff size={20} />}
                      </TooltipTrigger>
-                     <TooltipContent side={`bottom`} className={`!text-xs rounded-lg bg-black text-white dark:bg-white dark:text-black`}>
+                     <TooltipContent side={`bottom`}
+                                     className={`!text-xs rounded-lg bg-black text-white dark:bg-white dark:text-black`}>
                         {userCollection.public ? `Public` : `Private`}
                      </TooltipContent>
                   </Tooltip>

@@ -5,7 +5,7 @@ import { handleLikeImage, handleUnlikeImage } from "@/app/actions";
 import React, { Fragment } from "react";
 import GridColumnImage, { ActionButton } from "@/app/_components/GridColumnImage";
 import { Bookmark, Heart, Trash } from "lucide-react";
-import { getFileName, getSessionImageSrc } from "@/lib/utils";
+import { getFileName, getSessionImageSrc, isAbsoluteUrl } from "@/lib/utils";
 import { CollectionGridColumnProps } from "@/app/account/collections/[collectionId]/page";
 import { Image as IImage, User } from "@prisma/client";
 import Image from "next/image";
@@ -83,7 +83,7 @@ export const CollectionGridColumnImage = ({ image, collectionId, haveILiked }: {
          topContent={topContent(image.id)}
          bottomContent={bottomContent(image as any)}
          likedByMe={haveILiked}
-         imageUrl={`/uploads/${getFileName(image.absolute_url)}`}
+         imageUrl={isAbsoluteUrl(image.absolute_url) ? image.absolute_url : `/uploads/${getFileName(image.absolute_url)}`}
          image={image}
          imageKey={image.id}
          key={image.id} />

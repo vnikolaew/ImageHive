@@ -1,30 +1,9 @@
-import React, { cache } from "react";
+import React from "react";
 import { xprisma } from "@/lib/prisma";
 import { GridColumn } from "@/app/_components/GridColumn";
-import { auth } from "@/auth";
 import { sleep } from "@/lib/utils";
 import { FeedSortOptions } from "@/app/page";
-
-export const getImageLikes = cache(async () => {
-   const session = await auth();
-   return await xprisma.imageLike.findMany({
-      where: { userId: session?.user?.id as string },
-   });
-});
-
-export const getLikedImageIds = cache(async () => {
-   const likedImages = await getImageLikes();
-   return new Set<string>(likedImages.map(i => i.imageId));
-});
-
-export const getImageSavesIds = cache(async () => {
-   const session = await auth();
-   const collections = await xprisma.imageCollection.findMany({
-      where: { userId: session?.user?.id as string },
-      include: { images: { select: { imageId: true } } },
-   });
-   return new Set(collections.flatMap(c => c.images.map(i => i.imageId)));
-});
+import { getImageSavesIds, getLikedImageIds } from "@/app/_queries";
 
 
 interface HomeFeedSectionProps {

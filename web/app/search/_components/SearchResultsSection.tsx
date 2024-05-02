@@ -1,10 +1,10 @@
 import React from "react";
 import { xprisma } from "@/lib/prisma";
 import { GridColumn } from "@/app/_components/GridColumn";
-import { getLikedImageIds } from "@/app/_components/HomeFeedSection";
 import SimilarTagsSection from "@/app/search/_components/SimilarTagsSection";
 import { z } from "zod";
 import moment from "moment";
+import { getLikedImageIds } from "@/app/_queries";
 
 export interface SearchResultsSectionProps {
    search: string;
@@ -50,6 +50,7 @@ const SearchResultsSection = async ({ search, params }: SearchResultsSectionProp
    }
 
    const likedImageIds = await getLikedImageIds();
+
 
    const firstColumn = imageHits.filter((_, index) => index % 4 === 0);
    const secondColumn = imageHits.filter((_, index) => index % 4 === 1);

@@ -12,13 +12,13 @@ export const FeedSortOptions = [
    `Latest`,
    `Trending`,
    `Editor's choice`,
-] as const;
+] ;
 
 
-const FeedSettingsSection = ({hideAi}: FeedSettingsSectionProps) => {
+const FeedSettingsSection = ({ hideAi }: FeedSettingsSectionProps) => {
    return (
       <div className={`flex items-center gap-8`}>
-         <Separator className={`bg-neutral-700 dark:bg-neutral-200 !h-8`} orientation="vertical" />
+         <Separator className={`bg-neutral-200 dark:bg-neutral-200 !h-8`} orientation="vertical" />
          <SearchSettings hideAi={hideAi} />
          <GenericSortDropdown qsKey={`order`} onChange={_ => window.location.reload()} options={FeedSortOptions} />
       </div>

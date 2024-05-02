@@ -1,21 +1,12 @@
 import React from "react";
-import { auth } from "@/auth";
-import { xprisma } from "@/lib/prisma";
 import EditProfileFormWrapper from "@/app/account/settings/_components/EditProfileFormWrapper";
+import { getUserProfile } from "@/app/account/settings/_queries";
 
 const Page = async () => {
-   const session = await auth();
-   const user = await xprisma.user.findUnique({
-      where: { id: session?.user?.id },
-      include: { profile: true },
-   });
-
-   // @ts-ignore
-   const { verifyPassword, updatePassword, ...rest } = user;
-
+   const user = await getUserProfile()
    return (
       <div className={`my-8 min-h-[70vh]`}>
-         <EditProfileFormWrapper userProfile={user!.profile!} user={rest!} />
+         <EditProfileFormWrapper userProfile={user!.profile!} user={user!} />
       </div>
    );
 };

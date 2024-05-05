@@ -18,7 +18,8 @@
         "development": {
           "outputPath": "apps/web"
         },
-        "production": {}
+        "production": {
+        }
       }
     },
     "rimraf": {

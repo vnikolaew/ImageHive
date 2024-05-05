@@ -3,13 +3,13 @@
   "style": "new-york",
   "rsc": false,
   "tailwind": {
-    "config": "apps/nx-web/tailwind.config.js",
-    "css": "apps/nx-web/app/global.css",
+    "config": "apps/web/tailwind.config.js",
+    "css": "apps/web/app/global.css",
     "baseColor": "stone",
     "cssVariables": true
   },
   "aliases": {
-    "components": "@nx-web/shared/components",
-    "utils": "@nx-web/shared/lib/utils"
+    "components": "apps/web/components",
+    "utils": "apps/web/lib/utils"
   }
 }

@@ -6,7 +6,7 @@ export const APP_VERSION = `1.0.0`;
 
 export const __IS_DEV__ = process.env.NODE_ENV === "development";
 
-export const RESEND_ONBOARDING_EMAIL = `onboarding@resend.dev`
+export const RESEND_ONBOARDING_EMAIL = `onboarding@resend.dev`;
 
 export const API_ROUTES = {
    FORGOT_PASSWORD: `/api/forgot`,
@@ -120,7 +120,53 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   ACCEPT_COOKIE_CONSENT_SUCCESS: {
+      message: `Cookies accepted.`,
+      description: `You've successfully accepted the usage of cookies.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+   CHANGE_PROFILE_COVER_IMAGE_SUCCESS: {
+      message: `Cover image changed.`,
+      description: `You've successfully changed your profile cover image.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+   CHANGE_PROFILE_COVER_IMAGE_FAILURE: {
+      message: `Cover image changed.`,
+      description: `You've successfully changed your profile cover image.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+   SEND_MESSAGE_SUCCESS: {
+      message: `Message successfully sent.`,
+      description: `You've successfully send a message to {user}.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
+   SEND_MESSAGE_FAILURE: {
+      message: `Message could not be sent.`,
+      description: `There was a problem sending your message.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
 } as const;
 
 export const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
 export const PROFILE_PICS_DIR = path.join(process.cwd(), "public", "profile-pictures");
+export const COVERS_PICS_DIR = path.join(process.cwd(), "public", "covers");

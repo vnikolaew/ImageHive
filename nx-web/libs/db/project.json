@@ -68,7 +68,8 @@
     "prisma-seed": {
       "executor": "@nx-tools/nx-prisma:seed",
       "options": {
-        "schema": "libs/db/prisma/schema.prisma"
+        "schema": "libs/db/prisma/schema.prisma",
+        "script": "libs/db/prisma/seed.ts"
       }
     },
     "prisma-validate": {

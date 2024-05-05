@@ -15,9 +15,14 @@
       "dom"
     ],
     "skipLibCheck": true,
+    "noEmitOnError": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
+    "strict": false,
     "paths": {
+      "@components/*": [
+        "apps/web/components/ui/*"
+      ],
       "@nx-web/db": [
         "libs/db/src/index.ts"
       ],
@@ -27,8 +32,14 @@
       "@nx-web/shared": [
         "shared/src/index.ts"
       ],
-      "@nx-web/shared/server": [
-        "shared/src/server.ts"
+      "@public/*": [
+        "apps/web/public/*"
+      ],
+      "@utils": [
+        "shared/src/lib/utils.ts"
+      ],
+      "@web/*": [
+        "apps/web/*"
       ]
     }
   },

@@ -105,6 +105,7 @@ async function main() {
                },
             },
             images: {
+              // @ts-ignore
                create: user.images.map(({ userId, ...rest }) => ({
                   ...rest,
                })),

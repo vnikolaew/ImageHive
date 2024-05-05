@@ -1,62 +1,66 @@
 {
-  "name": "worker",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/worker/src",
-  "projectType": "application",
-  "tags": [],
-  "targets": {
-    "build": {
-      "executor": "@nx/esbuild:esbuild",
-      "outputs": [
-        "{options.outputPath}"
-      ],
-      "defaultConfiguration": "production",
-      "options": {
-        "platform": "node",
-        "outputPath": "dist/apps/worker",
-        "format": [
-          "cjs"
-        ],
-        "bundle": false,
-        "main": "apps/worker/src/main.ts",
-        "tsConfig": "apps/worker/tsconfig.app.json",
-        "assets": [
-          "apps/worker/src/assets"
-        ],
-        "generatePackageJson": true,
-        "esbuildOptions": {
-          "sourcemap": true,
-          "outExtension": {
-            ".js": ".js"
-          }
-        }
-      },
-      "configurations": {
-        "development": {},
-        "production": {
-          "esbuildOptions": {
-            "sourcemap": false,
-            "outExtension": {
-              ".js": ".js"
+   "name": "worker",
+   "$schema": "../../node_modules/nx/schemas/project-schema.json",
+   "sourceRoot": "apps/worker/src",
+   "projectType": "application",
+   "tags": [],
+   "targets": {
+      "build": {
+         "executor": "@nx/esbuild:esbuild",
+         "outputs": [
+            "{options.outputPath}"
+         ],
+         "defaultConfiguration": "production",
+         "options": {
+            "platform": "node",
+            "outputPath": "dist/apps/worker",
+            "format": [
+               "esm"
+            ],
+            "bundle": false,
+            "main": "apps/worker/src/main.ts",
+            "tsConfig": "apps/worker/tsconfig.app.json",
+            "assets": [
+               "apps/worker/src/assets"
+            ],
+            "generatePackageJson": true,
+            "esbuildOptions": {
+               "resolveExtensions": ".ts,.js",
+               "sourcemap": true,
+               "outExtension": {
+                  ".js": ".js"
+               }
             }
-          }
-        }
-      }
-    },
-    "serve": {
-      "executor": "@nx/js:node",
-      "defaultConfiguration": "development",
-      "options": {
-        "buildTarget": "worker:build"
+         },
+         "configurations": {
+            "development": {},
+            "production": {
+               "esbuildOptions": {
+                  "sourcemap": false,
+                  "outExtension": {
+                     ".js": ".js"
+                  }
+               }
+            }
+         }
       },
-      "configurations": {
-        "development": {
-          "buildTarget": "worker:build:development"
-        },
-        "production": {
-          "buildTarget": "worker:build:production"
-        }
+      "dev": {
+         "command": "cd apps/worker && npx nodemon --exec npx tsx src/main.ts"
+      },
+      "serve": {
+         "executor": "@nx/js:node",
+         "defaultConfiguration": "development",
+         "options": {
+            "buildTarget": "worker:build"
+         },
+         "configurations": {
+            "development": {
+               "buildTarget": "worker:build:development"
+            },
+            "production": {
+               "buildTarget": "worker:build:production"
+            }
+         }
       }
-    }
-  }
+   }
 }

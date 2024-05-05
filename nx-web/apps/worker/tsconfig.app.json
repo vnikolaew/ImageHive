@@ -1,10 +1,29 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "module": "commonjs",
-    "types": ["node"]
-  },
-  "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts"]
+   "extends": "./tsconfig.json",
+   "buildOptions": {
+   },
+   "compilerOptions": {
+      "outDir": "../../dist/out-tsc",
+      "skipDefaultLibCheck": true,
+      "skipLibCheck": true,
+      "module": "ES2022",
+      "moduleResolution": "Node",
+      "types": [
+         "node"
+      ],
+      "lib": [
+         "ES2022"
+      ],
+      "strict": false,
+      "esModuleInterop": true,
+      "noEmitOnError": true
+   },
+   "exclude": [
+      "jest.config.ts",
+      "src/**/*.spec.ts",
+      "src/**/*.test.ts"
+   ],
+   "include": [
+      "src/**/*.ts"
+   ]
 }

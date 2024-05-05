@@ -11,6 +11,13 @@
     }
   ],
   "compilerOptions": {
-    "esModuleInterop": true
+    "lib": ["ES2022"],
+    "strict": false,
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "module": "commonjs",
+    "types": ["node"],
+    "noEmitOnError": true
   }
 }

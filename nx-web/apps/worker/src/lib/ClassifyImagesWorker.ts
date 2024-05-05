@@ -1,149 +1,126 @@
-import { Prisma, PrismaClient, Tag } from "@prisma/client";
-import { Job, Worker } from "bullmq";
+import { Prisma, Tag } from "@prisma/client";
+import { Job } from "bullmq";
 import { HfInference } from "@huggingface/inference";
-import * as fs from "node:fs";
-import _ from "lodash";
-import {
-   FeatureExtractionPipeline,
-   pipeline,
-} from "@xenova/transformers";
+
 import { PrismaVectorStore } from "@langchain/community/vectorstores/prisma";
 import { HuggingFaceInferenceEmbeddings } from "@langchain/community/embeddings/hf";
-import { CATEGORIES } from "./CATEGORIES";
+// @ts-ignore
+import { Categories } from "./categories";
 import { xprisma } from "@nx-web/db";
+import { ImageClassifier } from "./tasks/ImageClassifier";
+import { SentenceSimilarity } from "./tasks/SentenceSimilarity";
+import { WorkerBase } from "./WorkerBase";
+
+import { FeatureExtractionPipeline } from "@xenova/transformers";
 
 type JobMessage = { imageId?: string }
 
-export class ClassifyImagesWorker {
-   inner: Worker;
+export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
    hf: HfInference;
    ss_model?: FeatureExtractionPipeline;
    hfi_model?: HuggingFaceInferenceEmbeddings;
    vectorStore: PrismaVectorStore<Tag, string, any, any>;
 
-   static REDIS_CONNECTION = {
-      host: `localhost`,
-      port: 6379,
-   };
+   image_classifier: ImageClassifier;
+   sentence_similarity: SentenceSimilarity;
 
-   static IMAGE_CLASSIFICATION_MODEL = `openai/clip-vit-large-patch14`;
-   static EMBEDDINGS_MODEL = "sentence-transformers/multi-qa-MiniLM-L6-cos-v1";
+   static IMAGE_CLASSIFICATION_MODEL = `google/vit-base-patch16-224`;
+   static SS_MODEL = `Snowflake/snowflake-arctic-embed-s`;
 
    constructor() {
-      this.hf = new HfInference(`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`, {
+      super(`classify_images`, `worker-1`);
+
+      this.hf = new HfInference(process.env.HF_API_KEY, {
          use_cache: true,
          dont_load_model: false,
          retry_on_error: true,
       });
       this.hfi_model = new HuggingFaceInferenceEmbeddings({
-         model: `Snowflake/snowflake-arctic-embed-s`,
-         apiKey: `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`,
+         model: ClassifyImagesWorker.SS_MODEL,
+         apiKey: process.env.HF_API_KEY,
       });
 
-      this.vectorStore = PrismaVectorStore.withModel<Tag>(xprisma).create(
-         this.hfi_model,
-         {
-            prisma: Prisma,
-            tableName: `Tag`,
-            vectorColumnName: `embedding`,
-            columns: {
-               name: PrismaVectorStore.IdColumn,
-               embedding: PrismaVectorStore.ContentColumn
+      this.image_classifier = new ImageClassifier(ClassifyImagesWorker.IMAGE_CLASSIFICATION_MODEL);
+      this.sentence_similarity = new SentenceSimilarity(ClassifyImagesWorker.SS_MODEL);
+
+      this.vectorStore = PrismaVectorStore.withModel<Tag>(xprisma)
+         .create(
+            this.hfi_model,
+            {
+               prisma: Prisma,
+               tableName: `Tag`,
+               vectorColumnName: `embedding`,
+               columns: {
+                  name: PrismaVectorStore.ContentColumn,
+                  id: PrismaVectorStore.IdColumn,
+               },
             },
-         },
-      );
-
-      this.inner = new Worker<JobMessage>(
-         "classify_images",
-         job => this.process(job),
-         { name: `worker-1`, connection: ClassifyImagesWorker.REDIS_CONNECTION, concurrency: 3, autorun: false });
-
-      this.inner.on(`ready`, () => {
-         console.log(`Worker is ready and listening for messages.`);
-      });
-      this.inner.on("completed", job => {
-         console.log(`Job ${job.id} has completed!`);
-      });
-
-      this.inner.on("failed", (job, err) => {
-         console.log(`Job ${job?.id} has failed with ${err.message}`);
-      });
-
-      this.inner.on("error", err => {
-         console.error(err);
-      });
+         );
    }
 
-   async run() {
+   override async run() {
+      const { pipeline } = await import("@xenova/transformers");
       this.ss_model = await pipeline(`feature-extraction`, `Snowflake/snowflake-arctic-embed-s`, {
          quantized: false,
       });
+
       console.log(`Loaded feature extraction model.`);
-      // const ss_model2 = await AutoModel.from_pretrained(ClassifyImagesWorker.EMBEDDINGS_MODEL);
 
-      await this.inner.run();
+      await super.run();
    }
 
-   async disconnect() {
-      await this.inner.disconnect();
-   }
-
-   private async process(job: Job<JobMessage>) {
+   protected override async process(job: Job<JobMessage>) {
       if (!job.data.imageId?.length) return;
 
-      const image = await new PrismaClient().image.findUnique({
+      let image = await xprisma.image.findUnique({
          where: { id: job.data.imageId },
       });
-      if (!image) {
-         console.log(`Image with ID ${job.data.imageId} not found 1!`);
+
+      if (image.classified) {
+         console.log(`Image with ID ${job.data.imageId} is already classified.`);
          return;
       }
 
-      console.log({ image });
-
-      const [res, res2] = await Promise.all([
-         this.hf.zeroShotImageClassification({
-            model: ClassifyImagesWorker.IMAGE_CLASSIFICATION_MODEL,
-            inputs: {
-               image: fs.readFileSync(image.absolute_url).buffer,
-            },
-            parameters: {
-               candidate_labels: CATEGORIES.slice(0, 10),
-            },
-         }),
-         this.hf.zeroShotImageClassification({
-            model: ClassifyImagesWorker.IMAGE_CLASSIFICATION_MODEL,
-            inputs: {
-               image: fs.readFileSync(image.absolute_url).buffer,
-            },
-            parameters: {
-               candidate_labels: image.tags,
-            },
-         }),
-      ]);
-
-      const predictions = _.concat(res, res2).sort(({ score }, { score: scoreB }) => scoreB - score);
-      const result = await this.ss_model?._call(predictions.map(p => p.label), { normalize: true, pooling: `cls` });
-
-      console.log({ predictions, result: result!.tolist() });
-      const tags = _.zip(predictions, result!.tolist() as unknown as any[])
-         .map(([a, b]) => ({ name: a?.label, embedding: (b as any[]).slice(0, 384) }));
-
-      // Insert embeddings in DB:
-      for (const tag of tags) {
-         const ex = await xprisma.tag.findUnique({
-            where: { name: tag.name },
-            select: { name: true },
-         });
-
-         if (!ex) {
-            await this.vectorStore.addModels(
-               await xprisma.$transaction([tag].map(tag => xprisma.tag.create({ data: { name: tag.name } }))),
-            );
-
-            // if (affected === 1) console.log(`Inserted ne w tag!`);
-         }
-         // if (ex) await this.prisma.tag.update({ where: { name: ex.name }, data: { embedding: tag.embedding } });
+      if (!image) {
+         console.log(`Image with ID ${job.data.imageId} not found!`);
+         return;
       }
+
+      console.log(`Image with ID ${job.data.imageId} found!`);
+
+      const res = await this.image_classifier.classify(image.absolute_url);
+      const normalized = res.output
+         .flatMap(({ label, score }) =>
+            label.split(`,`)
+               .map(x => x.trim())
+               .map(label => ({ label, score })));
+
+      const ss = await this.sentence_similarity
+         .run(normalized, Categories);
+
+      const newTags = ss.output
+         .slice(0, 5)
+         .map(x => x.label);
+
+      image = await xprisma.image.update({
+         where: { id: image.id },
+         data: {
+            tags: [...image.tags, ...newTags],
+            metadata: { ...(image.metadata as Record<string, any> ?? {}), "classified": true },
+         },
+      });
+
+      console.log(`New image: `, image);
+
+      await this.vectorStore.addModels(
+         await xprisma.$transaction(
+            image.tags.map(t =>
+               xprisma.tag.upsert({
+                  where: { name: t },
+                  create: { name: t },
+                  update: { name: t },
+               })),
+         ),
+      );
    }
 }

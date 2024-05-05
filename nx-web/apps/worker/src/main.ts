@@ -1,8 +1,10 @@
 import readline from "readline/promises";
-import { ClassifyImagesWorker } from "./lib/ClassifyImagesWorker";
+import { ClassifyImagesWorker } from "./lib/ClassifyImagesWorker.js";
+
+require('dotenv').config()
 
 async function main() {
-  const rl = readline.createInterface({
+   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
     terminal: true,
@@ -25,7 +27,7 @@ async function main() {
   while (true) {
     try {
       await worker.run();
-      const text = await rl.question(``);
+      let _ = await rl.question(``);
     } catch (error) {
       console.error(error);
     }
@@ -34,6 +36,6 @@ async function main() {
 
 
 main().catch((err) => {
-  console.log(err);
+  console.error(err);
   process.exit(1);
 });

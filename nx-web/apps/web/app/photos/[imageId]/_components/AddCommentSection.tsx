@@ -1,7 +1,6 @@
 "use client";
 import React, { useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import DefaultAvatar from "../../../../public/default-avatar.png";
 import { useOnClickOutside } from "next/dist/client/components/react-dev-overlay/internal/hooks/use-on-click-outside";
 import { AnimatePresence, motion } from "framer-motion";

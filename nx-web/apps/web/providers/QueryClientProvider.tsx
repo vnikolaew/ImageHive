@@ -19,7 +19,7 @@ const queryClient = new QueryClient({
    },
 });
 
-const QueryClientProvider = ({ children }: QueryClientProviderProps) => {
+const QueryClientProvider_ = ({ children }: QueryClientProviderProps) => {
    return (
       <QProvider client={queryClient}>
          {children}
@@ -27,4 +27,4 @@ const QueryClientProvider = ({ children }: QueryClientProviderProps) => {
    );
 };
 
-export default QueryClientProvider;
+export default QueryClientProvider_;

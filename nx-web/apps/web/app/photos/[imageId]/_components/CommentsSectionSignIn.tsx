@@ -1,9 +1,9 @@
 "use client";
 import { MessageCircle } from "lucide-react";
 import React from "react";
-import { ModalType, useModals } from "../../../../providers/ModalsProvider";
+import { ModalType, useModals } from "@web/providers/ModalsProvider";
 import { APP_NAME } from "@nx-web/shared";
-import { Button } from "../../../../components/ui/button";
+import { Button } from "@components/button";
 
 export interface CommentsSectionSignInProps {
 }

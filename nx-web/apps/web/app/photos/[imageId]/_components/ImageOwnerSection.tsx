@@ -19,12 +19,12 @@ function isAbsoluteUrl(url: string) {
 
 const ImageOwnerSection = ({ owner, haveIFollowed }: ImageOwnerSectionProps) => {
    const session = useSession();
-   const isMe = useMemo(() => session?.data?.user?.id === owner.id, [owner.id, session?.data?.user?.id]);
+   const isMe = useMemo(() => session?.data?.user?.id === owner.id, [owner?.id, session?.data?.user?.id]);
 
    return (
       <div className={`flex items-start flex-col gap-1 w-full`}>
          <div className={`w-full p-4 flex items-center justify-between`}>
-            <div className={`flex items-center gap-4`}>
+            <div className={`flex items-center gap-2`}>
                <Link href={`/users/${owner.id}`}>
                   <Image height={36} width={36}
                          className={`rounded-full cursor-pointer shadow-md w-10 h-10 hover:opacity-80 transition-opacity duration-200`}
@@ -32,12 +32,12 @@ const ImageOwnerSection = ({ owner, haveIFollowed }: ImageOwnerSectionProps) => 
                          alt={owner.name ?? ``} />
                </Link>
                <div className={`flex flex-col justify-center gap-0`}>
-                  <span className={`font-semibold dark:text-neutral-300`}>{owner.name}</span>
+                  <span className={`font-semibold dark:text-neutral-300 text-sm`}>{owner.name}</span>
                   <span
-                     className={`font-normal text-neutral-500 text-sm`}>{owner._count.following} {`follower${owner._count.following === 1 ? `` : `s`}`}</span>
+                     className={`font-normal text-neutral-500 text-xs`}>{owner._count.following} {`follower${owner._count.following === 1 ? `` : `s`}`}</span>
                </div>
             </div>
-            <div>
+            <div className={`ml-2`}>
                {!isMe &&
                   <FollowUserButton userId={owner.id} amIFollower={haveIFollowed ?? false} />
                }

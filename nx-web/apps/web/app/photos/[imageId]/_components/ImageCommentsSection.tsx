@@ -9,6 +9,8 @@ import { SignedIn, SignedOut } from "@web/components/common/Auth";
 import { AddCommentSection } from "./AddCommentSection";
 import ImageComments from "./ImageComments";
 import CommentsSectionSignIn from "./CommentsSectionSignIn";
+import { auth } from "@web/auth";
+import { ServerSignedIn, ServerSignedOut } from "@web/components/common/ServerAuth";
 
 export interface ImageCommentsSectionProps {
    imageId: string;
@@ -47,6 +49,7 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
    const total = await xprisma.imageComment.count({
       where: { imageId },
    });
+   const session = await auth();
    const imageComments = await getImageComments(imageId);
 
    return (
@@ -54,15 +57,17 @@ const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
          <h2 className="text-xl font-bold ">
             {imageComments.length + 10} comments.
          </h2>
-         <SignedIn>
-            <AddCommentSection imageId={imageId} />
-            <ImageComments hasMore comments={[
-               ...DEFAULT_COMMENTS(imageId),
-            ]} />
-         </SignedIn>
-         <SignedOut>
+         <ServerSignedIn>
+            <AddCommentSection session={session} imageId={imageId} />
+            <ImageComments
+               hasMore
+               comments={[
+                  ...DEFAULT_COMMENTS(imageId),
+               ]} />
+         </ServerSignedIn>
+         <ServerSignedOut>
             <CommentsSectionSignIn />
-         </SignedOut>
+         </ServerSignedOut>
       </div>
    );
 };

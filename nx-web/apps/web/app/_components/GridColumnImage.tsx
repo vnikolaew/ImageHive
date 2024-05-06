@@ -9,7 +9,7 @@ import { useQueryString } from "@web/hooks/useQueryString";
 import { handleLikeImage, handleUnlikeImage } from "@web/app/actions";
 import { cn } from "@nx-web/shared";
 import { Button } from "@components/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger , TooltipTriggerProps } from "@components/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TooltipTriggerProps } from "@components/tooltip";
 
 export interface GridColumnImageProps {
    image: Image;
@@ -37,9 +37,9 @@ const GridColumnImage = ({
    const [x, y] = dimensions_set[0].split(`,`).map(x => Number(x));
 
    async function handleAddToCollection() {
-      if(!session.data)  {
-         openModal(ModalType.SIGN_IN)
-         return
+      if (!session.data) {
+         openModal(ModalType.SIGN_IN);
+         return;
       }
       setImageId(id).then(_ => {
          setTimeout(_ => openModal(ModalType.ADD_IMAGE_TO_COLLECTION), 100);
@@ -47,9 +47,9 @@ const GridColumnImage = ({
    }
 
    async function handleLikeImageClient(id: string) {
-      if(!session.data)  {
-         openModal(ModalType.SIGN_IN)
-         return
+      if (!session.data) {
+         openModal(ModalType.SIGN_IN);
+         return;
       }
 
       if (likedByMe) handleUnlikeImage(id).then(console.log).catch(console.error);

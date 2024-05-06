@@ -3,7 +3,7 @@
 import { cache } from "react";
 import { Image, Profile, User } from "@prisma/client";
 import { xprisma } from "@nx-web/db";
-import { auth } from "../../../../auth";
+import { auth } from "@web/auth";
 import { getLikedImageIds } from "../../../_queries";
 
 export type ImageSummary = Image & {

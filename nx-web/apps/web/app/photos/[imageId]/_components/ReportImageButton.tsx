@@ -8,9 +8,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "../../../../components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../../../../components/ui/tooltip";
-import { Button } from "../../../../components/ui/button";
+} from "@components/dropdown-menu";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/tooltip";
+import { Button } from "@components/button";
 
 export interface ReportImageButtonProps {
 }

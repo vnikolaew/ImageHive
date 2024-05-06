@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { APP_NAME } from "@nx-web/shared";
+import { Linkedin } from "lucide-react";
 
 export interface FooterProps {
 }
@@ -8,21 +9,28 @@ export interface FooterProps {
 const Footer = ({}: FooterProps) => {
    return (
       <section className={`mt-24 lg:mt-32 w-full p-12 border-t-[1px] rounded-b-xl grid grid-cols-3 gap-8`}>
-         <nav className="flex items-start flex-col justify-between px-3 gap-4 text-md leading-none">
-            <h6 className="text-lg font-bold uppercase text-neutral-400">Services</h6>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">Branding</Link>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">Design</Link>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">Marketing</Link>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">Advertisement</Link>
+         <nav className="flex items-start flex-col px-3 gap-3 text-md leading-none">
+            <h6 className="text-lg font-bold uppercase text-neutral-400">Discover</h6>
+            <Link href={`/`} className="link text-sm link-hover text-neutral-400 hover:underline">Branding</Link>
+            <Link href={`/`} className="link text-sm link-hover text-neutral-400 hover:underline">Design</Link>
+            <Link href={`/`} className="link text-sm link-hover text-neutral-400 hover:underline">Marketing</Link>
+            <Link href={`/`} className="link text-sm link-hover text-neutral-400 hover:underline">Advertisement</Link>
          </nav>
-         <nav className="flex h-fit items-start flex-col justify-between px-3 gap-4 text-md leading-none">
+         <nav className="flex h-fit items-start flex-col px-3 gap-3 text-md leading-none">
             <h6 className="text-lg font-bold uppercase text-neutral-400">Company</h6>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">Contact</Link>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">About us</Link>
-            <Link href={`/`} className="link link-hover text-neutral-400 hover:underline">Jobs</Link>
+            <Link href={`/service/about`} className="link text-sm link-hover text-neutral-400 hover:underline">About
+               us</Link>
+            <Link href={`/service/cookies`}
+                  className="link text-sm link-hover text-neutral-400 hover:underline">Cookies</Link>
+            <Link href={`/service/privacy`} className="link text-sm link-hover text-neutral-400 hover:underline">Privacy
+               Policy</Link>
+            <Link href={`/service/license-summary`}
+                  className="link text-sm link-hover text-neutral-400 hover:underline">License Summary</Link>
+            <Link href={`/service/terms`} className="link text-sm link-hover text-neutral-400 hover:underline">Terms of
+               service</Link>
          </nav>
          <nav className="">
-            <h6 className="text-lg font-bold uppercase text-neutral-400">Social</h6>
+            <h6 className="text-lg font-bold uppercase text-neutral-400">Socials</h6>
             <div className="flex items-center gap-6 mt-4">
                <a>
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -45,10 +53,15 @@ const Footer = ({}: FooterProps) => {
                         d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"></path>
                   </svg>
                </a>
+               <a>
+                  <Linkedin
+                     className={`text-blue-500 stroke-2 cursor-pointer hover:opacity-80 transition-colors duration-200`}
+                     size={24} />
+               </a>
             </div>
             <div className="mt-12 text-sm text-neutral-400">
                Copyright © {new Date().getFullYear()} - All right reserved by <b>
-              {APP_NAME}
+               {APP_NAME}
             </b>
             </div>
          </nav>

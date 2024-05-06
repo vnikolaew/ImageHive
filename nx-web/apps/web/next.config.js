@@ -44,15 +44,23 @@ const nextConfig = {
             protocol: `https`,
          },
          {
-            hostname: "cdn.pixabay.com",
+            hostname: "cdn.{APP_NAME}.com",
             protocol: `https`,
          },
          {
-            hostname: "pixabay.com",
+            hostname: "{APP_NAME}.com",
             protocol: `https`,
          },
          {
             hostname: "files.stripe.com",
+            protocol: `https`,
+         },
+         {
+            hostname: "live.staticflickr.com",
+            protocol: `https`,
+         },
+         {
+            hostname: "staticflickr.com",
             protocol: `https`,
          },
       ],

@@ -5,6 +5,7 @@ import { xprisma } from "@nx-web/db";
 
 export const getImageLikes = cache(async () => {
    const session = await auth();
+   if(!session) return []
    return await xprisma.imageLike.findMany({
       where: { userId: session?.user?.id as string },
    });
@@ -17,6 +18,8 @@ export const getLikedImageIds = cache(async () => {
 
 export const getImageSavesIds = cache(async () => {
    const session = await auth();
+   if(!session) return new Set<string>()
+
    const collections = await xprisma.imageCollection.findMany({
       where: { userId: session?.user?.id as string },
       include: { images: { select: { imageId: true } } },

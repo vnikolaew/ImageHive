@@ -4,8 +4,8 @@ import moment from "moment";
 import { ChevronDown } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageSummary } from "../_queries";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../../../components/ui/collapsible";
-import { Button } from "../../../../components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@components/collapsible";
+import { Button } from "@components/button";
 import { cn } from "@utils";
 
 export interface ImageStatisticsProps {
@@ -15,8 +15,8 @@ export interface ImageStatisticsProps {
 const ImageStat = ({ text, value }: { text: string, value: React.ReactNode }) => {
    return (
       <div className={`w-full text-sm xl:!text-md flex items-center justify-between`}>
-         <span className={`text-sm 2xl:!text-base`}>{text}</span>
-         <span className={`text-sm 2xl:!text-base`}>{value}</span>
+         <span className={`text-xs 2xl:!text-sm`}>{text}</span>
+         <span className={`text-xs 2xl:!text-sm`}>{value}</span>
       </div>
    );
 

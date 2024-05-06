@@ -6,7 +6,7 @@ import GeoLocationProvider from "./GeoLocationProvider";
 import SwrProvider from "./SWRProvider";
 import { ModalsProvider } from "./ModalsProvider";
 import ErrorBoundary from "./ErrorBoundary";
-
+import QueryClientProvider from "./QueryClientProvider";
 
 const Providers = ({ children }: PropsWithChildren) => {
   return (
@@ -20,9 +20,11 @@ const Providers = ({ children }: PropsWithChildren) => {
             attribute={`class`}>
             <GeoLocationProvider>
               <SwrProvider>
-                <ModalsProvider>
-                  {children}
-                </ModalsProvider>
+                 <QueryClientProvider>
+                    <ModalsProvider>
+                       {children}
+                    </ModalsProvider>
+                 </QueryClientProvider>
               </SwrProvider>
             </GeoLocationProvider>
           </ThemeProvider>

@@ -19,7 +19,7 @@ const UserProfileCoverSection = ({ coverImage, isMe }: UserProfileCoverSectionPr
          <div
             style={{
                background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))`,
-               backgroundImage: `url('${!!coverImage?.length ? `/covers/${getFileName(coverImage)}` : `dark-banner.png`}')`,
+               backgroundImage: `url('${!!coverImage?.length ? `/covers/${getFileName(coverImage)}` : `/dark-banner.png`}')`,
                backgroundPosition: `center center`,
                backgroundSize: `cover`,
             }}

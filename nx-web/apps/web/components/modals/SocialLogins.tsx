@@ -61,14 +61,14 @@ export function SocialLogins() {
             By clicking continue, you agree to our{" "}
             <Link
                href="/service/terms"
-               className={cn(`underline-offset-4 hover:text-primary !text-sm`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-2`)}
+               className={cn(`underline-offset-4 hover:text-primary !text-sm`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-1`)}
             >
                Terms of Service
             </Link>
             and{" "}
             <Link
                href="/service/privacy"
-               className={cn(`underline-offset-4 hover:text-primary`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-2`)}
+               className={cn(`underline-offset-4 hover:text-primary !text-sm`, buttonVariants({ variant: `link` }), `!m-0 !py-0 !px-1`)}
             >
                Privacy Policy
             </Link>

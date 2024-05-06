@@ -7,7 +7,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-     "vercel-build": "nx prisma-generate db && nx prisma-migrate db --name 'init' deploy && nx run web:build:production"
+    "vercel-build": "nx prisma-generate db && nx prisma-migrate db --name 'init' deploy && nx run web:build:production"
   },
   "private": true,
   "dependencies": {
@@ -17,6 +17,7 @@
     "@iconscout/react-unicons": "^2.0.2",
     "@langchain/community": "^0.0.53",
     "@langchain/core": "^0.1.61",
+    "@pinecone-database/pinecone": "^2.2.0",
     "@prisma/adapter-pg": "^5.12.1",
     "@prisma/client": "^5.13.0",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
@@ -50,9 +51,10 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
+    "flickr-sdk": "^7.0.0-beta.7",
     "form-data-json-convert": "^2.2.2",
     "framer-motion": "^11.1.7",
-    "immer": "^10.0.4",
+    "immer": "^10.1.1",
     "json-form-data": "^1.7.2",
     "jsonwebtoken": "^9.0.2",
     "langchain": "^0.1.36",
@@ -64,6 +66,7 @@
     "next": "14.0.4",
     "next-auth": "^5.0.0-beta.16",
     "next-themes": "^0.3.0",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.9.13",
     "nuqs": "^1.17.1",
     "pg": "^8.11.5",

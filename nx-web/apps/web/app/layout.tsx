@@ -8,6 +8,7 @@ import Footer from "../components/common/Footer";
 import { Toaster } from "@components/sonner";
 
 import "./global.css"
+import ScrollToTopButton from "@web/app/service/_components/ScrollToTopButton";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -30,6 +31,7 @@ export default function RootLayout({
          {children}
          <Toaster />
          <CookieConsentBanner />
+         <ScrollToTopButton />
          <Footer />
          </body>
       </Providers>

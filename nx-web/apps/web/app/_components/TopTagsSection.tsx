@@ -14,7 +14,7 @@ const TopTagsSection = async ({ hideAi }: TopTagsSectionProps) => {
 
    return (
       <div className={`w-full flex items-center px-12 justify-between`}>
-         <div className={`w-full flex items-center gap-3`}>
+         <div className={`w-full flex items-center gap-3 flex-wrap`}>
             {topTags.filter(t => t.tag !== `ai generated`).map(({ tag }, i) => (
                <Link key={i} href={`/search?q=${encodeURIComponent(tag.toLowerCase())}`}>
                   <Badge

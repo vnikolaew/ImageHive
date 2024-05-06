@@ -1,18 +1,17 @@
-import React, { ReactNode } from "react";
+import React from "react";
 import { Bot } from "lucide-react";
 import { ImageSummary } from "../_queries";
+import { Badge } from "@components/badge";
 
 export interface ImageDescriptionProps {
    image: ImageSummary
 }
 
 function upperCase(str: string): string {
+   if(!str?.length) return str;
    return `${str[0].toUpperCase()}${str.slice(1).toLowerCase()}`;
 }
 
-function Badge(props: { color: string, variant: string, className: string, children: ReactNode }) {
-  return null;
-}
 
 const ImageDescription = ({image}: ImageDescriptionProps) => {
    return (
@@ -23,7 +22,7 @@ const ImageDescription = ({image}: ImageDescriptionProps) => {
               <span className={`ml-2 text-sm !px-1 !py-.5`}>AI Generated</span>
            </Badge>
          )}
-         <p className={`text-md`}>{image.tags.map(upperCase).slice(0, 3).join(`, `)} image. Free for use.</p>
+         <p className={`text-md`}>{image.tags.filter(x => !!x.length).map(upperCase).slice(0, 3).join(`, `)} image. Free for use.</p>
       </div>
    );
 };

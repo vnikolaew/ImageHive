@@ -8,16 +8,20 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { usePromise } from "@web/hooks/usePromise";
 import { handleCommentOnImage } from "../actions";
-import { getSessionImageSrc } from "@nx-web/shared";
+import { API_ROUTES, getSessionImageSrc } from "@nx-web/shared";
 import { LoadingSpinner } from "@web/components/modals/SocialLogins";
 import { Button } from "@components/button";
+import { InfiniteData, useQueryClient } from "@tanstack/react-query";
+import { ImageComment } from "@web/app/photos/[imageId]/_components/ImageCommentsSection";
+import { produce } from "immer";
+import { Session } from "next-auth";
 
 export interface AddCommentSectionProps {
-   imageId: string;
+   imageId: string,
+   session?: Session
 }
 
-export function AddCommentSection({ imageId }: AddCommentSectionProps) {
-   const { data: session } = useSession();
+export function AddCommentSection({ imageId, session }: AddCommentSectionProps) {
    const commentInputRef = useRef<HTMLTextAreaElement>(null!);
 
    useOnClickOutside(commentInputRef.current, e => {
@@ -31,10 +35,28 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
       return !!comment?.length;
    }, [comment?.length]);
 
+   const queryClient = useQueryClient();
    const { action: handleComment, loading } = usePromise((comment: string) => {
       return handleCommentOnImage(imageId, comment)
          .then(res => {
             if (res.success) {
+               console.log(queryClient.getQueryData<InfiniteData<ImageComment[]>>([API_ROUTES.COMMENTS, imageId]));
+               queryClient.setQueryData<InfiniteData<ImageComment[]>>([API_ROUTES.COMMENTS, imageId], (data: InfiniteData<ImageComment[]>) => {
+                  // data.pages.
+                  const comment = res.data;
+                  console.log(comment);
+                  return produce(data, draft => {
+                     if (draft.pages[0].length >= 10) {
+                        draft.pages.unshift([{ ...comment }]);
+                     } else {
+                        draft.pages[0].unshift({
+                           ...comment,
+                        });
+                     }
+
+                     return draft;
+                  });
+               });
                setComment(``);
                setBig(false);
             }
@@ -54,8 +76,8 @@ export function AddCommentSection({ imageId }: AddCommentSectionProps) {
       <div className={`w-full h-fit mt-4 flex items-start justify-between gap-4`}>
          <Image height={36} width={36}
                 className={`rounded-full p-0 border-white bg-white border-[1px] cursor-pointer shadow-md w-10 h-10 hover:opacity-80 transition-opacity duration-200`}
-                src={session.user?.image ? getSessionImageSrc(session!.user?.image!) : DefaultAvatar}
-                alt={session!.user?.name! ?? ``} />
+                src={session?.user?.image ? getSessionImageSrc(session?.user?.image!) : DefaultAvatar}
+                alt={session?.user?.name! ?? ``} />
          <div className={`flex flex-1 flex-col gap-2 items-start`}>
             <div className={`relative w-full`}>
                <motion.textarea

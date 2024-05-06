@@ -1,13 +1,11 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { auth } from "@web/auth";
-import { ActionApiResponse, COVERS_PICS_DIR, getFileExtension, sleep } from "@nx-web/shared";
+import { ActionApiResponse, COVERS_PICS_DIR } from "@nx-web/shared";
 import { xprisma } from "@nx-web/db";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { writeFile } from "node:fs";
-import { Readable } from "node:stream";
-import probe from "probe-image-size";
 
 export async function handleFollowUser(userId: string): Promise<ActionApiResponse> {
    const session = await auth();

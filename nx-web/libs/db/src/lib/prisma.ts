@@ -338,11 +338,15 @@ export const xprisma = prisma.$extends({
          },
          async findSimilarImages(image: Image, limit = 10): Promise<Image[]> {
             const imageTags = image.tags.map(t => t.toLowerCase());
+            const arrayFilter = imageTags.length > 0
+               ? Prisma.sql`WHERE i.tag ILIKE ANY (array [${Prisma.join(imageTags)}])`
+               : Prisma.empty;
+
             const result = await xprisma.$queryRaw<Image[]>`
                SELECT DISTINCT(i.id), *
                FROM (SELECT *
                      FROM (SELECT *, unnest(tags) tag from "Image") i
-                     WHERE i.tag ILIKE ANY (array [${Prisma.join(imageTags)}])) i
+                     ${arrayFilter}) i
                   LIMIT ${limit}
                ;
             `;

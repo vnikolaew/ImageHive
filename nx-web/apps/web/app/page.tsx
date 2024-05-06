@@ -42,7 +42,7 @@ export default async function Home(props: HomeProps) {
             </div>
             <div
                className={`justify-self-end absolute bottom-6 left-6 flex items-center justify-between text-xs text-neutral-300`}>
-               Read more about our <Link href={`/service/terms`} className={cn(`ml-1 underline hover:text-white`)}>
+               Read more about our <Link href={`/service/license-summary`} className={cn(`ml-1 underline hover:text-white`)}>
                Content License
             </Link>
             </div>

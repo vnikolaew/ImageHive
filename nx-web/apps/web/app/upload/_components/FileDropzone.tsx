@@ -6,6 +6,7 @@ import ImagesUploadSection from "./ImagesUploadSection";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/tooltip";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
+import { APP_NAME } from "@nx-web/shared";
 
 export interface FileDropzoneProps {
    uploadsRemaining: number;
@@ -46,7 +47,7 @@ const FileDropzone = ({ uploadsRemaining }: FileDropzoneProps) => {
                         <CircleHelp size={16} />
                      </TooltipTrigger>
                      <TooltipContent className={`bg-neutral-800 !text-xs text-white rounded-lg`}>
-                        <b>ImageHive</b> limits weekly uploads.
+                        <b>{APP_NAME}</b> limits weekly uploads.
                      </TooltipContent>
                   </Tooltip>
                </TooltipProvider>

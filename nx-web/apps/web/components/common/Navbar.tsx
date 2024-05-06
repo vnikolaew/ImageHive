@@ -7,32 +7,28 @@ import LogoDark from "../../public/ImageHive-logo-dark.png";
 import DefaultAvatar from "../../public/default-avatar.png";
 import { LogOut, Upload } from "lucide-react";
 import { useWindowScroll } from "@uidotdev/usehooks";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { useIsDarkMode } from "@web/hooks/useIsDarkMode";
 import { ModalType, useModals } from "@web/providers/ModalsProvider";
-import { usePromise } from "@web/hooks/usePromise";
 import NavSearchBar from "./NavSearchBar";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { SignedIn, SignedOut } from "./Auth";
-import {
-  DropdownMenu,
-  DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@components/dropdown-menu";
 import { Button } from "@components/button";
-import { cn, getSessionImageSrc } from "@utils";
+import { cn } from "@utils";
+import NavbarUserMenu from "@web/components/common/NavbarUserMenu";
 
 const Navbar = () => {
    const { data } = useSession();
    const pathname = usePathname();
    const darkMode = useIsDarkMode();
    const { openModal } = useModals();
-   const { loading, action: signOutAction } = usePromise(async () => {
-      await signOut({ redirect: true, callbackUrl: `/` });
-   });
+
+   useEffect(() => {
+      if ("scrollRestoration" in window.history) {
+         window.history.scrollRestoration = "manual";
+      }
+   }, []);
 
    const navRef = useRef<HTMLElement>(null!);
    const [{ y }] = useWindowScroll();
@@ -42,6 +38,7 @@ const Navbar = () => {
 
    return (
       <nav
+         id={`navbar`}
          ref={navRef}
          className={cn(`w-full navbar-dark bg-transparent flex items-center justify-between gap-24 px-12 py-4 shadow-sm !z-20 rounded--bxl sticky transition-colors duration-300`,
             (pathname === `/` || pathname.startsWith(`/users`)) && `fixed`,
@@ -63,73 +60,7 @@ const Navbar = () => {
             <ThemeSwitch showNavbarBackground={showNavbarBackground} />
             <div className={`flex items-center gap-2`}>
                <SignedIn>
-                  <DropdownMenu modal>
-                     <DropdownMenuTrigger asChild>
-                        <Image
-                           className={cn(`rounded-full cursor-pointer bg-white border-neutral-200 !h-9 !w-9`,
-                              !data?.user?.image && `p-1`)}
-                           height={36}
-                           width={36}
-                           src={data?.user?.image ? getSessionImageSrc(data.user.image) : DefaultAvatar} alt={``} />
-                     </DropdownMenuTrigger>
-                     <DropdownMenuContent className={`min-w-[200px] p-1 -left-1/2`}>
-                        <DropdownMenuLabel className={`font-normal`}>
-                           Signed in as <b>
-                           {data?.user?.name}
-                        </b>
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <Link href={`/users/${data?.user?.id}`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Profile
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/account/media`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              My images
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/upload`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Upload
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/account/statistics`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Statistics
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/account/collections`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Collections
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/account/following`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Following
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/account/messages/inbox`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Messages
-                           </DropdownMenuItem>
-                        </Link>
-                        <Link href={`/account/settings`}>
-                           <DropdownMenuItem className={`cursor-pointer py-2 px-5`}>
-                              Settings
-                           </DropdownMenuItem>
-                        </Link>
-                        <DropdownMenuItem className={`flex my-2 justify-center w-full hover:!bg-transparent`}>
-                           <Button
-                              disabled={loading}
-                              className={`!px-8 rounded-full gap-3 !py-2 shadow-md`} variant={`destructive`}
-                              onClick={() => signOutAction()}>
-                              <LogOut size={14} />
-                              Sign out
-                           </Button>
-                        </DropdownMenuItem>
-                     </DropdownMenuContent>
-                  </DropdownMenu>
+                  <NavbarUserMenu />
                   <div className={cn(`text-sm font-semibold text-black mr-4`,
                      showNavbarBackground ? `text-white` : `text-white`,
                      !darkMode && `!text-black`,

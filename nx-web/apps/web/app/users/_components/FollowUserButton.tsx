@@ -3,12 +3,12 @@ import React, { Fragment } from "react";
 import { useHover } from "@uidotdev/usehooks";
 import { UserCheck, UserPlus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { usePromise } from "../../../hooks/usePromise";
-import { ModalType, useModals } from "../../../providers/ModalsProvider";
+import { usePromise } from "@web/hooks/usePromise";
+import { ModalType, useModals } from "@web/providers/ModalsProvider";
 import { handleFollowUser, handleUnfollowUser } from "../[userId]/actions";
 import { cn } from "@nx-web/shared";
-import { LoadingSpinner } from "../../../components/modals/SocialLogins";
-import { Button } from "../../../components/ui/button";
+import { LoadingSpinner } from "@web/components/modals/SocialLogins";
+import { Button } from "@components/button";
 
 export interface FollowUserButtonProps {
    userId: string;
@@ -39,7 +39,7 @@ const FollowUserButton = ({ userId, amIFollower }: FollowUserButtonProps) => {
             )}
          variant={`secondary`}>
          {loading ? (
-            <LoadingSpinner text={`Loading ...`} />
+            <LoadingSpinner text={`Following ...`} />
          ) : amIFollower ? (
             <Fragment>
                {hovering ? <X size={16} /> : <UserCheck className={`text-green-700 stroke-[3px]`} size={16} />}

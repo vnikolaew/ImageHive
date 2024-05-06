@@ -70,7 +70,7 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
             <DialogHeader className="">
                <DialogTitle className={`text-left text-2xl`}>Create new collection</DialogTitle>
             </DialogHeader>
-            <div className="mt-12 w-full flex-1">
+            <div className="mt-4 w-full flex-1">
                <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="w-full space-y-6 !h-full">
                      <FormField
@@ -126,7 +126,7 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
                         <EyeOff size={12} />
                         <span className={`dark:text-neutral-300 text-sm`}>This collection will only be visible to you</span>
                      </div>
-                     <div className={`w-full flex flex-1 justify-end gap-2 justify-self-end`}>
+                     <div className={`w-full flex flex-1 !mb-2 justify-end gap-2 justify-self-end`}>
                         <Button variant={`outline`} onClick={_ => {
                            toggleModal(ModalType.CREATE_NEW_COLLECTION);
                         }} className={`rounded-full`} type="button">Cancel</Button>

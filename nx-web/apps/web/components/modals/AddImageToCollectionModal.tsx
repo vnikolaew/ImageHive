@@ -70,7 +70,7 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
             <div className={`w-full`}>
                <ImageCollectionSearchModal search={searchValue} setSearch={setSearchValue} />
             </div>
-            <div className={cn(`w-full mt-2 rounded-md p-2 bg-neutral-100/70 min-h-[200px]`,
+            <div className={cn(`w-full mt-2 rounded-md p-2 bg-neutral-100/70 min-h-[120px]`,
                noResultsFound && `!min-h-[100px] flex items-center justify-center`)}>
                {noResultsFound ? (
                   <div className={`w-full h-full flex items-center justify-center`}>
@@ -101,13 +101,13 @@ interface ImageCollectionProps {
 }
 
 const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
-   const firstCollectionImageSrc = `/uploads/${getFileName(collection.images.at(0)?.image?.absolute_url ?? ``)}`;
+   const firstCollectionImageSrc = `/uploads/${getFileName(collection?.images?.at(0)?.image?.absolute_url ?? ``)}`;
    const [imageWidth, imageHeight] = collection?.images?.at(0)?.image?.dimensions?.at(0) ?? [200, 200];
    const [imageId] = useQueryString();
    const { mutate } = useSWRConfig();
 
    const isCurrentImageSaved = useMemo(() => {
-      return collection.images.some(i => i.imageId === imageId);
+      return collection?.images?.some(i => i.imageId === imageId);
    }, [collection.images, imageId]);
 
 
@@ -175,11 +175,11 @@ const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
 const ImageCollectionSearchModal = ({ setSearch, search }: ImageCollectionSearchModalProps) => {
    return (
       <div className={`w-full rounded-md relative dark:bg-neutral-100 mt-2 `}>
-         <Search size={18} className={`absolute top-[50%] left-2 -translate-y-1/2 cursor-pointer text-primary`} />
+         <Search size={14} className={`absolute top-[50%] left-4 -translate-y-1/2 cursor-pointer text-primary`} />
          <Input
             onChange={e => setSearch(e.target.value)}
             value={search} placeholder={`Filter your collections`}
-            className={`rounded-full dark:bg-neutral-100 focus-visible:ring-0 border-none pl-8 text-neutral-700 placeholder:text-neutral-400 text-sm `} />
+            className={`rounded-full dark:bg-neutral-100 focus-visible:ring-0 border-none pl-10 text-neutral-700 placeholder:text-neutral-400 text-sm `} />
       </div>
    );
 };

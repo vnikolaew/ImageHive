@@ -1,11 +1,12 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { auth } from "../../../auth";
+import { auth } from "@web/auth";
 import { ActionApiResponse, sleep } from "@nx-web/shared";
 import { xprisma } from "@nx-web/db";
+import { ImageComment } from "@prisma/client";
 
-export async function handleCommentOnImage(imageId: string, commentText: string): Promise<ActionApiResponse> {
+export async function handleCommentOnImage(imageId: string, commentText: string): Promise<ActionApiResponse<ImageComment>> {
    const session = await auth();
    if (!session) return { success: false };
    await sleep(2000);
@@ -16,12 +17,15 @@ export async function handleCommentOnImage(imageId: string, commentText: string)
          raw_text: commentText,
          userId: session.user?.id as string,
          metadata: {},
-      },
+      }, include: { user: true },
    });
 
    if (!comment) return { success: false };
+   const { updatePassword, verifyPassword, ...rest } = comment.user;
+   // @ts-ignore
+   comment.user = rest;
 
-   revalidatePath(`/photos/${imageId}`);
+   // revalidatePath(`/photos/${imageId}`);
    return { success: true, data: comment };
 }
 

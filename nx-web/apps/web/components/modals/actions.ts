@@ -39,15 +39,6 @@ export type UploadFileResponse = {
 
 export type Dimensions = [number, number]
 
-const REDIS_CONNECTION = {
-   host: `localhost`,
-   port: 6379,
-};
-
-const queue = new Queue(`classify_images`, {
-   connection: REDIS_CONNECTION,
-});
-
 export async function uploadFile(
    imageUpload: ImageUpload,
    name: string,

@@ -24,4 +24,9 @@ type Events = {
    "test/image.classify": ClassifyImageRequest;
 };
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "my-app", schemas: new EventSchemas().fromRecord<Events>() });
+export const inngest = new Inngest(
+   {
+      id: "my-app",
+      schemas: new EventSchemas().fromRecord<Events>(),
+      eventKey: process.env.INNGEST_EVENT_KEY,
+   });

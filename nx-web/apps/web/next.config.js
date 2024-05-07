@@ -26,6 +26,8 @@ const nextConfig = {
    },
    webpack: (config) => {
       // See https://webpack.js.org/configuration/resolve/#resolvealias
+      config.externals = [...config.externals, "hnswlib-node"];
+
       config.resolve.alias = {
          ...config.resolve.alias,
          "sharp$": false,
@@ -61,6 +63,14 @@ const nextConfig = {
          },
          {
             hostname: "staticflickr.com",
+            protocol: `https`,
+         },
+         {
+            hostname: "cdn.pixabay.com",
+            protocol: `https`,
+         },
+         {
+            hostname: "www.dropbox.com",
             protocol: `https`,
          },
       ],

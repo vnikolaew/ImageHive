@@ -1,4 +1,5 @@
 import { HfInference } from "@huggingface/inference";
+import { sleep } from "@utils";
 
 export interface SentenceSimilarityResponse {
    output: { label: string, score: number }[];
@@ -21,13 +22,18 @@ export class SentenceSimilarity {
       console.log({ source_sentences, sentences });
 
       const similarities = await Promise.all(
-         source_sentences.map(s => this.hf.sentenceSimilarity({
-            model: this.model ?? "Snowflake/snowflake-arctic-embed-s",
-            inputs: {
-               source_sentence: s.label,
-               sentences,
-            },
-         })),
+         source_sentences.map((s, index) => {
+            // Add a delay to evade rate limit:
+            return sleep(index * 500)
+               .then(() =>
+                  this.hf.sentenceSimilarity({
+                     model: this.model ?? "Snowflake/snowflake-arctic-embed-s",
+                     inputs: {
+                        source_sentence: s.label,
+                        sentences,
+                     },
+                  }));
+         }),
       );
       console.log({ size: similarities.length, similarities });
 

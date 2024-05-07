@@ -41,7 +41,7 @@ const ChangeProfilePictureModal = ({}: ChangeProfilePictureModalProps) => {
    const [selectedImagePattern, setSelectedImagePattern] = useState(``);
 
    const { modal, toggleModal, closeModal } = useModals();
-   const { addImage, removeImage, imagePreview, inputFiles } = useSingleFileImagePreview();
+   const { addImage, removeImage, imagePreview, inputFile } = useSingleFileImagePreview();
 
    const { loading, action: handleUplodProfilePictureAction } = usePromise(async (data: FormData) => {
       await handleUpdateProfilePicture(data).then(res => {
@@ -62,8 +62,8 @@ const ChangeProfilePictureModal = ({}: ChangeProfilePictureModalProps) => {
 
    async function handleUpdateProfilePictureClient() {
       const formData = new FormData();
-      if (!!inputFiles) {
-         formData.append(`file`, inputFiles);
+      if (!!inputFile) {
+         formData.append(`file`, inputFile);
       } else if (!!selectedImagePattern?.length) {
          formData.append(`url`, selectedImagePattern);
       }
@@ -109,7 +109,7 @@ const ChangeProfilePictureModal = ({}: ChangeProfilePictureModalProps) => {
                                 size={`lg`} variant={`ghost`}>
                            Browse files
                         </Button>
-                        {!!inputFiles && (
+                        {!!inputFile && (
                            <Button onClick={_ => removeImage()}
                                    className={`rounded-full gap-2  my-4 hover:border-black`}
                                    size={`sm`} variant={`ghost`}>

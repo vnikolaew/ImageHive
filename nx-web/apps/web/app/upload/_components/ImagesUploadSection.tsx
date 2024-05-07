@@ -21,10 +21,6 @@ const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSe
    const scrollAreaRef = useRef<HTMLDivElement>(null!);
    const { openModal } = useModals();
 
-   const deleteImage = useCallback((id: string) => {
-      removeImage(id);
-   }, [removeImage]);
-
    useEffect(() => {
       document.getElementById(`form-${selectedImageId}`)?.scrollIntoView({ behavior: "smooth" });
    }, [selectedImageId]);
@@ -48,7 +44,7 @@ const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSe
                            inputFile={imageUpload.inputFile} imagePreview={imageUpload.imagePreview}
                            id={imageUpload.id}
                         />
-                        <DeleteImageModal deleteImage={deleteImage} form={form} imageUpload={imageUpload} />
+                        <DeleteImageModal deleteImage={removeImage} imageUpload={imageUpload} />
                      </div>
                   ))}
                </div>

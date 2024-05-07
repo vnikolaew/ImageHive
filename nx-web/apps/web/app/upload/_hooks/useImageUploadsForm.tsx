@@ -65,11 +65,9 @@ export function useImageUploadsForm() {
 
    const removeImage = useCallback((id: string) => {
       // @ts-ignore
-      const index = fields.indexOf(f => f.id === id);
+      const index = fields.findIndex(f => f.id === id);
       remove(index);
    }, [fields, remove]);
-
-   // const imageUploads = useWatch({ control: form.control, name: `imageUploads` });
 
    return { form, addImage, removeImage, imageUploads: fields } as const;
 }

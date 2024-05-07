@@ -36,7 +36,9 @@ const ScrollToTopButton = ({}: ScrollToTopButtonProps) => {
                   <Tooltip>
                      <TooltipTrigger asChild>
                         <MotionButton
-                           onClick={scrollToTop} className={`rounded-full !p-2 fixed bottom-8 right-8`} size={`icon`}>
+                           variant={`secondary`}
+                           onClick={scrollToTop} className={`rounded-full !p-2 fixed bottom-8 right-8`}
+                           size={`icon`}>
                            <ChevronUp size={18} />
                         </MotionButton>
                      </TooltipTrigger>

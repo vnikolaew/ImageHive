@@ -9,6 +9,7 @@ import { Categories } from "./categories";
 import { ImageClassifier } from "./tasks/ImageClassifier";
 import { SentenceSimilarity } from "./tasks/SentenceSimilarity";
 import { WorkerBase } from "./WorkerBase";
+import { pipeline, dot } from "@xenova/transformers";
 
 import { FeatureExtractionPipeline } from "@xenova/transformers";
 
@@ -60,7 +61,6 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
    }
 
    override async run() {
-      const { pipeline } = await import("@xenova/transformers");
       this.ss_model = await pipeline(`feature-extraction`, `Snowflake/snowflake-arctic-embed-s`, {
          quantized: false,
       });

@@ -1,10 +1,10 @@
 import { inngest } from "@web/lib/inngest";
-import { ClassifyImagesWorker } from "../../../../edge-function/lib/ClassifyImagesWorker";
 import { time } from "../utils";
+import { ClassifyImagesWorker } from "../../../../worker/src/lib/ClassifyImagesWorker";
 
 
 export const classifyImage = inngest.createFunction(
-   { id: "hello-world" },
+   { id: "image-classify" },
    { event: "test/image.classify" },
    async ({ event, step, attempt }) => {
       if (attempt > 1) return { success: false };
@@ -14,7 +14,7 @@ export const classifyImage = inngest.createFunction(
       if (!imageId.length) return { success: false };
 
       const worker = new ClassifyImagesWorker();
-      await time(() => new Promise(res => setTimeout(res, 2000)), event.name);
+      await time(() => worker.processCore(imageId), event.name);
 
       return { event, success: false };
    },

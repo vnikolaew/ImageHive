@@ -1,7 +1,6 @@
 "use client";
 import React, { Fragment, useState } from "react";
 import { Trash } from "lucide-react";
-import { UseFormReturn } from "react-hook-form";
 import { ImageUpload } from "../_store/imageUploadsStore";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/tooltip";
 import { Button } from "@components/button";
@@ -17,11 +16,10 @@ import {
 
 export interface DeleteImageModalProps {
    imageUpload: ImageUpload,
-   form: UseFormReturn<ImageUpload, any, undefined>,
    deleteImage: (id: string) => void
 }
 
-const DeleteImageModal = ({ imageUpload, form, deleteImage }: DeleteImageModalProps) => {
+const DeleteImageModal = ({ imageUpload, deleteImage }: DeleteImageModalProps) => {
    const [open, setOpen] = useState(false);
 
    function handleDeleteImage() {

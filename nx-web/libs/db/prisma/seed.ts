@@ -1,7 +1,8 @@
-import { PrismaClient } from "@prisma/client";
 import { openverse_main } from "./openverse_seed";
+import dotenv from "dotenv";
+import { prisma } from "../src";
 
-const prisma = new PrismaClient();
+dotenv.config();
 
 async function main() {
    return openverse_main(prisma);

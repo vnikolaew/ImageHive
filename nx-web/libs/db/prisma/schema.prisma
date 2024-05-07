@@ -18,6 +18,7 @@ model User {
    password      String?
    emailVerified DateTime?
    image         String?
+   metadata      Json?     @default("null") @db.JsonB
    accounts      Account[]
    sessions      Session[]
    images        Image[]

@@ -53,6 +53,7 @@ export async function uploadFile(
       const filePath = path.join(directory, name);
       writeFile(filePath, buffer, { encoding: `utf8` }, (_) => {
       });
+      console.log(`[${new Date().toISOString()}] Uploaded new file to '${filePath}'.`);
 
       // Add image to DB:
       const [width, height] = dimensions;

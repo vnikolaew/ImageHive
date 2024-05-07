@@ -10,23 +10,24 @@ import { revalidatePath } from "next/cache";
 import { Queue } from "bullmq";
 import { xprisma } from "@nx-web/db";
 import {
-  ActionApiResponse,
-  getFileExtension,
-  PROFILE_PICS_DIR,
-  sleep,
-  UPLOADS_DIR,
+   ActionApiResponse,
+   getFileExtension,
+   PROFILE_PICS_DIR,
+   sleep,
+   UPLOADS_DIR,
 } from "@nx-web/shared";
 import { auth } from "@web/auth";
 import { normalizeFormData } from "@web/lib/utils";
+import { inngest } from "@web/lib/inngest";
 
 
 export interface ImageUpload {
-  inputFile: File;
-  imagePreview: string;
-  id: string;
-  tags: string[];
-  description?: string;
-  aiGenerated: boolean;
+   inputFile: File;
+   imagePreview: string;
+   id: string;
+   tags: string[];
+   description?: string;
+   aiGenerated: boolean;
 }
 
 export type UploadFileResponse = {
@@ -101,18 +102,17 @@ export async function handleUploadImage(imageUpload: ImageUpload, userId: string
    );
 
    if (uploadResponse.success) {
-      // const response = await new ImagesApi(new Configuration({
-      //    get basePath(): string {
-      //       return process.env.BACKEND_API_URL!;
-      //    },
-      // }))
-      //    .classifyNewImageImagesClassifyImageIdPostRaw({ imageId: uploadResponse.image.id });
+      // await queue.add(`classify_image_${uploadResponse.image.id}`,
+      //    {
+      //       imageId: uploadResponse.image.id,
+      //    });
 
-      // Post a new Redis job:
-      await queue.add(`classify_image_${uploadResponse.image.id}`,
-         {
+      await inngest.send({
+         name: `test/image.classify`,
+         data: {
             imageId: uploadResponse.image.id,
-         });
+         }, id: randomUUID(),
+      });
 
       return { success: true };
    }

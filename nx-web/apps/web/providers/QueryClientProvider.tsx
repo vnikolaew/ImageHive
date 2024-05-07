@@ -3,7 +3,7 @@ import React, { PropsWithChildren } from "react";
 import {
    QueryClient,
    QueryCache,
-   QueryClientProvider as QProvider,
+   QueryClientProvider,
 } from "@tanstack/react-query";
 
 export interface QueryClientProviderProps extends PropsWithChildren {
@@ -14,16 +14,16 @@ const queryClient = new QueryClient({
    defaultOptions: {
       queries: {
          queryFn: ({ queryKey }) => fetch(queryKey.join("/")).then((result) => result.json()),
-         refetchInterval: 60 * 1_000
+         refetchInterval: 60 * 1_000,
       },
    },
 });
 
 const QueryClientProvider_ = ({ children }: QueryClientProviderProps) => {
    return (
-      <QProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
          {children}
-      </QProvider>
+      </QueryClientProvider>
    );
 };
 

@@ -9,29 +9,29 @@ import ErrorBoundary from "./ErrorBoundary";
 import QueryClientProvider from "./QueryClientProvider";
 
 const Providers = ({ children }: PropsWithChildren) => {
-  return (
-    <CSPostHogProvider>
-      <ErrorBoundary>
-        <SessionProvider>
-          <ThemeProvider
-            enableSystem
-            disableTransitionOnChange
-            defaultTheme={`system`}
-            attribute={`class`}>
-            <GeoLocationProvider>
-              <SwrProvider>
-                 <QueryClientProvider>
-                    <ModalsProvider>
-                       {children}
-                    </ModalsProvider>
-                 </QueryClientProvider>
-              </SwrProvider>
-            </GeoLocationProvider>
-          </ThemeProvider>
-        </SessionProvider>
-      </ErrorBoundary>
-    </CSPostHogProvider>
-  );
+   return (
+      <CSPostHogProvider>
+         <ErrorBoundary>
+            <QueryClientProvider>
+               <SessionProvider>
+                  <ThemeProvider
+                     enableSystem
+                     disableTransitionOnChange
+                     defaultTheme={`system`}
+                     attribute={`class`}>
+                     <GeoLocationProvider>
+                        <SwrProvider>
+                           <ModalsProvider>
+                              {children}
+                           </ModalsProvider>
+                        </SwrProvider>
+                     </GeoLocationProvider>
+                  </ThemeProvider>
+               </SessionProvider>
+            </QueryClientProvider>
+         </ErrorBoundary>
+      </CSPostHogProvider>
+   );
 };
 
 export default Providers;

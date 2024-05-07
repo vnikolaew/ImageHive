@@ -1,5 +1,4 @@
 import { Prisma, PrismaClient, Tag } from "@prisma/client";
-import { Job } from "bullmq";
 import { HfInference } from "@huggingface/inference";
 
 import { PrismaVectorStore } from "@langchain/community/vectorstores/prisma";
@@ -8,17 +7,11 @@ import { HuggingFaceInferenceEmbeddings } from "@langchain/community/embeddings/
 import { Categories } from "./categories";
 import { ImageClassifier } from "./tasks/ImageClassifier";
 import { SentenceSimilarity } from "./tasks/SentenceSimilarity";
-import { WorkerBase } from "./WorkerBase";
-
-import { FeatureExtractionPipeline } from "@xenova/transformers";
-
-type JobMessage = { imageId?: string }
 
 const prisma = new PrismaClient();
 
-export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
+export class ClassifyImagesWorker {
    hf: HfInference;
-   ss_model?: FeatureExtractionPipeline;
    hfi_model?: HuggingFaceInferenceEmbeddings;
    vectorStore: PrismaVectorStore<Tag, string, any, any>;
 
@@ -29,8 +22,7 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
    static SS_MODEL = `Snowflake/snowflake-arctic-embed-s`;
 
    constructor() {
-      super(`classify_images`, `worker-1`);
-
+      // super(`classify_images`, `worker-1`);
       this.hf = new HfInference(process.env.HF_API_KEY, {
          use_cache: true,
          dont_load_model: false,
@@ -59,22 +51,12 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
          );
    }
 
-   override async run() {
-      const { pipeline } = await import("@xenova/transformers");
-      this.ss_model = await pipeline(`feature-extraction`, `Snowflake/snowflake-arctic-embed-s`, {
-         quantized: false,
-      });
-
-      console.log(`Loaded feature extraction model.`);
-
-      // await super.run();
-   }
-
-   public async processCore(imageId: string) {
+   public async process(imageId: string) {
       let image = await prisma.image.findUnique({
          where: { id: imageId },
       });
 
+      // @ts-ignore
       if (image.metadata.classified === true) {
          console.log(`Image with ID ${imageId} is already classified.`);
          return;
@@ -94,8 +76,7 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
                .map(x => x.trim())
                .map(label => ({ label, score })));
 
-      const ss = await this.sentence_similarity
-         .run(normalized, Categories);
+      const ss = await this.sentence_similarity.run(normalized, Categories);
 
       const newTags = ss.output
          .slice(0, 5)
@@ -109,7 +90,7 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
          },
       });
 
-      console.log(`New image: `, image);
+      console.log(`New image tags: [${image.tags.join(`, `)}] `);
 
       await this.vectorStore.addModels(
          await prisma.$transaction(
@@ -121,11 +102,5 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
                })),
          ),
       );
-   }
-
-   protected override async process(job: Job<JobMessage>) {
-      if (!job.data.imageId?.length) return;
-
-      await this.processCore(job.data.imageId);
    }
 }

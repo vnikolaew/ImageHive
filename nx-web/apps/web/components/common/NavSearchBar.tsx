@@ -36,7 +36,8 @@ const NavSearchBar = ({ showNavbarBackground }: NavSearchBarProps) => {
             ref={inputRef}
             onChange={e => setSearchValue(e.target.value)}
             value={searchValue} placeholder={`Search ${APP_NAME}`}
-            className={`rounded-full focus-visible:ring-0 border-none pl-10 text-black dark:!text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-100 text-md focus:shadow-lg`} />
+            className={cn(`rounded-full focus-visible:ring-0 border-none pl-10 text-black dark:!text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-100 text-md focus:shadow-lg`,
+               !showNavbarBackground && `text-neutral-300`)} />
       </div>
    );
 };

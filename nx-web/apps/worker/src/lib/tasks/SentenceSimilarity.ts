@@ -1,5 +1,4 @@
 import { HfInference } from "@huggingface/inference";
-import { pipeline, dot, FeatureExtractionPipeline } from "@xenova/transformers";
 
 export interface SentenceSimilarityResponse {
    output: { label: string, score: number }[];
@@ -7,7 +6,7 @@ export interface SentenceSimilarityResponse {
 
 export class SentenceSimilarity {
    hf: HfInference;
-   extractor?: FeatureExtractionPipeline;
+   extractor?: any;
 
    constructor(public model: string) {
       this.hf = new HfInference(process.env.HF_API_KEY, {
@@ -19,6 +18,8 @@ export class SentenceSimilarity {
 
    public async run(source_sentences: ({ label: string, score: number })[], sentences: string[]):
       Promise<SentenceSimilarityResponse> {
+      const { pipeline, dot } = await import("@xenova/transformers").then(m => m);
+
       if (!this.extractor) {
          this.extractor = await pipeline(
             "feature-extraction",
@@ -45,7 +46,7 @@ export class SentenceSimilarity {
          return acc;
       }, {});
 
-      for (let i = 0; i < source_embeddings.length; i++){
+      for (let i = 0; i < source_embeddings.length; i++) {
          let source_embedding = source_embeddings[i];
 
          const similarities = sentence_embeddings.map(x => dot(source_embedding, x));

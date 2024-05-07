@@ -24,7 +24,6 @@ const NavbarUserMenu = ({}: NavbarUserMenuProps) => {
    const { loading, action: signOutAction } = usePromise(async () => {
       await signOut({ redirect: true, callbackUrl: `/` });
    });
-   console.log(data.user.image);
 
    return (
       <DropdownMenu modal>

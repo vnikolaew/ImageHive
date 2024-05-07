@@ -34,7 +34,8 @@
         "targetName": "test"
       },
       "exclude": [
-        "apps/worker-e2e/**/*"
+        "apps/worker-e2e/**/*",
+        "apps/edge-function-e2e/**/*"
       ]
     },
     {

@@ -34,7 +34,7 @@ const DEFAULT_USER_IMAGES = [
    `purple.svg`,
    `teal.svg`,
    `yellow.svg`,
-].map((i) => `https://{APP_NAME}.com/static/img/profile_images/${i}`);
+].map((i) => `https://pixabay.com/static/img/profile_images/${i}`);
 
 const ChangeProfilePictureModal = ({}: ChangeProfilePictureModalProps) => {
    const session = useSession();

@@ -47,8 +47,10 @@ const Navbar = () => {
          )}>
          <h2 className="text-xl cursor-pointer">
             <Link href={`/`}>
-               <Image alt={`logo`} width={120} height={30}
-                      src={!darkMode ? Logo : (darkMode || !showNavbarBackground) ? LogoDark : Logo} />
+               <Image
+                  className={`rounded-sm`}
+                  alt={`logo`} width={120} height={30}
+                  src={!darkMode ? Logo : (darkMode || !showNavbarBackground) ? LogoDark : Logo} />
             </Link>
          </h2>
          <div className={`flex-1`}>

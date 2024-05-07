@@ -67,7 +67,7 @@ const EditCoverImageModal = ({ open, onOpenChange }: EditCoverImageModalProps) =
                         const file = e.dataTransfer.files[0];
                         addImage(file);
                      }}
-                          className={`flex flex-col flex-wrap items-center justify-center mt-12 h-[200px] border-dashed border-[2px] border-slate-300/70 dark:bg-slate-600/60 bg-slate-300/60 rounded-xl text-black dark:text-white shadow-md`}>
+                          className={`flex flex-col flex-wrap items-center justify-center mt-4 h-[200px] border-dashed border-[2px] border-slate-300/70 dark:bg-slate-600/60 bg-slate-300/60 rounded-xl text-black dark:text-white shadow-md`}>
                         <div className={`my-4`}>
                            <Image className={`text-green-600`} size={18} />
                         </div>
@@ -94,7 +94,7 @@ const EditCoverImageModal = ({ open, onOpenChange }: EditCoverImageModalProps) =
                </form>
                <div className={`text-sm font-semibold`}>Or choose a gradient</div>
             </div>
-            <DialogFooter className={`!w-full my-4 flex items-center !justify-between`}>
+            <DialogFooter className={`!w-full mt-4 flex items-center !justify-between`}>
                <Button
                   onClick={_ => {
                      onOpenChange(false);

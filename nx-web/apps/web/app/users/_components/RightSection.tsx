@@ -17,7 +17,13 @@ import { Account, Image, Profile, User } from "@prisma/client";
 import { ModalType, useModals } from "@web/providers/ModalsProvider";
 import { TooltipProvider, TooltipTrigger, Tooltip, TooltipContent } from "@components/tooltip";
 import { Button } from "@components/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@components/dropdown-menu";
+import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuSeparator,
+   DropdownMenuTrigger,
+} from "@components/dropdown-menu";
 
 interface RightSectionProps {
    isMe: boolean,
@@ -39,7 +45,7 @@ const SOCIAL_ICONS: Record<string, LucideIcon> = {
 
 const RightSection = ({ isMe, user }: RightSectionProps) => {
    const { modal, openModal } = useModals();
-   console.log(Object.keys(user.profile?.onlineProfiles ?? { }));
+   console.log(Object.keys(user.profile?.onlineProfiles ?? {}));
 
    return (
       <div className={`flex items-center gap-2`}>
@@ -64,18 +70,25 @@ const RightSection = ({ isMe, user }: RightSectionProps) => {
                         className={`dark:bg-white dark:text-black bg-black`}>{`${key[0].toUpperCase()}${key.slice(1)}`}</TooltipContent>
                   </Tooltip>
                ))}
-            <Tooltip>
-               <TooltipTrigger>
-                  <Button
-                     className={`rounded-full border-[0px] border-neutral-300 !p-3 !h-fit`} variant={`ghost`}
-                  >
-                     <Earth size={20} />
-                  </Button>
-               </TooltipTrigger>
-               <TooltipContent
-                  side={`bottom`}
-                  className={`dark:bg-white dark:text-black bg-black`}>Website</TooltipContent>
-            </Tooltip>
+            {user.profile?.onlineProfiles?.website?.length && (
+               <Tooltip>
+                  <TooltipTrigger asChild>
+                     <Button
+                        asChild
+                        className={`rounded-full border-[0px] border-neutral-300 !p-3 !h-fit`} variant={`ghost`}
+                     >
+                        <Link href={user.profile.onlineProfiles.website?.trim()}>
+                           <Earth size={20} />
+                        </Link>
+                     </Button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                     side={`bottom`}
+                     className={`dark:bg-white dark:text-black bg-black`}>
+                     Website
+                  </TooltipContent>
+               </Tooltip>
+            )}
          </TooltipProvider>
          <TooltipProvider>
             <Tooltip>
@@ -103,28 +116,33 @@ const RightSection = ({ isMe, user }: RightSectionProps) => {
                {isMe ? (
                   <Fragment>
                      <Link href={`/account/settings`}>
-                        <DropdownMenuItem className={`p-3 text-md cursor-pointer gap-4 !px-6`}>
-                           <Pencil className={``} size={16} />
+                        <DropdownMenuItem
+                           className={`p-2 text-base gap-4 !px-3 cursor-pointer !pr-4`}
+                        >
+                           <Pencil className={``} size={14} />
                            Edit Profile
                         </DropdownMenuItem>
                      </Link>
                      <DropdownMenuItem
                         onClick={_ => openModal(ModalType.SHARE_PROFILE)}
-                        className={`p-3 text-md gap-4 !px-6 cursor-pointer`}>
-                        <Share2 size={16} />
+                        className={`p-2 text-base gap-4 !px-3 cursor-pointer !pr-4`}
+                     >
+                        <Share2 size={14} />
                         Share Profile
                      </DropdownMenuItem>
 
                   </Fragment>
                ) : (
-                  <><DropdownMenuItem className={`p-3 text-md gap-4 !px-6`}>
-                     <Share2 size={16} />
-                     Share Profile
-                  </DropdownMenuItem><DropdownMenuSeparator /><DropdownMenuItem
+                  <>
+                     <DropdownMenuItem className={`p-3 text-md gap-4 !px-6`}>
+                        <Share2 size={16} />
+                        Share Profile
+                     </DropdownMenuItem><DropdownMenuSeparator /><DropdownMenuItem
                      className={`p-3 text-md !text-red-500 gap-4 !px-6 hover:text-red-500`}>
                      <Flag className={`text-red-500`} size={16} />
                      Block user
-                  </DropdownMenuItem></>
+                  </DropdownMenuItem>
+                  </>
                )}
 
             </DropdownMenuContent>

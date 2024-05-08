@@ -85,7 +85,6 @@
       "react-hook-form": "^7.51.3",
       "react-share": "^5.1.0",
       "resend": "^3.2.0",
-      "sharp": "^0.33.2",
       "sonner": "^1.4.41",
       "stripe": "^15.4.0",
       "swr": "^2.2.5",

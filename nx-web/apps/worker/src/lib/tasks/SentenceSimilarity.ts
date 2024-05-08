@@ -5,6 +5,7 @@ import {
    env,
 } from "@xenova/transformers";
 import * as path from "node:path";
+import { __IS_DEV__ } from "@nx-web/shared";
 
 global.self = global;
 
@@ -21,9 +22,11 @@ export class SentenceSimilarity {
    extractor?: any;
 
    constructor(public model: string) {
-      env.allowLocalModels = true
-      env.localModelPath = path.join(process.cwd(), `models`)
-      env.allowRemoteModels = false;
+      if(__IS_DEV__) {
+         env.allowLocalModels = true
+         env.localModelPath = path.join(process.cwd(), `models`)
+         env.allowRemoteModels = false;
+      }
 
       this.hf = new HfInference(process.env.HF_API_KEY, {
          use_cache: true,

@@ -83,8 +83,8 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
 
    return (
       <div
-         className="w-full h-fit border-[1px] border-neutral-500 sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-lg p-6">
-         <div className={`w-full flex items-center gap-2 justify-center`}>
+         className="w-full h-fit border-[1px] border-neutral-300 sticky top-12 rounded-lg dark:bg-border flex flex-col items-start gap-4 shadow-lg p-6">
+         <div className={`w-full flex items-center gap-4 justify-center`}>
             <CircleCheck className={`dark:text-neutral-200`} size={16} />
             <span className={`dark:text-neutral-300 text-sm`}>  Free for use under the {APP_NAME}
                <Link
@@ -106,7 +106,7 @@ const ImageSummary = ({ image, haveILiked, haveIDownloaded, haveISaved, haveIFol
                }
             </Button>
          </div>
-         <Separator className={`w-full mt-6 dark:bg-neutral-500`} />
+         <Separator className={`w-full mt-4 dark:bg-neutral-500`} />
          <div className={`w-full flex items-center justify-center gap-2 mt-2`}>
             <ImageAction
                action={handleLike}

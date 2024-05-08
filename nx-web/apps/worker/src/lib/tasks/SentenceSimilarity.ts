@@ -1,6 +1,16 @@
 import { HfInference } from "@huggingface/inference";
-import { pipeline, dot, env } from "@xenova/transformers";
+import {
+   pipeline,
+   dot,
+   env,
+} from "@xenova/transformers";
+import * as path from "node:path";
 
+global.self = global;
+
+env.backends.onnx ??= { }
+env.backends.onnx.wasm ??= { }
+env.backends.onnx.wasm.numThreads = 1;
 
 export interface SentenceSimilarityResponse {
    output: { label: string, score: number }[];
@@ -11,7 +21,9 @@ export class SentenceSimilarity {
    extractor?: any;
 
    constructor(public model: string) {
-      // env.backends.onnx.wasm.numThreads = 1;
+      env.allowLocalModels = true
+      env.localModelPath = path.join(process.cwd(), `models`)
+      env.allowRemoteModels = false;
 
       this.hf = new HfInference(process.env.HF_API_KEY, {
          use_cache: true,
@@ -29,6 +41,7 @@ export class SentenceSimilarity {
             {
                quantized: false, // Comment out this line to use the quantized version
             });
+         console.log({ extractor: this.extractor });
       }
 
       const output = await this.extractor._call(

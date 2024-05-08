@@ -41,7 +41,7 @@ const AccountsTabsList = () => {
    const session = useSession();
 
    return (
-      <div className="flex items-center justify-start gap-8 border-b-[1px] w-2/3 mx-auto">
+      <div className="flex items-center justify-start gap-8 border-b-[1px] w-full mx-auto">
          {TABS.map((tab, index) => (
             <Link key={index}
                   href={tab.label === `Profile` ? tab.href.replace(`{userId}`, session.data?.user?.id!) : tab.href}>

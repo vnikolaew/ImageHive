@@ -48,7 +48,7 @@ const ImageStatistics = ({ image }: ImageStatisticsProps) => {
                </CollapsibleContent>
             </AnimatePresence>
             <CollapsibleTrigger>
-               <Button className={`underline text-neutral-400 font-normal !px-0 text-sm 2xl:text-base mt-2`}
+               <Button className={`underline text-neutral-400 font-normal !px-0 text-sm mt-2`}
                        variant={`link`}>
                   {showDetails ? `Hide` : `Show`} details <ChevronDown className={cn(`ml-1 transition-all duration-300`,
                   showDetails && `rotate-180`)} size={16} />

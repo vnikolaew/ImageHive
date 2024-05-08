@@ -1,4 +1,4 @@
-import { Dropbox } from "dropbox";
+import { Dropbox, DropboxAuth } from "dropbox";
 import fetch from "node-fetch";
 
 // Upload flow ->
@@ -10,18 +10,26 @@ export const FOLDERS = {
    UPLOADS: "images",
    COVERS: "covers",
    PROFILE_PICS: "profile_pictures",
-}
+};
+
 
 export class DropboxService {
    private db: Dropbox;
+   private dbAuth: DropboxAuth;
 
    constructor() {
-      this.db = new Dropbox({
-         accessToken: process.env.DROPBOX_ACCESS_TOKEN,
+      this.dbAuth = new DropboxAuth({
          fetch,
          clientId: `95iupmdxhrhm6b6`,
          clientSecret: `vgoqpb4ypsu0kep`,
+         accessToken: process.env.DROPBOX_ACCESS_TOKEN,
+      })
+
+      this.db = new Dropbox({
+         fetch,
+         auth: this.dbAuth,
       });
+
    }
 
    async filesListFolder(path: string) {
@@ -72,6 +80,7 @@ export class DropboxService {
 
       return { success: res.status === 200, response: res.result };
    }
+
    async deleteImage(fileName: string) {
       const res = await this.db.filesDeleteV2({
          path: `/${FOLDERS.UPLOADS}/${fileName}`,

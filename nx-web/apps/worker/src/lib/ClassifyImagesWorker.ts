@@ -9,7 +9,7 @@ import { Categories } from "./categories";
 import { ImageClassifier } from "./tasks/ImageClassifier";
 import { SentenceSimilarity } from "./tasks/SentenceSimilarity";
 import { WorkerBase } from "./WorkerBase";
-import { pipeline, dot } from "@xenova/transformers";
+import { pipeline } from "@xenova/transformers";
 
 import { FeatureExtractionPipeline } from "@xenova/transformers";
 
@@ -27,7 +27,7 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
    sentence_similarity: SentenceSimilarity;
 
    static IMAGE_CLASSIFICATION_MODEL = `google/vit-base-patch16-224`;
-   static SS_MODEL = `Snowflake/snowflake-arctic-embed-s`;
+   static SS_MODEL = `Xenova/all-MiniLM-L6-v2`;
 
    constructor() {
       super(`classify_images`, `worker-1`);
@@ -96,6 +96,7 @@ export class ClassifyImagesWorker extends WorkerBase<JobMessage> {
 
       const ss = await this.sentence_similarity
          .run(normalized, Categories);
+      return;
 
       const newTags = ss.output
          .slice(0, 5)

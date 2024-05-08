@@ -9,6 +9,7 @@ import Link from "next/link";
 import { usePromise } from "@web/hooks/usePromise";
 import { Button, buttonVariants } from "@components/button";
 import { cn } from "@utils";
+import { usePathname } from "next/navigation";
 
 export const LoadingSpinner = ({ text }: { text?: string }) => (
    <Fragment>
@@ -19,7 +20,11 @@ export const LoadingSpinner = ({ text }: { text?: string }) => (
 
 export function SocialLogins() {
    const { theme } = useTheme();
-   const { loading, action: googleSignIn } = usePromise(() => signIn(`google`, { redirect: true, callbackUrl: `/` }));
+   const pathname = usePathname();
+   const { loading, action: googleSignIn } = usePromise(() => {
+      console.log({ pathname });
+      return signIn(`google`, { redirect: true, callbackUrl: pathname });
+   });
 
    const handleGoogleLogin = async (e: any) => {
       e.preventDefault();

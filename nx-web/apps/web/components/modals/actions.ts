@@ -61,7 +61,7 @@ export async function uploadFile(
       const [width, height] = dimensions;
       const image = await xprisma.image.create({
          data: {
-            original_file_name: imageUpload.inputFile.name,
+            original_file_name: name,
             dimensions_set: [`${width},${height}`],
             createdAt: new Date(),
             file_format: getFileExtension(imageUpload.inputFile.name),

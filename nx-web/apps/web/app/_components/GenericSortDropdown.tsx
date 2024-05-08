@@ -8,13 +8,14 @@ interface MediaSortDropdownProps {
   qsKey?: string;
   onChange?: (value: string) => void;
   placeholder?: string;
+   defaultValue?: string;
 }
 
-export const GenericSortDropdown = ({ options, qsKey, onChange, placeholder }: MediaSortDropdownProps) => {
+export const GenericSortDropdown = ({ options, qsKey, onChange, placeholder, defaultValue }: MediaSortDropdownProps) => {
   const [sort, setSort] = useQueryState<string>(qsKey ?? `sort`,
     parseAsString.withOptions({
       history: `push`,
-    }));
+    })) ;
 
   //@ts-ignore
   options = typeof options[0] === `string` ? options.map(o => ({ value: o, label: o })) : options;
@@ -26,7 +27,7 @@ export const GenericSortDropdown = ({ options, qsKey, onChange, placeholder }: M
           setSort(value).then(_ => onChange?.(value));
         }}
         // defaultValue={placeholder}
-        value={sort}>
+        value={sort ?? defaultValue}>
         <SelectTrigger className="w-[180px] rounded-full pl-4">
           <SelectValue placeholder={placeholder ?? sort ?? options[0]?.value} />
         </SelectTrigger>

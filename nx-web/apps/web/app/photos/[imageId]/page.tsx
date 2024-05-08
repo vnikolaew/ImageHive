@@ -21,13 +21,14 @@ export interface PageProps {
 
 const Page = async ({ params: { imageId } }: PageProps) => {
    const session = await auth();
-   if (!session) return <div>No user</div>;
 
-   const imageView = await xprisma.imageView.upsert({
-      where: { userId_imageId: { imageId, userId: session?.user?.id as string } },
-      create: { userId: session?.user?.id!, imageId, metadata: {} },
-      update: { userId: session?.user?.id!, imageId, metadata: {} },
-   });
+   if(session?.user?.id) {
+      const imageView = await xprisma.imageView.upsert({
+         where: { userId_imageId: { imageId, userId: session?.user?.id as string } },
+         create: { userId: session?.user?.id!, imageId, metadata: {} },
+         update: { userId: session?.user?.id!, imageId, metadata: {} },
+      });
+   }
 
    const image = await getImage(imageId);
    if (!image) return notFound();

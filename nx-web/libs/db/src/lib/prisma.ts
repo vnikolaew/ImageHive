@@ -102,11 +102,25 @@ export const xprisma = prisma.$extends({
    },
    model: {
       user: {
-         async inbox({ userId }: { userId: string }): Promise<Message[]> {
+         async inbox({ userId, filter }: { userId: string, filter?: string }): Promise<Message[]> {
             const messages = await xprisma.message.findMany({
                where: {
                   recipientId: userId,
                   is_deleted: false,
+                  OR: [
+                     {
+                        subject: {
+                           contains: filter.toLowerCase(),
+                           mode: `insensitive`,
+                        },
+                     },
+                     {
+                        text: {
+                           contains: filter.toLowerCase(),
+                           mode: `insensitive`,
+                        },
+                     },
+                  ],
                },
                orderBy: {
                   createdAt: `desc`,
@@ -118,11 +132,25 @@ export const xprisma = prisma.$extends({
             });
             return messages;
          },
-         async outbox({ userId }: { userId: string }): Promise<Message[]> {
+         async outbox({ userId, filter }: { userId: string, filter?: string }): Promise<Message[]> {
             const messages = await xprisma.message.findMany({
                where: {
                   senderId: userId,
                   is_deleted: false,
+                  OR: [
+                     {
+                        subject: {
+                           contains: filter.toLowerCase(),
+                           mode: `insensitive`,
+                        },
+                     },
+                     {
+                        text: {
+                           contains: filter.toLowerCase(),
+                           mode: `insensitive`,
+                        },
+                     },
+                  ],
                },
                orderBy: {
                   createdAt: `desc`,
@@ -345,7 +373,7 @@ export const xprisma = prisma.$extends({
                SELECT DISTINCT(i.id), *
                FROM (SELECT *
                      FROM (SELECT *, unnest(tags) tag from "Image") i
-                     ${arrayFilter}) i
+                        ${arrayFilter}) i
                   LIMIT ${limit}
                ;
             `;

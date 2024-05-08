@@ -14,9 +14,10 @@ import { toast } from "sonner";
 
 export interface MessagesSectionProps {
    outbox: Message[];
+   value: string;
 }
 
-const MessagesSection = ({ outbox }: MessagesSectionProps) => {
+const MessagesSection = ({ outbox, value }: MessagesSectionProps) => {
    const [markedEntries, setMarkedEntries] = useState<string[]>([]);
    const { action: markReadAction, loading } = usePromise(async () => {
       const res = await handleMarkMessagesAsRead(markedEntries);
@@ -46,7 +47,7 @@ const MessagesSection = ({ outbox }: MessagesSectionProps) => {
    }, [markedEntries, loading, unreadLoading, deleteLoading]);
 
    return (
-      <TabsContent className={`flex flex-col gap-4 w-full`} value={`outbox`}>
+      <TabsContent className={`flex flex-col gap-4 w-full`} value={value}>
          <div className={`w-full flex items-center gap-2`}>
             <Button
                disabled={disableButtons} size={`sm`} className={`rounded-full`}
@@ -67,14 +68,18 @@ const MessagesSection = ({ outbox }: MessagesSectionProps) => {
                Mark as unread {!!markedEntries.length && `(${markedEntries.length})`}
             </Button>
          </div>
-         {outbox.map((message, i) => (
+         {outbox?.length > 0 ? outbox.map((message, i) => (
             <MessageEntry
                onMarkChange={value => {
                   if (value) setMarkedEntries(e => [...e, message.id]);
                   else setMarkedEntries(e => e.filter(x => x !== message.id));
                }} key={i}
-               message={message} />
-         ))}
+               message={message as any} />
+         )) : (
+           <div className={`mt-4 text-neutral-500`}>
+              You have no messages in your {value}.
+           </div>
+         )}
       </TabsContent>
    );
 };

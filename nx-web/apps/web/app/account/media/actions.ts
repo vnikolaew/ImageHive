@@ -5,6 +5,7 @@ import * as fs from "node:fs";
 import { ImageUpload } from "@web/components/modals/actions";
 import { auth } from "@web/auth";
 import { xprisma } from "@nx-web/db";
+import { DropboxService } from "@web/lib/dropbox";
 
 export interface ApiResponse {
    success: boolean;
@@ -46,6 +47,14 @@ export async function deleteMedia(imageId: string): Promise<ApiResponse> {
    if (!image) return { success: false };
 
    console.log(`Deleted image with ID ${imageId}.`);
+
+   // Delete from Dropbox as well:
+   const db = new DropboxService();
+   const res = await db.deleteImage(image.original_file_name);
+   if(res.success) {
+      console.log(`Deleted image with ID ${imageId} from Image storage.`);
+   }
+
    if (fs.existsSync(image.absolute_url)) {
       fs.unlinkSync(image.absolute_url);
    }

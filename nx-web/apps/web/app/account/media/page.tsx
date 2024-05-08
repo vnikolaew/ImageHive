@@ -9,6 +9,7 @@ import { GenericSortDropdown } from "@web/app/_components/GenericSortDropdown";
 import { Separator } from "@components/separator";
 import AccountMediaItem from "@web/app/account/media/_components/AccountMediaItem";
 import { Button } from "@components/button";
+import MediaSidebar from "@web/app/account/media/_components/MediaSidebar";
 
 interface PageSearchParams {
    qs?: string;
@@ -30,7 +31,8 @@ const IMAGES_LIMIT = 10;
 const Page = async ({ searchParams }: { params: any, searchParams: PageSearchParams }) => {
    const session = await auth();
 
-   let sortClause: Prisma.ImageOrderByWithRelationAndSearchRelevanceInput | Prisma.ImageOrderByWithRelationAndSearchRelevanceInput[] | undefined;
+   let sortClause: Prisma.ImageOrderByWithRelationAndSearchRelevanceInput | Prisma.ImageOrderByWithRelationAndSearchRelevanceInput[] | undefined
+      = { createdAt: `desc` };
    if (searchParams?.sort?.length && Object.keys(SortOptions).includes(searchParams.sort)) {
       switch (SortOptions[searchParams.sort as keyof typeof SortOptions]) {
          case SortOptions.UploadedLatest:
@@ -40,6 +42,7 @@ const Page = async ({ searchParams }: { params: any, searchParams: PageSearchPar
             sortClause = { createdAt: `asc` };
             break;
          default:
+            sortClause = { createdAt: `desc` };
             break;
       }
    }
@@ -51,6 +54,13 @@ const Page = async ({ searchParams }: { params: any, searchParams: PageSearchPar
       },
       take: IMAGES_LIMIT,
       orderBy: sortClause,
+      include: {
+         _count: {
+            select: {
+               views: true, likes: true, downloads: true, comments: true,
+            },
+         },
+      },
    });
 
    let filteredImages = myImages;
@@ -64,15 +74,22 @@ const Page = async ({ searchParams }: { params: any, searchParams: PageSearchPar
             <h2 className={`text-3xl`}>Media</h2>
             <div className={`flex items-center gap-4 w-2/5`}>
                <MediaSearchBar qs={searchParams?.qs ?? ``} />
-               <GenericSortDropdown options={Object.values(SortOptions)} />
+               <GenericSortDropdown
+                  defaultValue={SortOptions.UploadedLatest}
+                  options={Object.values(SortOptions)} />
             </div>
          </div>
          <Separator className={`w-full my-4 h-[1px]`} />
          {filteredImages.length ? (
-            <div className={`flex items-start flex-wrap gap-6 mt-8`}>
-               {filteredImages.map((image, i) => (
-                  <AccountMediaItem key={i} image={image} />
-               ))}
+            <div className={`grid grid-cols-10 gap-8`}>
+               <div className={`col-span-2 h-full`}>
+                  <MediaSidebar />
+               </div>
+               <div className={`grid grid-cols-3 col-span-8 flex-wrap gap-6`}>
+                  {filteredImages.map((image, i) => (
+                     <AccountMediaItem key={i} image={image} />
+                  ))}
+               </div>
             </div>
          ) : (
             <div className={`my-16 flex flex-col items-center gap-4 text-neutral-500 w-full text-center`}>

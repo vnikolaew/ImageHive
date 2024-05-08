@@ -55,7 +55,7 @@ const Footer = ({}: FooterProps) => {
                </a>
                <a>
                   <Linkedin
-                     className={`text-blue-500 stroke-2 cursor-pointer hover:opacity-80 transition-colors duration-200`}
+                     className={`text-[#0077B5] stroke-2 cursor-pointer hover:opacity-80 transition-colors duration-200`}
                      size={24} />
                </a>
             </div>

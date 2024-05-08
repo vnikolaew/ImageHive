@@ -1,21 +1,23 @@
 import React from "react";
-import { TabsContent } from "@components/tabs";
 import { auth } from "@web/auth";
 import { xprisma } from "@nx-web/db";
+import MessagesSection from "../_components/MessagesSection";
 
 export interface PageProps {
+   searchParams: { qs?: string };
 }
 
-const Page = async ({}: PageProps) => {
+const Page = async ({ searchParams }: PageProps) => {
    const session = await auth();
    const inbox = await xprisma.user.inbox({
       userId: session?.user.id!,
+      filter: searchParams.qs ?? ``
    });
    console.log({ inbox });
 
    return (
       <div>
-         <TabsContent value={`inbox`}>Inbox</TabsContent>
+         <MessagesSection value={`inbox`} outbox={inbox} />
       </div>
    );
 };

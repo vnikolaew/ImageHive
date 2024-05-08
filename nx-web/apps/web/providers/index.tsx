@@ -7,28 +7,31 @@ import SwrProvider from "./SWRProvider";
 import { ModalsProvider } from "./ModalsProvider";
 import ErrorBoundary from "./ErrorBoundary";
 import QueryClientProvider from "./QueryClientProvider";
+import GoogleReCaptchaProvider from "./GoogleReCaptchaProvider";
 
 const Providers = ({ children }: PropsWithChildren) => {
    return (
       <CSPostHogProvider>
          <ErrorBoundary>
-            <QueryClientProvider>
-               <SessionProvider>
-                  <ThemeProvider
-                     enableSystem
-                     disableTransitionOnChange
-                     defaultTheme={`system`}
-                     attribute={`class`}>
-                     <GeoLocationProvider>
-                        <SwrProvider>
-                           <ModalsProvider>
-                              {children}
-                           </ModalsProvider>
-                        </SwrProvider>
-                     </GeoLocationProvider>
-                  </ThemeProvider>
-               </SessionProvider>
-            </QueryClientProvider>
+            <GoogleReCaptchaProvider>
+               <QueryClientProvider>
+                  <SessionProvider>
+                     <ThemeProvider
+                        enableSystem
+                        disableTransitionOnChange
+                        defaultTheme={`system`}
+                        attribute={`class`}>
+                        <GeoLocationProvider>
+                           <SwrProvider>
+                              <ModalsProvider>
+                                 {children}
+                              </ModalsProvider>
+                           </SwrProvider>
+                        </GeoLocationProvider>
+                     </ThemeProvider>
+                  </SessionProvider>
+               </QueryClientProvider>
+            </GoogleReCaptchaProvider>
          </ErrorBoundary>
       </CSPostHogProvider>
    );

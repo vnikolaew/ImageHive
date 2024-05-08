@@ -6,7 +6,7 @@ import { z } from "zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useIsDarkMode } from "@web/hooks/useIsDarkMode";
 import { usePromise } from "@web/hooks/usePromise";
 import { ModalType } from "@web/providers/ModalsProvider";
@@ -37,6 +37,7 @@ const SignInForm = () => {
    });
    const [showPassword, setShowPassword] = useState(false);
    const darkMode = useIsDarkMode();
+   const pathname=  usePathname()
    const { loading, action: signInAction } = usePromise(async (values: FormValues) =>
       await signIn(`credentials`, {
          username: values.usernameOrEmail,
@@ -44,7 +45,7 @@ const SignInForm = () => {
          password: values.password,
          type: `signin`,
          redirect: false,
-         callbackUrl: `/`,
+         callbackUrl: pathname
       })
          .then(res => {
             if (res?.error === `CredentialsSignin`) {

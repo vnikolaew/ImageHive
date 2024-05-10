@@ -19,13 +19,13 @@ const nextConfig = {
       disableServerWebpackPlugin: true,
       disableClientWebpackPlugin: true,
    },
-   experimental: {
-      serverComponentsExternalPackages: ["sharp", "onnxruntime-node"],
-   },
+   // experimental: {
+   //    serverComponentsExternalPackages: ["sharp", "onnxruntime-node"],
+   // },
    webpack: (config) => {
       // See https://webpack.js.org/configuration/resolve/#resolvealias
       config.externals = [...config.externals, "hnswlib-node"];
-
+      //
       config.resolve.alias = {
          ...config.resolve.alias,
          "sharp$": false,

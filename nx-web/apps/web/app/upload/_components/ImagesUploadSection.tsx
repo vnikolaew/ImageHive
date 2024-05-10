@@ -26,7 +26,7 @@ const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSe
    }, [selectedImageId]);
 
    return (
-      <div className={`flex flex-col gap-8 items-center`}>
+      <div className={`flex flex-col gap-6 items-center`}>
          <div className={`flex gap-12 items-start my-8`}>
             <ImagePreviewsSection
                imageUploads={imageUploads!}
@@ -55,8 +55,8 @@ const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSe
                onClick={_ => {
                   openModal(ModalType.REVIEW_UPLOAD_IMAGES);
                }}
-               size={`lg`}
-               className={`rounded-full !px-12 text-md`}
+               size={`default`}
+               className={`rounded-full !px-12 text-sm`}
                variant={`default`}>
                Review ({imageUploads?.length})
             </Button>

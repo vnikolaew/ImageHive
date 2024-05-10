@@ -20,10 +20,11 @@ export class DropboxService {
    constructor() {
       this.dbAuth = new DropboxAuth({
          fetch,
-         clientId: `95iupmdxhrhm6b6`,
-         clientSecret: `vgoqpb4ypsu0kep`,
+         clientId: `jyl4y952jyegfsf`,
+         clientSecret: `qlqyyhd4nko6d2l`,
          accessToken: process.env.DROPBOX_ACCESS_TOKEN,
-      })
+         refreshToken: process.env.DROPBOX_REFRESH_TOKEN,
+      });
 
       this.db = new Dropbox({
          fetch,
@@ -55,6 +56,7 @@ export class DropboxService {
    }
 
    async uploadImage(file: File, fileName: string) {
+      await this.dbAuth.checkAndRefreshAccessToken();
       const res = await this.db.filesUpload({
          path: `/${FOLDERS.UPLOADS}/${fileName}`,
          contents: await file.arrayBuffer(),

@@ -27,8 +27,10 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
       <div id={`form-${id}`}
            className={`flex p-0 gap-8 items-start rounded-lg border-[1px] dark:border-neutral-600 bg-white`}>
          <div className={`bg-neutral-100 rounded-l-lg !min-h-[360px] flex items-center justify-center`}>
-            <Image className={`rounded-md border-[1px] border-neutral-200`} width={320} height={1000} src={imagePreview}
-                   alt={inputFile?.name ?? id} />
+            <Image
+               className={`rounded-md border-[1px] border-neutral-200`}
+               width={320} height={1000} src={imagePreview}
+               alt={inputFile?.name ?? id} />
          </div>
          <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}
@@ -51,7 +53,7 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                                     </TooltipContent>
                                  </Tooltip>
                               </TooltipProvider>
-                              <span className={`text-sm font-light text-neutral-500`}>Enter tags in English.</span>
+                              <span className={`text-xs font-light text-neutral-500`}>Enter tags in English.</span>
                            </div>
 
                         </FormLabel>
@@ -114,7 +116,7 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                                        </TooltipContent>
                                     </Tooltip>
                                  </TooltipProvider>
-                                 <span className={`text-sm font-light text-neutral-500`}>Optional</span>
+                                 <span className={`text-xs font-light text-neutral-500`}>Optional</span>
                               </div>
                               <div className={`text-neutral-500 font-normal mr-2 text-xs`}>
                                  {field?.value?.length}/300
@@ -144,14 +146,14 @@ const UploadImageForm = ({ imagePreview, inputFile, id, form, index }: UploadIma
                         <FormControl className={`!mt-1 `}>
                            <Switch
                               className={`!bg-neutral-300 data-[state=checked]:!bg-primary`}
-                              checked={field.value}
+                              checked={field.value as boolean}
                               onCheckedChange={field.onChange}
                            />
                         </FormControl>
                         <FormLabel className={`text-neutral-500 flex items-center gap-1 !mt-0 font-normal text-md`}>
                            <Sparkles className={`inline`} size={16} />
-                           <span>
-                           This media is AI generated
+                           <span className={`text-xs`}>
+                              This media is AI generated
                           </span>
                         </FormLabel>
                         <TooltipProvider>

@@ -324,9 +324,186 @@ const Page = ({}: PageProps) => {
          <p className={`text-sm mt-3 max-w-2xl`}>
             If you have consented to the disclosure of your personal information to any other third party, we may also
             share the data with them.
-
-
          </p>
+
+         <h2 className={`text-lg font-semibold mt-4`}>
+            How we transfer, store and protect your information
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            Your information will be stored and processed in the United States, Australia, Singapore, the European
+            Union, United Kingdom, Philippines and New Zealand and any other country in which {APP_NAME}, its group
+            companies, service providers and partners maintain facilities or employ staff or contractors.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            This means that your data may be transferred to and processed in countries other than the country in which
+            you are located. These countries may have data protection laws that are different to the laws of your
+            country (and, in some cases, may not be as protective).
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            However, we always take steps to ensure that your data will remain protected in accordance with this privacy
+            policy and applicable data protection laws. These measures include transferring your data to a country that
+            the European Commission or UK authorities (as applicable) have determined provides an adequate level of
+            protection for personal data, or by implementing standard contractual clauses with our group companies,
+            service providers and partners.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Keeping your information safe
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            We take commercially reasonable security measures designed to protect the security of the personal data,
+            including protection against unauthorized or unlawful processing and against accidental loss, destruction or
+            damage, using appropriate technical or organisational measures. To protect your privacy and security, we
+            take reasonable steps (such as requesting a unique password) to verify your identity before granting you
+            access to your account. You are responsible for maintaining the secrecy of your unique password and account
+            information, and for controlling access to your account, at all times. However, we cannot ensure or warrant
+            the security of any information you transmit to us or guarantee that information on the Service may not be
+            accessed, disclosed, altered, or destroyed.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Your rights
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            You have the right to access the data we process about you, obtain rectification of inaccurate data, request
+            deletion of your data, restrict our processing of your data, request portability of your data, and/or object
+            to unreasonable processing. If we process your data on the basis of your consent, you have the option to
+            withdraw your consent at any time. Doing so will not affect the lawfulness of the processing we carried out
+            based on your consent up to the time of withdrawal.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            You can exercise any of these rights by contacting us using the contact details provided at the bottom of
+            this page under the “Contact us” heading. We respond to all requests we receive in accordance with
+            applicable data protection laws. In some circumstances we will not be able to comply with your request
+            regarding your personal data. If we are unable to remove any of your information, we will explain why.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            You also have the right to opt-out of marketing communications we send you at any time. You can exercise
+            this right by clicking on the “unsubscribe” or “opt-out” link in the marketing emails we send you or in your
+            user profile page. You can also opt out of having your Content used for machine learning by updating your
+            preferences in your account settings at any time. You can also contact us using the contact details provided
+            at the bottom of this page under the “Contact us” heading.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            If we are unable to resolve your request, or if you are concerned about a potential violation, you also have
+            the option to report the issue or make a complaint to the data protection authority in your jurisdiction.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Data retention
+
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            We will retain your personal information for as long as your account is active or as needed to provide you
+            with the Service or as necessary to comply with our legal obligations, resolve disputes, and enforce our
+            agreements.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            When we have no ongoing legitimate business need to process your information, we will either delete or
+            anonymise it or, if this is not possible (for example, because your information has been stored in backup
+            archives), then we will securely store your information and isolate it from any further processing until
+            deletion is possible.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Children
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            As set out in our Terms, Children may not access or use the Service unless their use is directly authorized
+            by their parent, guardian or another authorized adult who agrees to be bound by these Terms. For the
+            purposes of these Terms, a child is a person under the age of 13 (or the minimum legal age required to
+            provide consent for processing of personal data in the country where the child is located, noting 16 is the
+            minimum legal age in Germany).
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            The Service and our content are not directed at children. Children are not permitted to sign up for the
+            Service by themselves. We do not knowingly collect or solicit personal information from Children. If we
+            learn that we have collected personal information from a child without verification of parental consent
+            where this is required, we will delete that information as quickly as possible.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Third-party service-based information
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            {APP_NAME} is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program
+            designed to provide a means for sites to earn advertising fees by advertising and linking to Amazon.com.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Advertising
+
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            We partner with third-party ad servers, ad networks and social media platforms (like Facebook, Instagram,
+            Google, Amazon Services LLC Associates and BuySellAds) to deliver personalized advertisements (“ads”) on our
+            Service and other sites that may be of interest to you and/or to measure their effectiveness, and/or to
+            identify potential new users of our Service.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            We may share certain information with our third-party advertising partners, such as your email address,
+            location, cookie information and information relating to your use of our Service, and allow partners to
+            perform a match of your information against information from other third-party networks or sites to serve
+            ads either on the Service or on third-party sites (including, but not limited to Facebook, Google) and to
+            measure the effectiveness of these ads. We also share certain information with social media platforms, such
+            as Facebook and TikTok, to display advertising to potential new users whose demographics and behaviour look
+            like those of our existing users.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            In addition, these third-party ad servers or ad networks may use technology to send, directly to your
+            browser or mobile device, these personalized ads and ad links directly to your browser or mobile device, and
+            will automatically receive your IP address when they do so. They may also use other technologies (such as
+            cookies, JavaScript, device identifiers, location data, and clear gifs) to compile information about your
+            browser’s or device’s visits and usage patterns on the Service, and to measure the effectiveness of their
+            ads and to personalize the advertising content. Please see our Cookies Policy for more information about how
+            we and our third-party partners use cookies and other technologies to deliver ads to you.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            We do not sell or rent the information we collect about you with these third-party ad servers or ad networks
+            for such parties’ own marketing purposes.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            Please note that an advertiser may ask us to show an ad on the Service to a certain audience of users (e.g.,
+            based on demographics or other interests). In that situation, we determine the target audience and we serve
+            the advertising to that audience and only provide anonymous aggregated data to the advertiser. If you
+            respond to such an ad, the advertiser or ad server may conclude that you fit the description of the audience
+            they are trying to reach.
+         </p>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            The {APP_NAME} Privacy Policy does not apply to, and we cannot control the activities of, third-party
+            advertisers. Please consult the respective privacy policies of such advertisers or contact such advertisers
+            for more information.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Changes to this policy
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            We may update this privacy policy from time to time to reflect our current practice and ensure compliance
+            with applicable laws. When we post changes to this policy, we will revise the “Last Updated” date at the top
+            of this policy. If we make any material changes to the way we collect, use, store and/or share your personal
+            data, we will take appropriate measures to notify you. We recommend that you check this page from time to
+            time to inform yourself of any changes.
+         </p>
+         <h2 className={`text-lg font-semibold mt-4`}>
+            Contact us
+
+         </h2>
+         <p className={`text-sm mt-3 max-w-2xl`}>
+            If you have any questions, suggestions or concerns about our use of your personal data or this privacy
+            policy, please contact us at:
+         </p>
+         <ul className={`text-sm list-disc pl-4 mt-4`}>
+            <li>
+               Email address: <a href={`mailto:info@ImageHive.com`}>
+               info@ImageHive.com
+            </a>
+            </li>
+            <li>
+               <p className={`text-sm mt-2 max-w-2xl`}>
+                  {APP_NAME}, a Bulgarian brand
+                  <br />
+                  Kesten 14
+                  <br />
+                  9000 Varna
+                  <br />
+                  Bulgaria
+               </p>
+            </li>
+         </ul>
       </div>
    );
 };

@@ -12,11 +12,11 @@ const Page = ({}: PageProps) => {
             Privacy Policy
          </h2>
          <p className={`text-sm mt-2 max-w-2xl`}>
-            We are {APP_NAME}, a Canva Germany GmbH brand ("{APP_NAME}"). This privacy policy applies to {APP_NAME}'s
+            We are {APP_NAME}, a Canva Germany GmbH brand (&quot;{APP_NAME}&quot;). This privacy policy applies to {APP_NAME}&apos;s
             website
             at
-            {APP_NAME}.com (the "Website") and all related websites, software, mobile apps, plug-ins and other services
-            that we provide (together, the "Service").
+            {APP_NAME}.com (the &quot;Website&quot;) and all related websites, software, mobile apps, plug-ins and other services
+            that we provide (together, the &quot;Service&quot;).
          </p>
          <p className={`text-sm mt-2 max-w-2xl`}>
             This privacy policy explains how we and our affiliates collect, use, disclose and safeguard the information
@@ -288,7 +288,7 @@ const Page = ({}: PageProps) => {
          </p>
          <p className={`text-sm mt-2 max-w-2xl`}>
             Where we use your information for our legitimate interest, you have the right to object to that use by
-            contacting info@{APP_NAME}.com. However, if you do, it may diminish the quality of the Service you receive
+            contacting info@{APP_NAME.toLowerCase()}.com. However, if you do, it may diminish the quality of the Service you receive
             or
             prevent you from using the Service.
          </p>
@@ -488,8 +488,8 @@ const Page = ({}: PageProps) => {
          </p>
          <ul className={`text-sm list-disc pl-4 mt-4`}>
             <li>
-               Email address: <a href={`mailto:info@ImageHive.com`}>
-               info@ImageHive.com
+               Email address: <a href={`mailto:info@${APP_NAME.toLowerCase()}.com`}>
+               info@{APP_NAME.toLowerCase()}.com
             </a>
             </li>
             <li>

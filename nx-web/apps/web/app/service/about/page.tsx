@@ -34,7 +34,9 @@ const Page = ({}: PageProps) => {
          <p className={`text-sm mt-2 max-w-2xl`}>
             Phone: +1 844-204-1750
             <br />
-            Email address: info (at) {APP_NAME}.com
+            Email address: <a href={`mailto:info@${APP_NAME.toLowerCase()}.com`}>
+            info@{APP_NAME.toLowerCase()}.com
+         </a>
             <br />
             <Link className={`text-blue-500`} href={`contact`}>Contact form</Link>
          </p>
@@ -50,12 +52,14 @@ const Page = ({}: PageProps) => {
             Dispute resolution:
          </h2>
          <p className={`text-sm mt-2 max-w-2xl`}>
-            <Link href={`https://ec.europa.eu/consumers/odr/`}>
+            <Link className={`text-primary`} href={`https://ec.europa.eu/consumers/odr/`}>
                https://ec.europa.eu/consumers/odr/
             </Link>
-             {APP_NAME} is not obligated or willing to participate in arbitration
+            {` `} {APP_NAME} is not obligated or willing to participate in arbitration
             proceedings within the meaning of the VSBG. {APP_NAME} endeavors to settle any disagreements amicably. Our
-            email address: info@{APP_NAME.toLowerCase()}.com
+            email address: <a href={`mailto:info@${APP_NAME.toLowerCase()}.com`}>
+            info@{APP_NAME.toLowerCase()}.com
+         </a>
          </p>
       </div>
    );

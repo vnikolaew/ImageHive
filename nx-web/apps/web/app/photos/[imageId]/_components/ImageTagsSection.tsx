@@ -6,7 +6,6 @@ import { cn } from "@utils";
 import { ImageSummary } from "../_queries";
 import { useIsDarkMode } from "@web/hooks/useIsDarkMode";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/tooltip";
-import { Settings } from "lucide-react";
 
 export interface ImageTagsSectionProps {
    image: ImageSummary;
@@ -18,7 +17,8 @@ const ImageTagsSection = ({ image }: ImageTagsSectionProps) => {
    return (
       <div className={`mt-8 flex items-center gap-3 flex-wrap`}>
          {image.tags.slice(0, 7).map((tag, index) => (
-            <Button asChild key={index}
+            <Button
+               asChild key={index}
                     variant={darkMode ? `default` : `outline`}
                     className={cn(`rounded-lg `,
                        !darkMode && `hover:border-black hover:bg-white`,

@@ -1,5 +1,5 @@
+"use client"
 import React from "react";
-import { randomUUID } from "node:crypto";
 import { Image as IImage } from "@prisma/client";
 import GridColumnImage from "./GridColumnImage";
 import { isAbsoluteUrl } from "@nx-web/shared";
@@ -23,8 +23,8 @@ export const GridColumn = async ({ images, likedImageIds, savedImages }: GridCol
                likedByMe={likedImageIds.has(image.id)}
                imageUrl={isAbsoluteUrl(image.absolute_url) ? image.absolute_url : `/uploads/${getFileName(image.absolute_url)}`}
                image={image}
-               imageKey={image.id + randomUUID()}
-               key={image.id + randomUUID()} />
+               imageKey={image.id}
+               key={image.id} />
          ))}
       </div>
    );

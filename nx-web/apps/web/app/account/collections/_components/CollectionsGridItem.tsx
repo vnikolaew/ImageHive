@@ -33,9 +33,9 @@ const CollectionsGridItem = ({ userCollection }: CollectionsGridItemProps) => {
       `/uploads/${getFileName(userCollection?.images?.[0]?.image?.absolute_url)}`;
 
    return (
-      <Link className={`w-fit`} href={`/account/collections/${userCollection.id}`}>
-         <div className={`flex flex-col group items-start gap-1 !w-fit cursor-pointer`}>
-            <div>
+      <Link className={``} href={`/account/collections/${userCollection.id}`}>
+         <div className={`flex flex-col group items-start gap-1 !w-full cursor-pointer`}>
+            <div className={`w-full`}>
                {hasItems ? (
                   <Image
                      className={`rounded-lg shadow-sm group-hover:brightness-75 transition-all duration-200 overflow-hidden`}
@@ -44,7 +44,7 @@ const CollectionsGridItem = ({ userCollection }: CollectionsGridItemProps) => {
                      src={imageUrl}
                      alt={``} />
                ) : (
-                  <div style={{ width: `400px`, height: `400px` }}
+                  <div style={{ width: `100%`, height: `400px` }}
                        className={`flex items-center justify-center flex-col gap-4 bg-neutral-200 hover:bg-neutral-300 rounded-lg transition-colors duration-200`}>
                      <Button variant={`secondary`}
                              className={`rounded-full !p-3 !h-fit !w-fit bg-neutral-500 hover:!bg-neutral-500`}>

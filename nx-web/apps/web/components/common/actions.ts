@@ -100,3 +100,28 @@ export const updateCookiePreferences = authorizedAction(cookiePreferencesSchema,
 
    return { success: true };
 });
+
+const changeThemeSchema = z.union([z.literal(`light`), z.literal(`dark`), z.literal(`system`)]);
+
+export const changeUserTheme = authorizedAction(changeThemeSchema, async (theme, { userId }) => {
+   await sleep(2000);
+
+   const user = await xprisma.user.findFirst({
+      where: { id: userId },
+   });
+   if (!user) return { success: false };
+
+   await xprisma.user.update({
+      where: {
+         id: userId
+      },
+      data: {
+         metadata: {
+            ...user.metadata as Record<string, any>,
+            "theme": theme,
+         },
+      },
+   });
+
+   return { success: true };
+});

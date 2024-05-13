@@ -13,7 +13,7 @@ const CommentsSectionSignIn = ({}: CommentsSectionSignInProps) => {
    return (
       <div
          className={`w-2/3 mx-auto p-8 items-center justify-center flex flex-col bg-neutral-100 mt-4 rounded-xl`}>
-         <MessageCircle className={`fill-primary text-primary border-primary`} size={20} />
+         <MessageCircle className={`fill-neutral-500 text-neutral-500 border-primary`} size={20} />
          <h2 className={`mt-2`}>The community are waiting to hear from you!
          </h2>
          <span className={`text-sm text-neutral-500 mt-2`}>Log in or Join {APP_NAME} to view comments</span>

@@ -7,6 +7,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { Button } from "@components/button";
 import { cn } from "@utils";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/tooltip";
+import { useAction } from "next-safe-action/hooks";
+import { changeUserTheme } from "@web/components/common/actions";
 
 
 interface ThemeSwitchProps {
@@ -15,6 +17,13 @@ interface ThemeSwitchProps {
 
 export function ThemeSwitch({ showNavbarBackground }: ThemeSwitchProps) {
    const { setTheme } = useTheme();
+   const { result, execute: changeTheme } = useAction(changeUserTheme, {
+      onSuccess: res => {
+         if (res.success) {
+            console.log(`success`);
+         }
+      },
+   });
 
    return (
       <DropdownMenu>
@@ -22,8 +31,9 @@ export function ThemeSwitch({ showNavbarBackground }: ThemeSwitchProps) {
             <TooltipProvider>
                <Tooltip>
                   <TooltipTrigger asChild>
-                     <Button className={cn(`rounded-xl border-none`, !showNavbarBackground && `!bg-transparent`)}
-                             variant="outline" size="icon">
+                     <Button
+                        className={cn(`rounded-xl border-none`, !showNavbarBackground && `!bg-transparent`)}
+                        variant="outline" size="icon">
                         <Sun
                            className="h-[1.2rem] dark:text-white w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                         <Moon
@@ -38,13 +48,22 @@ export function ThemeSwitch({ showNavbarBackground }: ThemeSwitchProps) {
             </TooltipProvider>
          </DropdownMenuTrigger>
          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
+            <DropdownMenuItem onClick={() => {
+               changeTheme(`light`);
+               setTheme("light");
+            }}>
                Light
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
+            <DropdownMenuItem onClick={() => {
+               changeTheme(`dark`);
+               setTheme("dark");
+            }}>
                Dark
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
+            <DropdownMenuItem onClick={() => {
+               changeTheme(`system`);
+               setTheme("system");
+            }}>
                System
             </DropdownMenuItem>
          </DropdownMenuContent>

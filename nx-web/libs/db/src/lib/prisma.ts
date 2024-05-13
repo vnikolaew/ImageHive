@@ -317,13 +317,14 @@ export const xprisma = prisma.$extends({
          },
       },
       image: {
-         async homeFeedRawNew(limit = 20): Promise<Image[]> {
+         async homeFeedRawNew(page = 1, limit = 20): Promise<Image[]> {
             const images = await xprisma.$queryRaw<Image[]>`
                SELECT "Image".*
                FROM "Image"
-               ORDER BY metadata - > 'popularity_score' DESC, "createdAt" DESC
-                  LIMIT ${limit};
-            `
+               ORDER BY metadata->'popularity_score' DESC, "createdAt" DESC
+               LIMIT ${limit}
+               OFFSET ${(page - 1)  * limit};
+            `;
             return images;
          },
 
@@ -364,10 +365,11 @@ export const xprisma = prisma.$extends({
             return images;
          },
 
-         async homeFeedRaw_Latest(limit = 20): Promise<Image[]> {
+         async homeFeedRaw_Latest(page = 1, limit = 20): Promise<Image[]> {
             return await xprisma.image.findMany({
                orderBy: { createdAt: `desc` },
                take: limit,
+               skip: (page - 1) * limit,
             });
          },
 
@@ -451,19 +453,24 @@ export const xprisma = prisma.$extends({
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async findSimilarImages(image: Image, limit = 10): Promise<Image[]> {
-            const imageTags = image.tags.map(t => t.toLowerCase());
-            const arrayFilter = imageTags.length > 0
-               ? Prisma.sql`WHERE i.tag ILIKE ANY (array [${Prisma.join(imageTags)}])`
+         async findSimilarImages(imageTags: string[], page = 1, limit = 10): Promise<Image[]> {
+            const tags = imageTags.map(t => t.toLowerCase());
+
+            const arrayFilter = tags.length > 0
+               ? Prisma.sql`WHERE i.tag ILIKE ANY (array [${Prisma.join(tags)}])`
                : Prisma.empty;
 
             const result = await xprisma.$queryRaw<Image[]>`
-               SELECT DISTINCT(i.id), *
-               FROM (SELECT *
-                     FROM (SELECT *, unnest(tags) tag from "Image") i
-                        ${arrayFilter}) i
-                  LIMIT ${limit}
-               ;
+              SELECT "Image".* FROM "Image"
+                RIGHT JOIN (SELECT it.id, COUNT(*) as count FROM (SELECT *
+                   FROM (SELECT *
+                         FROM (SELECT *, unnest(tags) tag from "Image") i
+                         ${arrayFilter}) i2) it
+              GROUP BY id
+              ORDER BY count DESC) t ON t.id = "Image".id
+              ORDER BY count DESC
+              LIMIT ${limit}
+              OFFSET ${(page - 1) * limit};
             `;
 
             return result!;

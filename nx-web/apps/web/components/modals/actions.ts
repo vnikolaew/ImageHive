@@ -98,7 +98,7 @@ export async function handleUploadImage(imageUpload: ImageUpload, userId: string
 
    if (uploadResponse.success) {
       await inngest.send({
-         name: `test/image.classify`,
+         name: `image/image.classify`,
          data: {
             imageId: uploadResponse.image.id,
          }, id: randomUUID(),

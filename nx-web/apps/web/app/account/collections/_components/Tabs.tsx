@@ -18,8 +18,8 @@ const CollectionTabs = ({ collectionsLength }: TabsProps) => {
             size={`lg`}
                  className={`rounded-full gap-2`}>
             Collections
-            <span className={`text-green-700`}>
-                  {collectionsLength}
+            <span className={`text-primary`}>
+               {collectionsLength}
             </span>
          </Button>
          <Button

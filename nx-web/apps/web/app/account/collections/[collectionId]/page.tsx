@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Upload } from "lucide-react";
 import { CollectionGridColumn } from "./_components/CollectionGridColumn";
 import Link from "next/link";
 import { getImageCollectionById } from "@web/app/account/collections/[collectionId]/_queries";
@@ -9,25 +9,24 @@ import { Button } from "@components/button";
 import MediaSearchBar from "@web/app/account/media/_components/MediaSearchBar";
 import { GenericSortDropdown } from "@web/app/_components/GenericSortDropdown";
 import EditCollectionButton from "@web/app/account/collections/[collectionId]/_components/EditCollectionButton";
+import React, { Fragment } from "react";
 
 export interface PageProps {
    params: { collectionId: string },
-   searchParams: {}
+   searchParams: Record<string, string>
 }
 
 const Page = async (props: PageProps) => {
    const collection = await getImageCollectionById(props.params.collectionId);
    if (!collection) return notFound();
 
-   console.log(collection.images);
-
    const likedImageIds = await getLikedImageIds();
    const images = collection.images.map(_ => _.image);
 
-   const firstColumn = images.filter((_, index) => index % 4 === 0);
-   const secondColumn = images.filter((_, index) => index % 4 === 1);
-   const thirdColumn = images.filter((_, index) => index % 4 === 2);
-   const fourthColumn = images.filter((_, index) => index % 4 === 3);
+   const columns = Array
+      .from({ length: 4 })
+      .map((_, i) =>
+         images.filter((_, index) => index % 4 === i));
 
    return (
       <div>
@@ -67,19 +66,28 @@ const Page = async (props: PageProps) => {
             </div>
          </div>
          <div className={`w-full mt-8 grid grid-cols-4 items-start gap-8 px-0`}>
-            <CollectionGridColumn
-               collectionId={collection.id}
-               likedImageIds={likedImageIds} key={1}
-               images={firstColumn} />
-            <CollectionGridColumn
-               collectionId={collection.id} likedImageIds={likedImageIds} key={2}
-               images={secondColumn} />
-            <CollectionGridColumn
-               collectionId={collection.id} likedImageIds={likedImageIds} key={3}
-               images={thirdColumn} />
-            <CollectionGridColumn
-               collectionId={collection.id} likedImageIds={likedImageIds} key={4}
-               images={fourthColumn} />
+            {!!images?.length ? (
+               <Fragment>
+                  {
+                     columns.map((c, index) => (
+                        <CollectionGridColumn
+                           collectionId={collection.id}
+                           likedImageIds={likedImageIds}
+                           key={index}
+                           images={c} />
+                     ))
+                  }
+               </Fragment>
+            ) : (
+               <div className={`text-neutral-500 !w-full col-span-4 flex items-center justify-center mt-8 flex-col gap-2`}>
+                  <span className={`text-neutral-500`}>
+                     You have no images in this collection.
+                  </span>
+                  <Button className={`flex gap-2 items-center !px-8 shadow-md`} size={`default`} variant={`outline`}>
+                     <Upload size={18} /> Upload now
+                  </Button>
+               </div>
+            )}
          </div>
       </div>
    );

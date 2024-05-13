@@ -18,15 +18,14 @@ import { inngest } from "@web/lib/inngest";
 import { validate as isValidUUID } from "uuid";
 import { Metadata, ResolvingMetadata } from "next";
 import { startCase } from "lodash";
+import HomeFeedSectionLoading from "@web/app/_components/HomeFeedSectionLoading";
+import { getLikedImageIds } from "@web/app/_queries";
 
 export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata): Promise<Metadata> {
    const { imageId } = params;
    if (!isValidUUID(imageId)) return await parent;
 
-   console.log(`Log from metadata -> ${imageId}`);
-
    const image = await getImage(imageId);
-
 
    return {
       metadataBase: new URL(new URL(image.absolute_url).origin),
@@ -56,7 +55,8 @@ const Page = async ({ params: { imageId } }: PageProps) => {
          create: { userId: session?.user?.id!, imageId, metadata: {}, createdAt: now },
          update: { userId: session?.user?.id!, imageId, metadata: {} },
       });
-      if (imageView.createdAt === now) {
+
+      if (imageView.createdAt.getTime() === now.getTime()) {
          await inngest.send({
             name: `image/image.viewed`,
             data: {
@@ -66,10 +66,11 @@ const Page = async ({ params: { imageId } }: PageProps) => {
             },
          });
       }
-
    }
 
    const image = await getImage(imageId);
+   const likedImageIds = await getLikedImageIds();
+
    if (!image) return notFound();
 
    const { haveILiked, haveISaved, haveIFollowed, haveIDownloaded } = await getImageInfo(image);
@@ -85,10 +86,11 @@ const Page = async ({ params: { imageId } }: PageProps) => {
                   </div>
                   <ReportImageButton />
                   <Image
+                     title={!!image.title?.length ? image.title : image.tags.filter(x => !!x.length).map(startCase).slice(0, 3).join(`, `)}
                      id={`image-${image.id}`}
                      data-src={isAbsoluteUrl(image?.absolute_url) ? image.absolute_url : path.join(`/uploads`, getFileName(image?.absolute_url)!).replaceAll(`\\`, `/`)}
-                     objectFit={`cover`}
                      layout="responsive"
+                     className={`!object-cover !bg-center-center`}
                      width={600}
                      height={600}
                      src={isAbsoluteUrl(image?.absolute_url) ? image.absolute_url : path.join(`/uploads`, getFileName(image?.absolute_url)!).replaceAll(`\\`, `/`)}
@@ -101,8 +103,8 @@ const Page = async ({ params: { imageId } }: PageProps) => {
                   <ImageCommentsSection imageId={image.id} />
                </Suspense>
                <ImageTagsSection image={image} />
-               <Suspense fallback={<Loader2 size={16} className={`animate-spin mr-2`} />}>
-                  <RelatedImagesSection image={image} />
+               <Suspense fallback={<HomeFeedSectionLoading cols={3} />}>
+                  <RelatedImagesSection likedImageIds={likedImageIds} image={image} />
                </Suspense>
             </div>
          </div>

@@ -18,6 +18,7 @@ import { Input } from "@components/input";
 import { RadioGroup, RadioGroupItem } from "@components/radio-group";
 import { Button } from "@components/button";
 import { useQueryClient } from "@tanstack/react-query";
+import { ImageCollectionApiResponse } from "@web/app/api/collections/route";
 
 export interface CreateNewCollectionModalProps {
 }
@@ -59,6 +60,9 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
                toast(message, { ...rest, icon: <Check size={16} /> });
 
                console.log(queryClient.getQueryData([API_ROUTES.COLLECTIONS]));
+               queryClient.setQueryData([API_ROUTES.COLLECTIONS], (data: { collections: ImageCollectionApiResponse }) => {
+                  return  { collections: [...data.collections, res.data] };
+               })
             }
          })
          .catch(console.error);

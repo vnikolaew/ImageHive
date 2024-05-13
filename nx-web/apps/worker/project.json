@@ -8,7 +8,7 @@
       "dev": {
          "executor": "nx:run-commands",
          "options": {
-            "command": "cd apps/worker && npx wrangler dev"
+            "command": "cd apps/worker && npx wrangler dev --port 8787"
          }
       },
       "serve": {

@@ -21,7 +21,7 @@ const Page = ({}: PageProps) => {
          <p className={`text-sm mt-2 max-w-2xl`}>
             {APP_NAME}, a Bulgarian brand
             <br />
-            Kesten 14
+            Some street 50
             <br />
             9000 Varna
             <br />
@@ -57,7 +57,7 @@ const Page = ({}: PageProps) => {
             </Link>
             {` `} {APP_NAME} is not obligated or willing to participate in arbitration
             proceedings within the meaning of the VSBG. {APP_NAME} endeavors to settle any disagreements amicably. Our
-            email address: <a href={`mailto:info@${APP_NAME.toLowerCase()}.com`}>
+            email address: <a className={`text-primary`} href={`mailto:info@${APP_NAME.toLowerCase()}.com`}>
             info@{APP_NAME.toLowerCase()}.com
          </a>
          </p>

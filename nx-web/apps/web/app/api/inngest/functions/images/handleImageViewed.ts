@@ -33,14 +33,14 @@ export const handleImageViewed = inngest.createFunction(
                   metadata: {
                      // @ts-ignore
                      ...(image.metadata ?? {}),
-                     [POPULARITY_SCORE_KEY]: (image.metadata?.[POPULARITY_SCORE_KEY] ?? 0) + 0.4
+                     [POPULARITY_SCORE_KEY]: (Number(image.metadata?.[POPULARITY_SCORE_KEY]) ?? 0) + 0.4
                   },
                },
                select: { metadata: true, id: true },
             },
          );
 
-         console.log(`Updated score for image ${image.id}. New score is: ${image.metadata[POPULARITY_SCORE_KEY].toFixed(2)}`);
+         console.log(`Updated score for image ${image.id}. New score is: ${(Number(image.metadata[POPULARITY_SCORE_KEY]) ?? 0).toFixed(2)}`);
 
       }, event.name);
       return { event, success: false };

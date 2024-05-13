@@ -25,7 +25,7 @@ const QueryClientProvider_ = ({ children }: QueryClientProviderProps) => {
    return (
       <QueryClientProvider client={queryClient}>
          {children}
-         {__IS_DEV__ && (<ReactQueryDevtools initialIsOpen={false} />)}
+         {__IS_DEV__ && <ReactQueryDevtools initialIsOpen={false} />}
       </QueryClientProvider>
    );
 };

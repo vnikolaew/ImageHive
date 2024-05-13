@@ -17,6 +17,11 @@ const NavSearchBar = ({ showNavbarBackground }: NavSearchBarProps) => {
 
    useEffect(() => {
       const handler = (e: KeyboardEvent) => {
+         if(e.ctrlKey && e.key === `k`) {
+            e.preventDefault();
+            inputRef.current?.focus();
+         }
+
          if (e.key === `Enter` && document.activeElement === inputRef.current && searchValue?.length) {
             window.location.href = `/search?q=${encodeURIComponent(searchValue)}`;
          }

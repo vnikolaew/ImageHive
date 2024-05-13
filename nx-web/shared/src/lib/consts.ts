@@ -13,6 +13,8 @@ export const API_ROUTES = {
    RESET_PASSWORD: `/api/reset`,
    COLLECTIONS: `/api/collections`,
    COMMENTS: `/api/comments`,
+   FEED: `/api/feed`,
+   SIMILAR_FEED: `/api/feed/similar`
 } as const;
 
 export const HTTP = {

@@ -86,6 +86,7 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
                queryClient.setQueryData([API_ROUTES.COLLECTIONS], (data: {
                   collections: ImageCollectionApiResponse
                }) => ({ collections: data.collections.filter(c => c.id !== collection!.id) }));
+
                router.push(`/account/collections`)
             }
          })

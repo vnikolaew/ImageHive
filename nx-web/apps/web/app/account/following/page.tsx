@@ -19,7 +19,7 @@ const Page = async ({}: PageProps) => {
         {!following?.length && (
           <div className={`flex flex-col mt-8 items-center justify-center gap-3 w-full`}>
             <UserRoundX size={28}/>
-            <span className={`text-neutral-500`}>
+            <span className={`text-neutral-500 text-lg`}>
               You&apos;re not following anyone yet.
             </span>
           </div>

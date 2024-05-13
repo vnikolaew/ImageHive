@@ -82,6 +82,7 @@ export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
             public: newCollectionBody.data.public === `true`,
             ...(!!create ? ({ images: { create } }) : {}),
          },
+         include: { images: true },
       })
    ;
 
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest, res: NextResponse): Promise<any> {
 
    revalidatePath(`/account/collections`);
    revalidatePath(`/account/collections/${newCollection.id}`);
-   return ImageHiveApiResponse.success({ newCollection });
+   return ImageHiveApiResponse.success(newCollection);
 }
 
 
@@ -121,6 +122,7 @@ export async function PUT(req: NextRequest, res: NextResponse): Promise<any> {
             title: editCollectionBody.data.title,
             public: editCollectionBody.data.public === `true`,
          },
+         include: { images: true },
       })
    ;
 

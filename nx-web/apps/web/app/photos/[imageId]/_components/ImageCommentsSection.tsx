@@ -3,9 +3,7 @@ import { Prisma } from "@prisma/client";
 import { randomUUID } from "node:crypto";
 import moment from "moment";
 import { sleep } from "@nx-web/shared";
-import { xprisma } from "@nx-web/db";
 import { getImageComments } from "./_queries";
-import { SignedIn, SignedOut } from "@web/components/common/Auth";
 import { AddCommentSection } from "./AddCommentSection";
 import ImageComments from "./ImageComments";
 import CommentsSectionSignIn from "./CommentsSectionSignIn";
@@ -46,9 +44,6 @@ export interface ImageComment {
 
 const ImageCommentsSection = async ({ imageId }: ImageCommentsSectionProps) => {
    await sleep(1000);
-   const total = await xprisma.imageComment.count({
-      where: { imageId },
-   });
    const session = await auth();
    const imageComments = await getImageComments(imageId);
 

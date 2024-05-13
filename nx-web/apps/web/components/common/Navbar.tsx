@@ -1,9 +1,8 @@
 "use client";
-import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
-import Logo from "../../public/ImageHive-logo.png";
-import LogoDark from "../../public/ImageHive-logo-dark.png";
+import Logo from "@web/public/ImageHive-logo.png";
+import LogoDark from "@web/public/ImageHive-logo-dark.png";
 import { Upload } from "lucide-react";
 import { useWindowScroll } from "@uidotdev/usehooks";
 import { useEffect, useMemo, useRef } from "react";
@@ -16,9 +15,12 @@ import { SignedIn, SignedOut } from "./Auth";
 import { Button } from "@components/button";
 import { cn } from "@utils";
 import NavbarUserMenu from "@web/components/common/NavbarUserMenu";
+import { useIsSignedIn } from "@web/hooks/useIsSignedIn";
+import { useSession } from "next-auth/react";
 
 const Navbar = () => {
-   const { data } = useSession();
+   const isSignedIn = useIsSignedIn();
+   const session = useSession();
    const pathname = usePathname();
    const darkMode = useIsDarkMode();
    const { openModal } = useModals();
@@ -68,14 +70,8 @@ const Navbar = () => {
                      pathname.startsWith(`/users`) && `!text-white`,
                      // showNavbarBackground ? `!text-black` : `text-white`,
                   )}>
-                     {data?.user?.name}
+                     {session.data?.user?.name}
                   </div>
-                  <Button asChild variant={`default`} className={`gap-3 text-white dark:text-black !px-5 rounded-lg`}>
-                     <Link href={`/upload`}>
-                        <Upload size={16} />
-                        Upload
-                     </Link>
-                  </Button>
                </SignedIn>
                <SignedOut>
                   <div className={`gap-4 flex`}>
@@ -85,10 +81,29 @@ const Navbar = () => {
                         className={`px-6 shadow-md !py-0`}>Log in</Button>
                      <Button
                         onClick={_ => openModal(ModalType.SIGN_UP)}
-                        variant={`default`}
+                        variant={`outline`}
                         className={`px-6 shadow-md !py-1`}>Join now</Button>
                   </div>
                </SignedOut>
+               <Button
+                  onClick={e => {
+                     if (!isSignedIn) openModal(ModalType.SIGN_IN);
+                  }}
+                  {...(isSignedIn && { asChild: true })}
+                  variant={`default`}
+                  className={`gap-3 text-white dark:text-black !px-5 rounded-lg flex`}>
+                  {isSignedIn ? (
+                     <Link href={`/upload`}>
+                        <Upload size={16} />
+                        Upload
+                     </Link>
+                  ) : (
+                     <>
+                        <Upload size={16} />
+                        Upload
+                     </>
+                  )}
+               </Button>
             </div>
          </div>
       </nav>

@@ -29,5 +29,5 @@ export async function DELETE(req: NextRequest, ctx: { params: { collectionId: st
 
    revalidatePath(`/account/collections`);
    revalidatePath(`/account/collections/${collection.id}`);
-   return ImageHiveApiResponse.success({ collection });
+   return ImageHiveApiResponse.success(collection);
 }

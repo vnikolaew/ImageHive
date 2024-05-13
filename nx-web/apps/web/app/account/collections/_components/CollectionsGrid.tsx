@@ -36,7 +36,7 @@ const CollectionsGrid = ({ userCollections, qs }: CollectionsGridProps) => {
    );
 
    return (
-      <div className={`grid gap-8`}>
+      <div className={`grid grid-cols-4 gap-8`}>
          {userCollections.sort(sorter).map((collection, i) => (
             <CollectionsGridItem userCollection={collection} key={i} />
          ))}

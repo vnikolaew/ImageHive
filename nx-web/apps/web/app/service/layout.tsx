@@ -2,9 +2,16 @@ import React, { PropsWithChildren } from "react";
 import { APP_NAME } from "@nx-web/shared";
 import ServiceLinksSection from "@web/app/service/_components/ServiceLinksSection";
 import ScrollToTopButton from "@web/app/service/_components/ScrollToTopButton";
+import type { Metadata } from "next";
+import darkLogo from "@public/ImageHive-logo-dark.png";
 
 export interface LayoutProps extends PropsWithChildren {
 }
+
+export const metadata: Metadata = {
+   title: `Services - ${APP_NAME}`, description: "A photo and media sharing platform",
+   icons: darkLogo.src,
+};
 
 const Layout = ({ children }: LayoutProps) => {
    return (

@@ -1,5 +1,14 @@
 import React, { PropsWithChildren } from "react";
 import AccountsTabsList from "./AccountsTabsList";
+import type { Metadata } from "next";
+import { APP_NAME } from "@nx-web/shared";
+import darkLogo from "@public/ImageHive-logo-dark.png";
+
+export const metadata: Metadata = {
+   title: `Account - ${APP_NAME}`,
+   description: "A photo and media sharing platform",
+   icons: darkLogo.src
+};
 
 const Layout = ({ children }: PropsWithChildren) => {
    return (

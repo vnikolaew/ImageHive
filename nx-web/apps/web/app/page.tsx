@@ -6,6 +6,7 @@ import { cn } from "@utils";
 import TopTagsSection from "./_components/TopTagsSection";
 import HomeFeedSectionLoading from "./_components/HomeFeedSectionLoading";
 import HomeFeedSection from "./_components/HomeFeedSection";
+import { getImageSavesIds, getLikedImageIds } from "@web/app/_queries";
 
 interface HomeProps {
    searchParams: { hideAi?: string, order?: string };
@@ -20,7 +21,11 @@ export const FeedSortOptions = [
 export default async function Home(props: HomeProps) {
    const hideAi = props.searchParams.hideAi === `true`;
    const imagesCount = await xprisma.image.count();
-   console.log({ props });
+
+   const [likedImageIds, savedImages] = await Promise.all([
+      getLikedImageIds(),
+      getImageSavesIds(),
+   ]);
 
    return (
       <main className="flex min-h-screen flex-col items-center justify-start gap-12">
@@ -50,7 +55,7 @@ export default async function Home(props: HomeProps) {
          <div className={`w-3/4`}>
             <TopTagsSection hideAi={hideAi} />
             <Suspense fallback={<HomeFeedSectionLoading />}>
-               <HomeFeedSection order={props.searchParams.order as any ?? `Latest`} hideAi={hideAi} />
+               <HomeFeedSection likedImageIds={likedImageIds} savedImages={savedImages} order={props.searchParams.order as any ?? `Latest`} hideAi={hideAi} />
             </Suspense>
          </div>
       </main>

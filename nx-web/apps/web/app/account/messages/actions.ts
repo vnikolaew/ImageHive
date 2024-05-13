@@ -1,13 +1,13 @@
 "use server";
 
-import { auth } from "@web/auth";
 import { xprisma } from "@nx-web/db";
 import { ActionApiResponse } from "@utils";
+import { z } from "zod";
+import { authorizedAction } from "@web/lib/actions";
 
-export async function handleMarkMessagesAsRead(messageIds: string[]): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
+const markReadSchema = z.array(z.string());
 
+export const handleMarkMessagesAsRead = authorizedAction(markReadSchema, async (messageIds: string[], { userId }): Promise<ActionApiResponse> => {
    const messages = await xprisma.message.findMany({
       where: {
          id: {
@@ -29,12 +29,9 @@ export async function handleMarkMessagesAsRead(messageIds: string[]): Promise<Ac
    );
 
    return { success: true, data: res };
-}
+});
 
-export async function handleMarkMessagesAsUnread(messageIds: string[]): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
-
+export const handleMarkMessagesAsUnread = authorizedAction(markReadSchema, async (messageIds: string[], { userId }): Promise<ActionApiResponse> => {
    const messages = await xprisma.message.findMany({
       where: {
          id: {
@@ -56,17 +53,14 @@ export async function handleMarkMessagesAsUnread(messageIds: string[]): Promise<
    );
 
    return { success: true, data: res };
-}
+});
 
 
-export async function handleDeleteMessages(messageIds: string[]): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
-
+export const handleDeleteMessages = authorizedAction(markReadSchema, async (messageIds: string[], { userId }): Promise<ActionApiResponse> => {
    let messages = await xprisma.message.findMany({
       where: {
          id: { in: messageIds },
-         senderId: session.user?.id as string,
+         senderId: userId,
       },
    });
    if (!messages?.length) return { success: false };
@@ -76,4 +70,4 @@ export async function handleDeleteMessages(messageIds: string[]): Promise<Action
    });
 
    return { success: true, data: { count } };
-}
+});

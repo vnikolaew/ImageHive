@@ -22,8 +22,9 @@ import { Input } from "@components/input";
 import { RadioGroup, RadioGroupItem } from "@components/radio-group";
 import { Button } from "@components/button";
 import {
-   useQuery,
+   useQuery, useQueryClient,
 } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 const editCollectionSchema = z.object({
    title: z.string().max(100, { message: `Name must not exceed 100 characters.` }),
@@ -64,6 +65,9 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
          title: collection?.title ?? ``,
       },
    });
+   const queryClient = useQueryClient();
+   const router = useRouter()
+
    const { loading: deleteLoading, action: handleDeleteCollection } = usePromise(() => {
       return fetch(`${API_ROUTES.COLLECTIONS}/${collection!.id}`, {
          method: `DELETE`,
@@ -78,6 +82,11 @@ const EditCollectionModal = ({ collection }: EditCollectionModalProps) => {
                closeModal(ModalType.EDIT_COLLECTION);
                const { message, ...rest } = TOASTS.DELETE_COLLECTION_SUCCESS;
                toast(message, { ...rest, icon: <Check size={16} /> });
+
+               queryClient.setQueryData([API_ROUTES.COLLECTIONS], (data: {
+                  collections: ImageCollectionApiResponse
+               }) => ({ collections: data.collections.filter(c => c.id !== collection!.id) }));
+               router.push(`/account/collections`)
             }
          })
          .catch(console.error);

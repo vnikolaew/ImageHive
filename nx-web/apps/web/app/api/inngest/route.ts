@@ -1,10 +1,19 @@
 import { serve } from "inngest/next";
 import { inngest } from "@web/lib/inngest";
-import { classifyImage } from "@web/app/api/inngest/functions";
+import { classifyImage } from "./functions";
+import {
+   handleImageAddedToCollection,
+   handleImageCommented,
+   handleImageDownloaded,
+   handleImageLiked,
+   handleImageUnliked,
+   handleImageViewed, updatePopularityScores,
+} from "./functions/images";
 
 // Create an API that serves zero functions
 export const { GET, POST, PUT } = serve({
    client: inngest,
+   streaming: `allow`,
    functions:
-      [classifyImage]
+      [classifyImage, handleImageLiked, handleImageUnliked, handleImageCommented, handleImageDownloaded, handleImageAddedToCollection, handleImageViewed, updatePopularityScores],
 });

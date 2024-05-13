@@ -3,20 +3,17 @@ import React, { useRef, useState } from "react";
 import { Flag } from "lucide-react";
 import { useOnClickOutside } from "next/dist/client/components/react-dev-overlay/internal/hooks/use-on-click-outside";
 import { cn } from "@utils";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@components/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@components/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/tooltip";
 import { Button } from "@components/button";
+import { ModalType, useModals } from "@web/providers/ModalsProvider";
 
 export interface ReportImageButtonProps {
 }
 
 const ReportImageButton = ({}: ReportImageButtonProps) => {
    const [dropdownOpen, setDropdownOpen] = useState(false);
+   const { openModal } = useModals();
    const menuRef = useRef<HTMLDivElement>(null!);
    useOnClickOutside(menuRef.current, e => {
       setDropdownOpen(false);
@@ -53,6 +50,7 @@ const ReportImageButton = ({}: ReportImageButtonProps) => {
                   <DropdownMenuItem
                      className={`px-2 py-2 cursor-pointer`}
                      onClick={() => {
+                        openModal(ModalType.REPORT_MEDIA);
                      }}>
                      Report media
                   </DropdownMenuItem>

@@ -1,38 +1,37 @@
 "use server";
 import { revalidatePath } from "next/cache";
-import { auth } from "@web/auth";
 import { ActionApiResponse, COVERS_PICS_DIR } from "@nx-web/shared";
 import { xprisma } from "@nx-web/db";
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import { writeFile } from "node:fs";
+import { z } from "zod";
+import { authorizedAction } from "@web/lib/actions";
+// @ts-ignore
+import { zfd } from "zod-form-data";
 
-export async function handleFollowUser(userId: string): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
+const followUserSchema = z.string();
 
+export const handleFollowUser = authorizedAction(followUserSchema, async (followingId: string, { userId }): Promise<ActionApiResponse> => {
    const follow = await xprisma.follows.create({
       data: {
-         followerId: session.user?.id!,
-         followingId: userId,
+         followerId: userId,
+         followingId,
       },
    });
 
    if (!follow) return { success: false };
 
-   revalidatePath(`/users/${userId}`);
+   revalidatePath(`/users/${followingId}`);
    revalidatePath(`/users/search`);
    return { success: true, data: follow };
-}
+});
 
-export async function handleUnfollowUser(userId: string): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
-
+export const handleUnfollowUser = authorizedAction(followUserSchema, async (followingId: string, { userId }): Promise<ActionApiResponse> => {
    const follow = await xprisma.follows.findFirst({
       where: {
-         followerId: session.user?.id!,
-         followingId: userId,
+         followerId: userId,
+         followingId,
       },
    });
    if (!follow) return { success: false };
@@ -40,23 +39,23 @@ export async function handleUnfollowUser(userId: string): Promise<ActionApiRespo
    await xprisma.follows.delete({
       where: {
          followingId_followerId: {
-            followerId: session.user?.id!,
-            followingId: userId,
+            followerId: userId,
+            followingId,
          },
       },
    });
 
-   revalidatePath(`/users/${userId}`);
+   revalidatePath(`/users/${followingId}`);
    revalidatePath(`/users/search`);
    return { success: true };
-}
+});
 
-export async function editUserCoverImage(formData: FormData): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
+const editCoverImageSchema = zfd.formData({
+   file: zfd.file().optional(),
+});
 
-   if (formData.has(`file`) && formData.get(`file`) instanceof File) {
-      const file = formData.get(`file`)! as File;
+export const editUserCoverImage = authorizedAction(editCoverImageSchema, async ({ file }, { userId }): Promise<ActionApiResponse> => {
+   if (file && file instanceof File) {
       const buffer = Buffer.from(await file.arrayBuffer());
 
       const name = `${Date.now()}_${randomUUID()}_${file.name.replaceAll(` `, `-`)}`;
@@ -67,16 +66,16 @@ export async function editUserCoverImage(formData: FormData): Promise<ActionApiR
 
       // Save new profile pic to database:
       const profile = await xprisma.profile.update({
-         where: { userId: session.user.id },
+         where: { userId },
          data: {
             cover_image: filePath,
          },
       });
-      console.log(`New profile`, { profile});
+      console.log(`New profile`, { profile });
 
-      revalidatePath(`/users/${session.user?.id as string}`);
+      revalidatePath(`/users/${userId}`);
       return { success: true };
    }
 
    return { success: false };
-}
+});

@@ -26,15 +26,13 @@ const vectorStore = PrismaVectorStore
    );
 
 export async function similaritySearch(tag: string, top_k= 10) {
-   const result = await vectorStore
-      .similaritySearchWithScore(tag, top_k);
+   const result = await vectorStore.similaritySearchWithScore(tag, top_k);
    return result;
 }
 
 export async function GET(req: NextRequest, res: NextResponse) {
    const { tag } = await req.json();
-   const result = await vectorStore
-      .similaritySearchWithScore(tag, 10);
+   const result = similaritySearch(tag);
 
    return NextResponse.json({ result });
 }

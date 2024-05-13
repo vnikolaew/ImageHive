@@ -3,7 +3,7 @@ import React, { Fragment } from "react";
 import { Button } from "@components/button";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@components/input";
-import { Control, useFormState, useWatch } from "react-hook-form";
+import { Control, useFormState } from "react-hook-form";
 import { FormSchema } from "@web/app/service/report/_components/ReportForm";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/form";
 import { cn } from "@utils";
@@ -33,7 +33,7 @@ const FormStepTwo = ({ control, onBack }: FormStepTwoProps) => {
                      <Input type="text" {...field} placeholder="www.image-hive.com/"
                             className={cn(!!errors.contentUrl && `border-red-500 focus:border-red-500 focus:!ring-red-500`)} />
                   </FormControl>
-                  <FormMessage className={`text-sm font-light`} />
+                  <FormMessage className={`text-xs font-light`} />
                </FormItem>
             )} />
          </div>

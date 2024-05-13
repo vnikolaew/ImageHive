@@ -34,5 +34,5 @@ export async function getUser(userId: string) {
    })) > 0;
 
    const isMe = user.id === session?.user?.id as string;
-   return { user: rest as User, isMe, amIFollower };
+   return { user: rest, isMe, amIFollower };
 }

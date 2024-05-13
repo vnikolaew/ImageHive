@@ -8,12 +8,39 @@ import { auth } from "@web/auth";
 import { xprisma } from "@nx-web/db";
 import AIGenerated from "./_components/AIGenerated";
 import ReportImageButton from "./_components/ReportImageButton";
-import { getFileName, isAbsoluteUrl } from "@nx-web/shared";
+import { APP_NAME, getFileName, isAbsoluteUrl } from "@nx-web/shared";
 import ImageDescription from "./_components/ImageDescription";
 import ImageCommentsSection from "./_components/ImageCommentsSection";
 import ImageTagsSection from "./_components/ImageTagsSection";
 import RelatedImagesSection from "./_components/RelatedImagesSection";
 import ImageSummary from "./_components/ImageSummary";
+import { inngest } from "@web/lib/inngest";
+import { validate as isValidUUID } from "uuid";
+import { Metadata, ResolvingMetadata } from "next";
+import { startCase } from "lodash";
+
+export async function generateMetadata({ params }: PageProps, parent: ResolvingMetadata): Promise<Metadata> {
+   const { imageId } = params;
+   if (!isValidUUID(imageId)) return await parent;
+
+   console.log(`Log from metadata -> ${imageId}`);
+
+   const image = await getImage(imageId);
+
+
+   return {
+      metadataBase: new URL(new URL(image.absolute_url).origin),
+      description:
+         `${image.tags.filter(x => !!x.length).map(startCase).slice(0, 3).join(`, `)} image. Free for use.`,
+      title: `${!!image.title.length ? image.title : image.tags.slice(0, 3).map(startCase).join(` `)} - ${APP_NAME}`,
+      applicationName: APP_NAME,
+      category: `photos`,
+      keywords: [...image.tags, image.title],
+      openGraph: {
+         images: [image.absolute_url],
+      },
+   };
+}
 
 export interface PageProps {
    params: { imageId: string };
@@ -22,12 +49,24 @@ export interface PageProps {
 const Page = async ({ params: { imageId } }: PageProps) => {
    const session = await auth();
 
-   if(session?.user?.id) {
+   if (session?.user?.id) {
+      const now = new Date();
       const imageView = await xprisma.imageView.upsert({
          where: { userId_imageId: { imageId, userId: session?.user?.id as string } },
-         create: { userId: session?.user?.id!, imageId, metadata: {} },
+         create: { userId: session?.user?.id!, imageId, metadata: {}, createdAt: now },
          update: { userId: session?.user?.id!, imageId, metadata: {} },
       });
+      if (imageView.createdAt === now) {
+         await inngest.send({
+            name: `image/image.viewed`,
+            data: {
+               imageId,
+               userId: session.user.id!,
+               timestamp: Date.now(),
+            },
+         });
+      }
+
    }
 
    const image = await getImage(imageId);
@@ -47,6 +86,7 @@ const Page = async ({ params: { imageId } }: PageProps) => {
                   <ReportImageButton />
                   <Image
                      id={`image-${image.id}`}
+                     data-src={isAbsoluteUrl(image?.absolute_url) ? image.absolute_url : path.join(`/uploads`, getFileName(image?.absolute_url)!).replaceAll(`\\`, `/`)}
                      objectFit={`cover`}
                      layout="responsive"
                      width={600}

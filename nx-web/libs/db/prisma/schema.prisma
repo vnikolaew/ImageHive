@@ -254,3 +254,16 @@ model Message {
 
    is_deleted Boolean @default(false)
 }
+
+model UserReport {
+   id                            String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+   reason                        String
+   contentUrl                    String
+   username                      String
+   email                         String
+   issue_screenshot_absolute_url String?
+
+   createdAt DateTime @default(now())
+
+   metadata Json? @default("null") @db.JsonB
+}

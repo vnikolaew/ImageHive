@@ -10,6 +10,7 @@ import { handleLikeImage, handleUnlikeImage } from "@web/app/actions";
 import { cn } from "@nx-web/shared";
 import { Button } from "@components/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger, TooltipTriggerProps } from "@components/tooltip";
+import { useAction } from "next-safe-action/hooks";
 
 export interface GridColumnImageProps {
    image: Image;
@@ -46,14 +47,28 @@ const GridColumnImage = ({
       });
    }
 
+   const { execute: likeImage, status } = useAction(handleLikeImage, {
+      onSuccess: res => {
+         if (res.success) console.log(res);
+      },
+      onError: console.error,
+   });
+
+   const { execute: unlikeImage, status: unlikeStatus } = useAction(handleUnlikeImage, {
+      onSuccess: res => {
+         if (res.success) console.log(res);
+      },
+      onError: console.error,
+   });
+
    async function handleLikeImageClient(id: string) {
       if (!session.data) {
          openModal(ModalType.SIGN_IN);
          return;
       }
 
-      if (likedByMe) handleUnlikeImage(id).then(console.log).catch(console.error);
-      else handleLikeImage(id).then(console.log).catch(console.error);
+      if (likedByMe) unlikeImage(id);
+      else likeImage(id);
    }
 
    return (
@@ -103,7 +118,7 @@ const GridColumnImage = ({
             <div
                className={`absolute items-center gap-2 hidden group-hover:flex text-sm lg:text-md bottom-4 left-4 `}>
                {bottomContent !== undefined ? bottomContent : (
-                  tags.sort().slice(0, 4).map((tag, i) => (
+                  tags.slice(0, 4).map((tag, i) => (
                      <span className={`text-sm lg:text-md text-neutral-100`} key={i}>{tag}</span>
                   ))
                )}
@@ -121,10 +136,11 @@ interface ActionButtonProps extends TooltipTriggerProps {
    active?: boolean;
 }
 
-export const ActionButton = ({
-                                action, active, icon, text, className, ...rest
-                             }:
-                                ActionButtonProps,
+export const ActionButton =
+   ({
+       action, active, icon, text, className, ...rest
+    }:
+       ActionButtonProps,
    ) => {
       return (
          <TooltipProvider delayDuration={100}>

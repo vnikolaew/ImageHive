@@ -1,23 +1,24 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ],
   "compilerOptions": {
-    "lib": ["ES2022"],
-    "strict": false,
+    "outDir": "./dist",
+    "module": "esnext",
+    "target": "esnext",
+    "lib": ["esnext"],
+    "alwaysStrict": true,
+    "strict": true,
+    "preserveConstEnums": true,
+    "moduleResolution": "node",
+    "sourceMap": true,
     "esModuleInterop": true,
-    "skipDefaultLibCheck": true,
-    "skipLibCheck": true,
-    "module": "commonjs",
-    "types": ["node"],
-    "noEmitOnError": true
-  }
+    "types": [
+      "@cloudflare/workers-types",
+      "@types/jest",
+      "@types/service-worker-mock"
+    ]
+  },
+  "include": [
+     "src",
+     "worker-configuration.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "test"]
 }

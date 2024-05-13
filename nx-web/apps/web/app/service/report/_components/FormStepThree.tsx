@@ -20,12 +20,10 @@ export interface FormStepThreeProps {
 }
 
 const FormStepThree = ({ control, onBack }: FormStepThreeProps) => {
-   const values = useWatch({ control });
    const { addImage, removeImage, imagePreview, inputFile } = useSingleFileImagePreview();
    const context = useFormContext<FormSchema>();
 
    const inputRef = useRef<HTMLInputElement>(null!);
-   console.log({ values });
 
    return (
       <Fragment>
@@ -69,7 +67,7 @@ const FormStepThree = ({ control, onBack }: FormStepThreeProps) => {
                addImage(file);
                context.setValue(`issueScreenshot`, file);
             }}
-                 className={`flex flex-col items-center justify-center mt-12 w-full h-fit !py-8 border-dashed border-[2px] border-slate-300/70 dark:bg-slate-600/60 bg-slate-300/60 rounded-xl text-black dark:text-white shadow-md`}>
+                 className={`flex flex-col items-center justify-center mt-2 w-full h-fit !py-8 border-dashed border-[2px] border-slate-300/70 dark:bg-slate-600/60 bg-slate-300/60 rounded-xl text-black dark:text-white shadow-md`}>
                <div className="flex gap-3 items-center">
                   <Button
                      onClick={_ => inputRef?.current?.click()} className={`rounded-full !px-6`}

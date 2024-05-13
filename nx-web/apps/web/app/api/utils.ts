@@ -7,8 +7,8 @@ export async function time(func: () => Promise<any>, name: string) {
 
    const time = end - start > 1000
       ? `${((end - start) / 1000).toFixed(3)}s`
-      : `${end - start}ms`;
+      : `${(end - start).toFixed(3)}ms`;
 
-   console.log(`Time taken to execute ${name} function: ${time}.`);
+   console.log(`Time taken to execute '${name}' function: ${time}.`);
    return result;
 }

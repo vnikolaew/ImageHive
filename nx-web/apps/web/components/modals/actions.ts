@@ -15,6 +15,8 @@ import { auth } from "@web/auth";
 import { normalizeFormData } from "@web/lib/utils";
 import { inngest } from "@web/lib/inngest";
 import { DropboxService } from "@web/lib/dropbox";
+import { zfd } from "zod-form-data";
+import { authorizedAction } from "@web/lib/actions";
 
 
 export interface ImageUpload {
@@ -123,16 +125,20 @@ export async function handleUploadImages(formData: FormData) {
    return results.every(r => r.success) ? { success: true } : { success: false };
 }
 
-export async function handleUpdateProfilePicture(formData: FormData): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
+const updateProfilePictureSchema = zfd.formData({
+   file: zfd.file().optional(),
+   url: zfd.text().optional(),
+});
 
+export const handleUpdateProfilePicture = authorizedAction(updateProfilePictureSchema, async (
+   {
+      file,
+      url,
+   }, { userId }): Promise<ActionApiResponse> => {
    await sleep(2000);
    const db = new DropboxService();
 
-   if (formData.has(`file`)) {
-      const file = formData.get(`file`)! as File;
-
+   if (!!file) {
       const name = `${Date.now()}_${randomUUID()}_${file.name.replaceAll(` `, `-`)}`;
 
       // Upload new profile picture to Dropbox:
@@ -148,7 +154,7 @@ export async function handleUpdateProfilePicture(formData: FormData): Promise<Ac
       console.log(`[${new Date().toISOString()}] Uploaded new file to '${res.response.path_display}'.`);
 
       let user = await xprisma.user.findUnique({
-         where: { id: session.user?.id },
+         where: { id: userId },
          select: { id: true, metadata: true },
       });
       if (!user) return { success: false };
@@ -162,32 +168,32 @@ export async function handleUpdateProfilePicture(formData: FormData): Promise<Ac
 
       // Save new profile pic to database:
       user = await xprisma.user.update({
-         where: { id: session.user?.id },
+         where: { id: userId },
          data: {
             image: shareLink,
             metadata: { ...(user.metadata ?? {}), fileName: name },
          },
       });
-      revalidatePath(`/users/${session.user?.id as string}`);
+      revalidatePath(`/users/${userId}`);
 
       const { verifyPassword, updatePassword, ...rest } = user;
       return { success: true, data: rest };
-   } else if (formData.has(`url`)) {
-      const imageUrl = formData.get(`url`)! as string;
+   } else if (!!url) {
+      const imageUrl = url;
 
       // Save profile pic URL to database:
       const user = await xprisma.user.update({
-         where: { id: session.user?.id },
+         where: { id: userId },
          data: {
             image: imageUrl,
          },
       });
       const { verifyPassword, updatePassword, ...rest } = user;
 
-      revalidatePath(`/users/${session.user?.id as string}`);
+      revalidatePath(`/users/${userId}`);
       return { success: true, data: rest };
    }
 
    return { success: false };
-}
+});
 

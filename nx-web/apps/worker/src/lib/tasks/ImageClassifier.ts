@@ -1,7 +1,4 @@
 import { HfInference } from "@huggingface/inference";
-import fs from "node:fs";
-import fetch from "node-fetch";
-
 
 export interface ImageClassifierResponse {
    output: { label: string, score: number }[];
@@ -10,8 +7,8 @@ export interface ImageClassifierResponse {
 export class ImageClassifier {
    hf: HfInference;
 
-   constructor(public model: string) {
-      this.hf = new HfInference(process.env.HF_API_KEY, {
+   constructor(public model: string, hfApiKey: string) {
+      this.hf = new HfInference(hfApiKey, {
          use_cache: true,
          dont_load_model: false,
          retry_on_error: true,
@@ -19,7 +16,7 @@ export class ImageClassifier {
 
    }
 
-   private isHttpURL(str) {
+   private isHttpURL(str: string) {
       // Regular expression to match HTTP URL
       const httpPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-zA-Z0-9]+([\-\.]{1}[a-zA-Z0-9]+)*\.[a-zA-Z]{2,5}(:[0-9]{1,5})?(\/.*)?$/;
 
@@ -27,11 +24,12 @@ export class ImageClassifier {
       return httpPattern.test(str);
    }
 
-   public async classify(imagePath: string): Promise<ImageClassifierResponse> {
+   public async classify(imageUrl: string): Promise<ImageClassifierResponse> {
+      console.log({ imageUrl});
       const res = await this.hf
          .imageClassification({
             model: this.model,
-            data: this.isHttpURL(imagePath) ? await fetch(imagePath).then(r => r.blob()) : fs.readFileSync(imagePath).buffer,
+            data: await fetch(imageUrl).then(r => r.arrayBuffer())
          });
 
       return { output: res };

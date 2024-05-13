@@ -53,9 +53,9 @@ const HomeSearchBar = ({}: HomeSearchBarProps) => {
             className={`rounded-full peer dark:bg-neutral-100 focus-visible:ring-0 border-none pl-10 text-neutral-700 placeholder:text-neutral-400 !text-base placeholder:!text-base`} />
          <Search
             size={18}
-            className={`absolute peer-focus-visible:text-green-700 top-[50%] left-4 -translate-y-1/2 cursor-pointer text-neutral-500 !stroke-[3px]`} />
+            className={`absolute peer-focus-visible:text-primary top-[50%] left-4 -translate-y-1/2 cursor-pointer text-neutral-500 !stroke-[3px]`} />
          <div className={
-            `absolute peer-focus-visible:text-green-700 top-[50%] right-4 -translate-y-1/2 cursor-pointer text-neutral-500 !stroke-[3px]`
+            `absolute peer-focus-visible:text-primary top-[50%] right-4 -translate-y-1/2 cursor-pointer text-neutral-500 !stroke-[3px]`
          }>
             <DropdownMenu onOpenChange={setOpen} open={open}>
                <DropdownMenuTrigger asChild>
@@ -64,7 +64,7 @@ const HomeSearchBar = ({}: HomeSearchBarProps) => {
                         {SearchTypes.find(t => t.value === searchType)!.label}
                      </span>
                      <ChevronDown className={cn(
-                        open && `rotate-180 transition-all text-green-600 duration-200`,
+                        open && `rotate-180 transition-all text-primary duration-200`,
                         !open && `rotate-0 transition-transform duration-200`,
                      )} size={16} />
                   </Button>
@@ -73,7 +73,7 @@ const HomeSearchBar = ({}: HomeSearchBarProps) => {
                   {SearchTypes.map((item, index) => (
                      <DropdownMenuItem
                         className={cn(`p-2 flex items-center gap-4 cursor-pointer rounded-lg`,
-                           item.value === searchType && `text-green-600 `)}
+                           item.value === searchType && `text-primary`)}
                         onClick={e => {
                            setSearchType(item.value);
                         }} key={index}>

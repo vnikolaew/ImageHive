@@ -8,6 +8,7 @@ import { EditCollectionModalWrapper } from "./EditCollectionModal";
 import CreateNewCollectionModal from "./CreateNewCollectionModal";
 import ShareProfileModal from "./ShareProfileModal";
 import ChangeProfilePictureModal from "./ChangeProfilePictureModal";
+import { ReportMediaModalWrapper } from "./ReportMediaModal";
 
 const Modals = () => {
    return (
@@ -21,6 +22,7 @@ const Modals = () => {
          <CreateNewCollectionModal />
          <ShareProfileModal />
          <ChangeProfilePictureModal />
+         <ReportMediaModalWrapper />
       </Fragment>
    );
 };

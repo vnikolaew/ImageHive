@@ -1,14 +1,14 @@
 import React from "react";
 import Link from "next/link";
 import { Badge } from "@components/badge";
-import { similaritySearch } from "@web/app/api/similiraty-search/route";
+import { getSimilarTags } from "@web/app/search/_queries";
 
 export interface SimilarTagsSectionProps {
    tag: string;
 }
 
 const SimilarTagsSection = async ({ tag }: SimilarTagsSectionProps) => {
-   const response = await similaritySearch(tag, 10);
+   const response = await getSimilarTags(tag)
 
    return (
       <div className={`w-full flex items-center gap-3`}>

@@ -1,24 +1,22 @@
 "use server";
 
 import { sleep } from "@nx-web/shared";
-import { auth } from "@web/auth";
 import { xprisma } from "@nx-web/db";
+import { authorizedAction } from "@web/lib/actions";
+import { z } from "zod";
 
 export interface CookiePreferences {
-  Necessary: boolean,
-  Statistics: boolean,
-  Functionality: boolean,
-  Marketing: boolean,
+   Necessary: boolean,
+   Statistics: boolean,
+   Functionality: boolean,
+   Marketing: boolean,
 }
 
-export async function acceptAllCookies() {
+export const acceptAllCookies = authorizedAction(z.any(), async (_, { userId }) => {
    await sleep(2000);
 
-   const session = await auth();
-   if (!session) return { success: false };
-
    const account = await xprisma.account.findFirst({
-      where: { userId: session.user?.id },
+      where: { userId },
    });
    if (!account) return { success: false };
 
@@ -43,15 +41,12 @@ export async function acceptAllCookies() {
       },
    });
    return { success: true };
-}
+});
 
-export async function declineCookieConsent() {
+export const declineCookieConsent = authorizedAction(z.any(), async (_, { userId }) => {
    await sleep(2000);
-   const session = await auth();
-   if (!session) return { success: false };
-
    const account = await xprisma.account.findFirst({
-      where: { userId: session.user?.id },
+      where: { userId },
    });
    if (!account) return { success: false };
 
@@ -70,16 +65,20 @@ export async function declineCookieConsent() {
       },
    });
    return { success: true };
-}
+});
 
 
-export async function updateCookiePreferences(cookiePreferences: CookiePreferences) {
+const cookiePreferencesSchema = z.object({
+   Necessary: z.boolean(),
+   Statistics: z.boolean(),
+   Functionality: z.boolean(),
+   Marketing: z.boolean(),
+});
+
+export const updateCookiePreferences = authorizedAction(cookiePreferencesSchema, async (cookiePreferences: CookiePreferences, { userId }) => {
    await sleep(2000);
-   const session = await auth();
-   if (!session) return { success: false };
-
    const account = await xprisma.account.findFirst({
-      where: { userId: session.user?.id },
+      where: { userId },
    });
    if (!account) return { success: false };
 
@@ -100,4 +99,4 @@ export async function updateCookiePreferences(cookiePreferences: CookiePreferenc
    });
 
    return { success: true };
-}
+});

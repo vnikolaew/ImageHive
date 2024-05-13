@@ -3,19 +3,25 @@
 import { revalidatePath } from "next/cache";
 import * as fs from "node:fs";
 import { ImageUpload } from "@web/components/modals/actions";
-import { auth } from "@web/auth";
 import { xprisma } from "@nx-web/db";
 import { DropboxService } from "@web/lib/dropbox";
+import { authorizedAction } from "@web/lib/actions";
+import { z } from "zod";
 
 export interface ApiResponse {
    success: boolean;
 }
 
-export async function handleUpdateMedia(payload: Partial<ImageUpload>): Promise<ApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
+const updateMediaSchema = z.object({
+   inputFile: z.instanceof(File).optional(),
+   imagePreview: z.string().optional(),
+   id: z.string().optional(),
+   tags: z.array(z.string()).optional(),
+   description: z.string().optional(),
+   aiGenerated: z.boolean().optional(),
+});
 
-
+export const handleUpdateMedia = authorizedAction(updateMediaSchema, async (payload: Partial<ImageUpload>, { userId }): Promise<ApiResponse> => {
    const { id, description, tags, aiGenerated } = payload;
    let image = await xprisma.image.findUnique({
       where: { id },
@@ -35,14 +41,13 @@ export async function handleUpdateMedia(payload: Partial<ImageUpload>): Promise<
 
    revalidatePath(`/account/media`);
    return { success: true };
-}
+});
 
-export async function deleteMedia(imageId: string): Promise<ApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
+const deleteMediaSchema = z.string();
 
+export const deleteMedia = authorizedAction(deleteMediaSchema, async (imageId, { userId }): Promise<ApiResponse> => {
    const image = await xprisma.image.delete({
-      where: { id: imageId, userId: session.user?.id },
+      where: { id: imageId, userId },
    });
    if (!image) return { success: false };
 
@@ -51,7 +56,8 @@ export async function deleteMedia(imageId: string): Promise<ApiResponse> {
    // Delete from Dropbox as well:
    const db = new DropboxService();
    const res = await db.deleteImage(image.original_file_name);
-   if(res.success) {
+
+   if (res.success) {
       console.log(`Deleted image with ID ${imageId} from Image storage.`);
    }
 
@@ -61,4 +67,4 @@ export async function deleteMedia(imageId: string): Promise<ApiResponse> {
 
    revalidatePath(`/account/media`);
    return { success: true };
-}
+});

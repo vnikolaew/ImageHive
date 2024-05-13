@@ -5,7 +5,7 @@ import SearchSettings from "../../_components/SearchSettings";
 import { GenericSortDropdown } from "../../_components/GenericSortDropdown";
 
 export interface SearchSettingsBarProps {
-   hideAi?: boolean
+   hideAi?: boolean;
 }
 
 export const SortOptions = [
@@ -15,7 +15,7 @@ export const SortOptions = [
    `Most relevant`,
 ] as const;
 
-const SearchSettingsBar = ({hideAi}: SearchSettingsBarProps) => {
+const SearchSettingsBar = ({ hideAi }: SearchSettingsBarProps) => {
    return (
       <div className={`w-full p-8 !px-12 border-b-[1px] flex items-center justify-between`}>
          <div>

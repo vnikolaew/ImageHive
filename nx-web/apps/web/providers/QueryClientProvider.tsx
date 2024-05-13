@@ -5,6 +5,8 @@ import {
    QueryCache,
    QueryClientProvider,
 } from "@tanstack/react-query";
+import { __IS_DEV__ } from "@nx-web/shared";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export interface QueryClientProviderProps extends PropsWithChildren {
 }
@@ -23,6 +25,7 @@ const QueryClientProvider_ = ({ children }: QueryClientProviderProps) => {
    return (
       <QueryClientProvider client={queryClient}>
          {children}
+         {__IS_DEV__ && (<ReactQueryDevtools initialIsOpen={false} />)}
       </QueryClientProvider>
    );
 };

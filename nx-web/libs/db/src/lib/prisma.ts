@@ -1,9 +1,12 @@
-import { Image, Message, Prisma, PrismaClient, User } from "@prisma/client";
+import { Image, Message, Prisma, PrismaClient, Tag, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import { InternalArgs } from "@prisma/client/runtime/binary";
-import { groupBy } from "lodash";
+import { groupBy, name } from "lodash";
 import path from "path";
 import { __IS_DEV__ } from "@nx-web/shared";
+import { HfInference } from "@huggingface/inference";
+import { createId } from "@paralleldrive/cuid2";
+import { Document } from "@langchain/core/documents";
 
 export const config = { runtime: "node.js" };
 
@@ -101,6 +104,77 @@ export const xprisma = prisma.$extends({
       },
    },
    model: {
+      tag: {
+         /**
+          * Perform a similarity search using the `pgvector` extension.
+          * @param tag The tag / text to search against.
+          * @param top_k The top K results to be returned.
+          */
+         async similaritySearch(tag: string, top_k = 10) {
+            const hf = new HfInference(process.env.HF_API_KEY);
+            const SS_MODEL = `Snowflake/snowflake-arctic-embed-s`;
+
+            const query = await hf.featureExtraction({
+               model: SS_MODEL,
+               inputs: tag,
+            }) as number[];
+
+            const vectorColumnRaw = Prisma.raw(`"embedding"`);
+            const tableNameRaw = Prisma.raw(`"Tag"`);
+
+            const vector = `[${query.join(",")}]`;
+            const articles = await xprisma.$queryRaw<
+               Array<any>
+            >(
+               Prisma.join(
+                  [
+                     Prisma.sql`
+                        SELECT "id", "name", ${vectorColumnRaw} <=> ${vector}::vector as "_distance"
+                        FROM ${tableNameRaw}
+                     `,
+                     // this.buildSqlFilterStr(filter ?? this.filter),
+                     Prisma.sql` ORDER BY "_distance" ASC LIMIT ${top_k};`,
+                  ].filter((x) => x != null),
+                  "",
+               ),
+            );
+
+            const results: [Document<any>, number][] = articles
+               .filter(a => a._distance !== null && a["name"] !== null)
+               .map(a => [new Document({
+                  pageContent: a.name as string,
+                  metadata: a,
+               }), a._distance]);
+
+            return results;
+         },
+         async insertMany(tags: string[]) {
+            const hf = new HfInference(process.env.HF_API_KEY);
+            const SS_MODEL = `Snowflake/snowflake-arctic-embed-s`;
+
+            const vectors = await hf.featureExtraction({
+               model: SS_MODEL,
+               inputs: tags,
+            }) as number[][];
+
+            const tableNameRaw = Prisma.raw(`"Tag"`);
+            const vectorColumnRaw = Prisma.raw(`"embedding"`);
+            const idColumnRaw = Prisma.raw(`"id"`);
+            const nameColumnRaw = Prisma.raw(`"name"`);
+
+            return await xprisma.$transaction(
+               tags.map((tag, index) => {
+                  const tagId = createId();
+                  return xprisma.$executeRaw`
+                     INSERT INTO ${tableNameRaw} (${idColumnRaw}, ${nameColumnRaw}, ${vectorColumnRaw})
+                     VALUES (${tagId}, ${tag}, ${`[${vectors[index].join(",")}]`}::vector) ON CONFLICT (${nameColumnRaw})
+                        DO
+                     UPDATE SET ${vectorColumnRaw} = ${`[${vectors[index].join(",")}]`}::vector;
+                  `;
+               }),
+            );
+         },
+      },
       user: {
          async inbox({ userId, filter }: { userId: string, filter?: string }): Promise<Message[]> {
             const messages = await xprisma.message.findMany({
@@ -243,6 +317,16 @@ export const xprisma = prisma.$extends({
          },
       },
       image: {
+         async homeFeedRawNew(limit = 20): Promise<Image[]> {
+            const images = await xprisma.$queryRaw<Image[]>`
+               SELECT "Image".*
+               FROM "Image"
+               ORDER BY metadata - > 'popularity_score' DESC, "createdAt" DESC
+                  LIMIT ${limit};
+            `
+            return images;
+         },
+
          async homeFeedRaw(limit = 20): Promise<Image[]> {
             const images = await xprisma.$queryRaw<Image[]>`
                SELECT "Image".*,
@@ -287,7 +371,7 @@ export const xprisma = prisma.$extends({
             });
          },
 
-         async search_Trending(searchValue: string, filters?: Record<string, any>, limit = 10): Promise<Image[]> {
+         async search_Trending(searchValue: string, filters?: Record<string, any>, page = 1, limit = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
             const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
@@ -299,14 +383,15 @@ export const xprisma = prisma.$extends({
                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                ORDER BY title_distance
-                  LIMIT ${limit};
+                  LIMIT ${limit}
+               OFFSET ${(page - 1) * limit};
             `;
 
             return Object
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async search_Latest(searchValue: string, filters?: Record<string, any>, limit = 10): Promise<Image[]> {
+         async search_Latest(searchValue: string, filters?: Record<string, any>, page = 1, limit = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
             const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
@@ -318,14 +403,15 @@ export const xprisma = prisma.$extends({
                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                ORDER BY "createdAt" DESC, title_distance
-                  LIMIT ${limit};
+                  LIMIT ${limit}
+               OFFSET ${(page - 1) * limit};
             `;
 
             return Object
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async search_MostRelevant(searchValue: string, filters?: Record<string, any>, limit = 10): Promise<Image[]> {
+         async search_MostRelevant(searchValue: string, filters?: Record<string, any>, page = 1, limit = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
             const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.sql``;
 
@@ -337,14 +423,15 @@ export const xprisma = prisma.$extends({
                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                ORDER BY "createdAt" DESC, title_distance
-                  LIMIT ${limit};
+                  LIMIT ${limit}
+               OFFSET {(page - 1) * limit};
             `;
 
             return Object
                .entries(groupBy(result as any[], i => i.id))
                .map(([_, value]) => value[0] as Image);
          },
-         async search(searchValue: string, filters?: Record<string, any>, limit = 10): Promise<Image[]> {
+         async search(searchValue: string, filters?: Record<string, any>, page = 1, limit = 10): Promise<Image[]> {
             const iLikeSearch = `%${searchValue}%`;
             const filterClause = filters?.date instanceof Date ? Prisma.sql`AND i."createdAt" > ${filters.date}` : Prisma.empty;
 
@@ -356,7 +443,8 @@ export const xprisma = prisma.$extends({
                      FROM (SELECT unnest(tags) unnested_tag, * FROM "Image") i
                      WHERE i."unnested_tag" ILIKE ${iLikeSearch} ${filterClause}) s
                ORDER BY title_distance
-                  LIMIT ${limit};
+                  LIMIT ${limit}
+               OFFSET ${(page - 1) * limit};
             `;
 
             return Object

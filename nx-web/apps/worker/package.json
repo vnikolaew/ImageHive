@@ -1,0 +1,16 @@
+{
+  "name": "worker",
+  "version": "0.0.1",
+  "private": true,
+  "devDependencies": {
+    "esbuild": "^0.14.42",
+     "wrangler": "^3.0.0"
+  },
+  "dependencies": {
+    "@paralleldrive/cuid2": "^2.2.2",
+    "zod-form-data": "^2.0.2"
+  },
+  "scripts": {
+    "build": "esbuild --bundle ./src/index.ts --outdir=./dist"
+  }
+}

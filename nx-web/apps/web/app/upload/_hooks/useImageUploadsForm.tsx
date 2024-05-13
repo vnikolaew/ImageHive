@@ -69,5 +69,5 @@ export function useImageUploadsForm() {
       remove(index);
    }, [fields, remove]);
 
-   return { form, addImage, removeImage, imageUploads: fields } as const;
+   return { form, addImage, removeImage, imageUploads: fields, reset: form.reset } as const;
 }

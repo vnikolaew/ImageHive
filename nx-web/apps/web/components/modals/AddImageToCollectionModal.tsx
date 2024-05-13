@@ -12,11 +12,12 @@ import { ScrollArea } from "@components/scroll-area";
 import { Button } from "@components/button";
 import { Input } from "@components/input";
 import { cn, getFileName } from "@web/lib/utils";
+import { useAction } from "next-safe-action/hooks";
 
 
 export const AddImageToCollectionModalWrapper = () => {
-   const { modal, toggleModal } = useModals();
-   const { data, error, isLoading, mutate } = useSWR<{
+   const { modal } = useModals();
+   const { data, isLoading, mutate } = useSWR<{
       collections: ImageCollectionApiResponse
    }>(API_ROUTES.COLLECTIONS);
 
@@ -46,7 +47,8 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
    }, [data?.collections, searchValue]);
 
    const noResultsFound = useMemo(() => {
-      return !!searchValue?.length && !filteredCollections?.length;
+      return !!searchValue?.length && !filteredCollections?.length
+         || (!searchValue?.length && !data?.collections?.length);
    }, [filteredCollections?.length, searchValue?.length]);
 
    return (
@@ -73,7 +75,7 @@ const AddImageToCollectionModal = ({ data, isLoading, mutate }: AddImageToCollec
             <div className={cn(`w-full mt-2 rounded-md p-2 bg-neutral-100/70 min-h-[120px]`,
                noResultsFound && `!min-h-[100px] flex items-center justify-center`)}>
                {noResultsFound ? (
-                  <div className={`w-full h-full flex items-center justify-center`}>
+                  <div className={`w-full h-full flex items-center justify-center text-sm`}>
                      No collections found.
                   </div>
                ) : (
@@ -103,30 +105,28 @@ interface ImageCollectionProps {
 const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
    const firstCollectionImageSrc = `/uploads/${getFileName(collection?.images?.at(0)?.image?.absolute_url ?? ``)}`;
    const [imageWidth, imageHeight] = collection?.images?.at(0)?.image?.dimensions?.at(0) ?? [200, 200];
+
    const [imageId] = useQueryString();
    const { mutate } = useSWRConfig();
 
-   const isCurrentImageSaved = useMemo(() => {
-      return collection?.images?.some(i => i.imageId === imageId);
-   }, [collection.images, imageId]);
+   const isCurrentImageSaved = useMemo(() =>
+      collection?.images?.some(i => i.imageId === imageId),
+      [collection.images, imageId]);
 
-
-   async function handleRemove() {
-      await handleRemoveImageFromCollection(imageId!, collection.id).then(res => {
+   const { execute: handleRemove, status: removeStatus } = useAction(handleRemoveImageFromCollection, {
+      onSuccess: async res => {
          if (res.success) {
-            mutate(API_ROUTES.COLLECTIONS);
+            await mutate(API_ROUTES.COLLECTIONS);
          }
-
-      }).catch(console.error);
-   }
-
-   async function handleAdd() {
-      await handleAddImageToCollection(imageId!, collection.id).then(res => {
+      },
+   });
+   const { execute: handleAdd, status } = useAction(handleAddImageToCollection, {
+      onSuccess: async res => {
          if (res.success) {
-            mutate(API_ROUTES.COLLECTIONS);
+            await mutate(API_ROUTES.COLLECTIONS);
          }
-      }).catch(console.error);
-   }
+      },
+   });
 
    return (
       <div
@@ -155,13 +155,13 @@ const ImageCollectionItem = ({ collection }: ImageCollectionProps) => {
          <div className={`absolute right-4 top-4 z-10 text-white`}>
             {!isCurrentImageSaved ? (
                <Button
-                  onClick={handleAdd}
+                  onClick={_ => handleAdd({ imageId, collectionId: collection.id })}
                   className={`bg-green-600 items-center gap-2 hover:bg-transparent transition-colors duration-200 rounded-full border-transparent hover:border-white hover:border-[1px]`}>
                   <Plus size={12} /> add
                </Button>
             ) : (
                <Button
-                  onClick={handleRemove}
+                  onClick={_ => handleRemove({imageId, collectionId: collection.id})}
                   className={`bg-green-600 items-center gap-2 hover:bg-transparent transition-colors duration-200 rounded-full border-transparent hover:border-white hover:border-[1px]`}>
                   <Check size={12} /> added
                </Button>

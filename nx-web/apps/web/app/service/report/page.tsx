@@ -5,7 +5,6 @@ export interface PageProps {
 }
 
 const Page = ({}: PageProps) => {
-
    return (
       <div className={`w-full flex flex-col items-start gap-6`}>
          <h1 className={`text-2xl font-semibold`}>Report content</h1>

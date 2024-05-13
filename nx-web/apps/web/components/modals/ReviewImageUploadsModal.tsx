@@ -11,29 +11,32 @@ import { LoadingSpinner } from "./SocialLogins";
 import { cn, objectToFormData } from "@web/lib/utils";
 import { TOASTS } from "@nx-web/shared";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogFooter,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
 } from "@components/dialog";
 import { ScrollArea } from "@components/scroll-area";
 import { Button, buttonVariants } from "@components/button";
 import { Alert, AlertDescription } from "@components/alert";
+import { useFormContext } from "react-hook-form";
 
 export interface ReviewImageUploadsModalProps {
-   imageUploads: ImageUpload[];
+   imageUploads: ImageUpload[],
+   reset: (values?: any) => void
 }
 
-const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps) => {
+const ReviewImageUploadsModal = ({ imageUploads, reset }: ReviewImageUploadsModalProps) => {
    const { modal, toggleModal, closeModal } = useModals();
    const imagePreviews = useMemo(() => {
       return new Map(imageUploads?.map(u => [u.id, u.imagePreview]));
    }, [imageUploads]);
    const { loading, action: handleUploadAction } = usePromise<any>((formData: FormData) =>
       handleUploadImages(formData));
+   const form = useFormContext();
 
    const inputFiles = useMemo(() => {
       return new Map(imageUploads?.map(u => [u.id, u.inputFile]));
@@ -56,6 +59,7 @@ const ReviewImageUploadsModal = ({ imageUploads }: ReviewImageUploadsModalProps)
             toast(message, { ...rest, icon: <Check size={16} /> });
 
             closeModal(ModalType.REVIEW_UPLOAD_IMAGES);
+            reset()
          }
       });
    }

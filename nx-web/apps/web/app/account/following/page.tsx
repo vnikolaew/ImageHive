@@ -13,7 +13,6 @@ const Page = async ({}: PageProps) => {
    if (!session) return notFound();
 
    const following = await getUserFollowings();
-   console.log({ x: following.map(f => f.following) });
 
    return (
       <div className={`flex items-center gap-4 mt-8`}>

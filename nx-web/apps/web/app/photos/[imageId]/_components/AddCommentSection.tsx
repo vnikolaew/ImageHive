@@ -5,7 +5,6 @@ import DefaultAvatar from "../../../../public/default-avatar.png";
 import { useOnClickOutside } from "next/dist/client/components/react-dev-overlay/internal/hooks/use-on-click-outside";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { usePromise } from "@web/hooks/usePromise";
 import { handleCommentOnImage } from "../actions";
 import { API_ROUTES, getSessionImageSrc } from "@nx-web/shared";
 import { LoadingSpinner } from "@web/components/modals/SocialLogins";
@@ -14,6 +13,8 @@ import { InfiniteData, useQueryClient } from "@tanstack/react-query";
 import { ImageComment } from "@web/app/photos/[imageId]/_components/ImageCommentsSection";
 import { produce } from "immer";
 import { Session } from "next-auth";
+import { useAction } from "next-safe-action/hooks";
+import { isExecuting } from "next-safe-action/status";
 
 export interface AddCommentSectionProps {
    imageId: string,
@@ -35,40 +36,38 @@ export function AddCommentSection({ imageId, session }: AddCommentSectionProps) 
    }, [comment?.length]);
 
    const queryClient = useQueryClient();
-   const { action: handleComment, loading } = usePromise((comment: string) => {
-      return handleCommentOnImage(imageId, comment)
-         .then(res => {
-            if (res.success) {
-               console.log(queryClient.getQueryData<InfiniteData<ImageComment[]>>([API_ROUTES.COMMENTS, imageId]));
-               queryClient.setQueryData<InfiniteData<ImageComment[]>>([API_ROUTES.COMMENTS, imageId], (data: InfiniteData<ImageComment[]>) => {
-                  // data.pages.
-                  const comment = res.data;
-                  console.log(comment);
-                  return produce(data, draft => {
-                     if (draft.pages[0].length >= 10) {
-                        draft.pages.unshift([{ ...comment }]);
-                     } else {
-                        draft.pages[0].unshift({
-                           ...comment,
-                        });
-                     }
+   const { result, execute, status } = useAction(handleCommentOnImage, {
+      onSuccess: res => {
+         if (res.success) {
+            console.log(queryClient.getQueryData<InfiniteData<ImageComment[]>>([API_ROUTES.COMMENTS, imageId]));
 
-                     return draft;
-                  });
+            queryClient.setQueryData<InfiniteData<ImageComment[]>>([API_ROUTES.COMMENTS, imageId], (data: InfiniteData<ImageComment[]>) => {
+               // data.pages.
+               const comment = res.data;
+               console.log(comment);
+               return produce(data, draft => {
+                  if (draft.pages[0].length >= 10) {
+                     draft.pages.unshift([{ ...comment }]);
+                  } else {
+                     draft.pages[0].unshift({
+                        ...comment,
+                     });
+                  }
+
+                  return draft;
                });
-               setComment(``);
-               setBig(false);
-            }
-         }).catch(console.error);
-
+            });
+            setComment(``);
+            setBig(false);
+         }
+      },
    });
-
    const [big, setBig] = useState(false);
    if (!session) return null;
 
    async function handleSubmitComment(e) {
       e.preventDefault();
-      await handleComment(comment);
+      execute({ imageId, commentText: comment });
    }
 
    return (
@@ -116,10 +115,10 @@ export function AddCommentSection({ imageId, session }: AddCommentSectionProps) 
                      <Button
                         id={`submit`}
                         onClick={handleSubmitComment}
-                        disabled={comment?.trim().length === 0 || loading}
+                        disabled={comment?.trim().length === 0 || isExecuting(status)}
                         className={`px-12 rounded-xl mt-2 shadow-sm`}
                         variant={`secondary`}>
-                        {loading ? (
+                        {isExecuting(status) ? (
                            <LoadingSpinner text={`Sending ...`} />
                         ) : (
                            `Submit`

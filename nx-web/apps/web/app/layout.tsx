@@ -7,8 +7,9 @@ import CookieConsentBanner from "../components/common/CookieConsentBanner";
 import Footer from "../components/common/Footer";
 import { Toaster } from "@components/sonner";
 
-import "./global.css"
+import "./global.css";
 import ScrollToTopButton from "@web/app/service/_components/ScrollToTopButton";
+import PageNavigationLoadingBar from "@web/app/_components/PageNavigationLoadingBar";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -24,9 +25,11 @@ export default function RootLayout({
 }>) {
    return (
       <html suppressHydrationWarning lang="en">
-      <head><title>{APP_NAME}</title></head>
+      <head>
+      </head>
       <Providers>
          <body className={cn(`min-h-screen font-sans antialiased `, inter.className)}>
+         <PageNavigationLoadingBar />
          <Navbar />
          {children}
          <Toaster />

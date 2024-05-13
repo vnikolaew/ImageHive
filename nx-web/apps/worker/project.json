@@ -5,62 +5,17 @@
    "projectType": "application",
    "tags": [],
    "targets": {
-      "build": {
-         "executor": "@nx/esbuild:esbuild",
-         "outputs": [
-            "{options.outputPath}"
-         ],
-         "defaultConfiguration": "production",
-         "options": {
-            "platform": "node",
-            "outputPath": "dist/apps/worker",
-            "format": [
-               "esm"
-            ],
-            "bundle": false,
-            "main": "apps/worker/src/main.ts",
-            "tsConfig": "apps/worker/tsconfig.app.json",
-            "assets": [
-               "apps/worker/src/assets"
-            ],
-            "generatePackageJson": true,
-            "esbuildOptions": {
-               "resolveExtensions": ".ts,.js",
-               "sourcemap": true,
-               "outExtension": {
-                  ".js": ".js"
-               }
-            }
-         },
-         "configurations": {
-            "development": {},
-            "production": {
-               "esbuildOptions": {
-                  "sourcemap": false,
-                  "outExtension": {
-                     ".js": ".js"
-                  }
-               }
-            }
-         }
-      },
       "dev": {
-         "command": "cd apps/worker && npx nodemon --exec npx tsx src/main.ts"
+         "executor": "nx:run-commands",
+         "options": {
+            "command": "cd apps/worker && npx wrangler dev"
+         }
       },
       "serve": {
-         "executor": "@nx/js:node",
-         "defaultConfiguration": "development",
-         "options": {
-            "buildTarget": "worker:build"
-         },
-         "configurations": {
-            "development": {
-               "buildTarget": "worker:build:development"
-            },
-            "production": {
-               "buildTarget": "worker:build:production"
-            }
-         }
+         "executor": "@k11r/nx-cloudflare-wrangler:serve-worker"
+      },
+      "deploy": {
+         "executor": "@k11r/nx-cloudflare-wrangler:deploy-worker"
       }
    }
 }

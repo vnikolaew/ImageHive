@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import { ImageUpload } from "@web/components/modals/actions";
-import { UseFormReturn } from "react-hook-form";
+import { DefaultValues, KeepStateOptions, UseFormReturn } from "react-hook-form";
 import { ModalType, useModals } from "@web/providers/ModalsProvider";
 import ImagePreviewsSection from "./ImagePreviewsSection";
 import UploadImageForm from "./UploadImageForm";
@@ -9,14 +9,16 @@ import DeleteImageModal from "./DeleteImageModal";
 import ReviewImageUploadsModal from "../../../components/modals/ReviewImageUploadsModal";
 import { ScrollArea } from "@components/scroll-area";
 import { Button } from "@components/button";
+import { UploadImageFormValues } from "@web/app/upload/_hooks/useImageUploadsForm";
 
 export interface ImagesUploadSectionProps {
    imageUploads?: ImageUpload[],
    form: UseFormReturn<ImageUpload, any, undefined>,
-   removeImage: (id: string) => void
+   removeImage: (id: string) => void,
+   reset: (values?: any) => void
 }
 
-const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSectionProps) => {
+const ImagesUploadSection = ({ imageUploads, form, removeImage, reset }: ImagesUploadSectionProps) => {
    const [selectedImageId, setSelectedImageId] = useState(``);
    const scrollAreaRef = useRef<HTMLDivElement>(null!);
    const { openModal } = useModals();
@@ -60,7 +62,7 @@ const ImagesUploadSection = ({ imageUploads, form, removeImage }: ImagesUploadSe
                variant={`default`}>
                Review ({imageUploads?.length})
             </Button>
-            <ReviewImageUploadsModal imageUploads={imageUploads!} />
+            <ReviewImageUploadsModal reset={reset} imageUploads={imageUploads!} />
          </div>
       </div>
    );

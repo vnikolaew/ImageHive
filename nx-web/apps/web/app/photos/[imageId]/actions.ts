@@ -1,39 +1,56 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { auth } from "@web/auth";
 import { ActionApiResponse, sleep } from "@nx-web/shared";
 import { xprisma } from "@nx-web/db";
 import { ImageComment } from "@prisma/client";
+import { z } from "zod";
+import { authorizedAction } from "@web/lib/actions";
+import { inngest } from "@web/lib/inngest";
 
-export async function handleCommentOnImage(imageId: string, commentText: string): Promise<ActionApiResponse<ImageComment>> {
-   const session = await auth();
-   if (!session) return { success: false };
-   await sleep(2000);
+const commentSchema = z.object({
+   imageId: z.string(),
+   commentText: z.string(),
+});
 
-   const comment = await xprisma.imageComment.create({
-      data: {
-         imageId,
-         raw_text: commentText,
-         userId: session.user?.id as string,
-         metadata: {},
-      }, include: { user: true },
+export const handleCommentOnImage = authorizedAction(
+   commentSchema,
+   async ({
+             imageId,
+             commentText,
+          }, { userId }): Promise<ActionApiResponse<ImageComment>> => {
+      await sleep(2000);
+
+      const comment = await xprisma.imageComment.create({
+         data: {
+            imageId,
+            raw_text: commentText,
+            userId,
+            metadata: {},
+         }, include: { user: true },
+      });
+
+      if (!comment) return { success: false };
+      const { updatePassword, verifyPassword, ...rest } = comment.user;
+      // @ts-ignore
+      comment.user = rest;
+
+      await inngest.send({
+         name: `image/image.commented`,
+         data: {
+            imageId,
+            userId,
+            timestamp: Date.now(),
+         },
+      });
+
+      // revalidatePath(`/photos/${imageId}`);
+      return { success: true, data: comment };
    });
 
-   if (!comment) return { success: false };
-   const { updatePassword, verifyPassword, ...rest } = comment.user;
-   // @ts-ignore
-   comment.user = rest;
+const downloadSchema = z.string();
 
-   // revalidatePath(`/photos/${imageId}`);
-   return { success: true, data: comment };
-}
-
-
-export async function handleDownloadImage(imageId: string): Promise<ActionApiResponse> {
-   const session = await auth();
-   if (!session) return { success: false };
-
+export const handleDownloadImage = authorizedAction(downloadSchema, async (imageId: string, { userId }): Promise<ActionApiResponse> => {
    await sleep(2000);
    const headers_ = headers();
    const ua = headers_.get(`user-agent`);
@@ -42,7 +59,7 @@ export async function handleDownloadImage(imageId: string): Promise<ActionApiRes
       xprisma.imageDownload.findFirst({
          where: {
             imageId,
-            userId: session.user?.id as string,
+            userId,
          },
       }),
       xprisma.image.findUnique({
@@ -65,12 +82,20 @@ export async function handleDownloadImage(imageId: string): Promise<ActionApiRes
                dimensions: image.dimensions_set[0].split(`,`).map(x => Number(x)),
             },
             imageId,
-            userId: session.user?.id as string,
+            userId,
          },
       });
 
+      await inngest.send({
+         name: `image/image.downloaded`,
+         data: {
+            imageId,
+            userId,
+            timestamp: Date.now(),
+         },
+      });
    }
 
    revalidatePath(`/photos/${imageId}`);
    return { success: true, data: download };
-}
+});

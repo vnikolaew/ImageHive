@@ -165,6 +165,15 @@ export const TOASTS: Record<string, ExternalToast & { message: string }> = {
       },
       duration: 10_000,
    },
+   USER_REPORT_SUCCESS: {
+      message: `Message could not be sent.`,
+      description: `There was a problem sending your message.`,
+      className: ``,
+      classNames: {
+         title: `text-lg`, description: `text-md`,
+      },
+      duration: 10_000,
+   },
 } as const;
 
 export const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");

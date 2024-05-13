@@ -18,16 +18,24 @@ const Footer = ({}: FooterProps) => {
          </nav>
          <nav className="flex h-fit items-start flex-col px-3 gap-3 text-md leading-none">
             <h6 className="text-lg font-bold uppercase text-neutral-400">Company</h6>
-            <Link href={`/service/about`} className="link text-sm link-hover text-neutral-400 hover:underline">About
-               us</Link>
+            <Link href={`/service/about`} className="link text-sm link-hover text-neutral-400 hover:underline">
+               About us
+            </Link>
             <Link href={`/service/cookies`}
-                  className="link text-sm link-hover text-neutral-400 hover:underline">Cookies</Link>
-            <Link href={`/service/privacy`} className="link text-sm link-hover text-neutral-400 hover:underline">Privacy
-               Policy</Link>
+                  className="link text-sm link-hover text-neutral-400 hover:underline">
+               Cookies
+            </Link>
+            <Link href={`/service/privacy`} className="link text-sm link-hover text-neutral-400 hover:underline">
+               Privacy Policy
+            </Link>
             <Link href={`/service/license-summary`}
                   className="link text-sm link-hover text-neutral-400 hover:underline">License Summary</Link>
-            <Link href={`/service/terms`} className="link text-sm link-hover text-neutral-400 hover:underline">Terms of
-               service</Link>
+            <Link href={`/service/terms`} className="link text-sm link-hover text-neutral-400 hover:underline">
+               Terms of service
+            </Link>
+            <Link href={`/service/report`} className="link text-sm link-hover text-neutral-400 hover:underline">
+               Report content
+            </Link>
          </nav>
          <nav className="">
             <h6 className="text-lg font-bold uppercase text-neutral-400">Socials</h6>

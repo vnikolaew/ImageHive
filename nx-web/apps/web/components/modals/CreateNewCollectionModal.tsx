@@ -17,6 +17,7 @@ import { FormControl, FormDescription, FormField, FormItem, Form, FormLabel, For
 import { Input } from "@components/input";
 import { RadioGroup, RadioGroupItem } from "@components/radio-group";
 import { Button } from "@components/button";
+import { useQueryClient } from "@tanstack/react-query";
 
 export interface CreateNewCollectionModalProps {
 }
@@ -30,13 +31,13 @@ type FormValues = z.infer<typeof createCollectionSchema>;
 
 const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
    const { modal, toggleModal, closeModal } = useModals();
+   const queryClient = useQueryClient()
    const form = useForm<FormValues>({
       resolver: zodResolver(createCollectionSchema),
       defaultValues: {
          public: `false`,
          title: ``,
       },
-
    });
    if (modal !== ModalType.CREATE_NEW_COLLECTION) return null;
 
@@ -56,6 +57,8 @@ const CreateNewCollectionModal = ({}: CreateNewCollectionModalProps) => {
                closeModal(ModalType.CREATE_NEW_COLLECTION);
                const { message, ...rest } = TOASTS.CREATE_COLLECTION_SUCCESS;
                toast(message, { ...rest, icon: <Check size={16} /> });
+
+               console.log(queryClient.getQueryData([API_ROUTES.COLLECTIONS]));
             }
          })
          .catch(console.error);

@@ -15,7 +15,7 @@ export interface FileDropzoneProps {
 
 const FileDropzone = ({ uploadsRemaining }: FileDropzoneProps) => {
    const inputRef = useRef<HTMLInputElement>(null);
-   const { form, addImage, removeImage, imageUploads } = useImageUploadsForm();
+   const { form, addImage, removeImage, imageUploads, reset } = useImageUploadsForm();
 
    return (
       <Fragment>
@@ -54,7 +54,7 @@ const FileDropzone = ({ uploadsRemaining }: FileDropzoneProps) => {
             </div>
          </div>
          <div className={`dark:text-white text-black mt-4`}>
-            <ImagesUploadSection removeImage={removeImage} imageUploads={imageUploads} form={form} />
+            <ImagesUploadSection reset={reset} removeImage={removeImage} imageUploads={imageUploads} form={form} />
          </div>
       </Fragment>
    );

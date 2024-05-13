@@ -1,11 +1,10 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import Logo from "../../public/ImageHive-logo.png";
 import LogoDark from "../../public/ImageHive-logo-dark.png";
-import DefaultAvatar from "../../public/default-avatar.png";
-import { LogOut, Upload } from "lucide-react";
+import { Upload } from "lucide-react";
 import { useWindowScroll } from "@uidotdev/usehooks";
 import { useEffect, useMemo, useRef } from "react";
 import { usePathname } from "next/navigation";

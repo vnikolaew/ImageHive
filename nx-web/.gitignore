@@ -44,3 +44,6 @@ Thumbs.db
 .next
 out
 .dist
+.env
+.env.development
+.env.production

@@ -1,5 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { composePlugins, withNx } = require("@nx/next");
+const { resolve } = require("path");
 
 /**
  * @type {import("@nx/next/plugins/with-nx").WithNxOptions}
@@ -11,6 +12,9 @@ const nextConfig = {
       // See: https://github.com/gregberge/svgr
       svgr: false,
 
+   },
+   experimental: {
+      serverComponentsExternalPackages: [`uuid`, 'langchain', '@langchain/core', ],
    },
    typescript: {
       ignoreBuildErrors: true,
@@ -30,6 +34,7 @@ const nextConfig = {
          ...config.resolve.alias,
          "sharp$": false,
          "onnxruntime-node$": false,
+         // uuid: resolve(__dirname, 'node_modules/uuid/dist/esm-node/index.js')
       };
       return config;
    },

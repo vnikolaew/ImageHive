@@ -9,6 +9,7 @@ import Credentials from "next-auth/providers/credentials";
 import { globalForPrisma, prisma, xprisma } from "@nx-web/db";
 import { APP_NAME, RESEND_ONBOARDING_EMAIL } from "@nx-web/shared";
 import { WelcomeEmail } from "@nx-web/emails";
+import crypto from 'crypto';
 
 globalForPrisma.prisma ??= new PrismaClient();
 

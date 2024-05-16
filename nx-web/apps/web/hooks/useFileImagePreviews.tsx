@@ -1,6 +1,5 @@
 "use client"
 import { useMap } from "./useMap";
-import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 
 export function useFileImagePreviews() {
@@ -10,7 +9,7 @@ export function useFileImagePreviews() {
       useMap<string, string>();
 
    const addImage = (imageFile: File) => {
-      const id = uuidv4();
+      const id = crypto.randomUUID();
       inputFilesActions.set(id, imageFile);
 
       const reader = new FileReader();

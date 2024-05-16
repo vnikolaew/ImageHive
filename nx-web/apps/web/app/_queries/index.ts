@@ -36,7 +36,7 @@ export const getUserTheme = cache(async () => {
          where: { id: session?.user?.id as string },
          select: { metadata: true, id: true },
       });
-      return userTheme.metadata["theme"] as string;
+      return userTheme.metadata?.["theme"] as string;
    }
 
    return null! as string;

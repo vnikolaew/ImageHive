@@ -2,7 +2,7 @@
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { v4 as uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import { useCallback } from "react";
 
 export const uploadImageFormSchema = z.object({
@@ -44,7 +44,7 @@ export function useImageUploadsForm() {
    const fields = form.watch(`imageUploads`);
 
    const addImage = useCallback((imageFile: File) => {
-      const id = uuid();
+      const id = uuidv4();
       append({
          id, aiGenerated: false, description: ``, tags: [], inputFile: imageFile, imagePreview: ``,
       });

@@ -7,6 +7,7 @@ import CookieConsentBanner from "../components/common/CookieConsentBanner";
 import Footer from "../components/common/Footer";
 import { Toaster } from "@components/sonner";
 import darkLogo from "@web/public/ImageHive-logo-dark.png";
+import { Analytics } from "@vercel/analytics/react";
 
 import "./global.css";
 import ScrollToTopButton from "@web/app/service/_components/ScrollToTopButton";
@@ -37,6 +38,7 @@ export default async function RootLayout({
          <PageNavigationLoadingBar />
          <Navbar />
          {children}
+         <Analytics />
          <Toaster />
          <CookieConsentBanner />
          <ScrollToTopButton />

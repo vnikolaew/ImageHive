@@ -50,6 +50,7 @@
       "@tanstack/react-query-devtools": "^5.35.5",
       "@uidotdev/usehooks": "^2.4.1",
       "@uploadthing/react": "^6.5.0",
+      "@vercel/analytics": "^1.2.2",
       "@xenova/transformers": "^2.4.2",
       "axios": "^1.6.0",
       "bcrypt": "^5.1.1",

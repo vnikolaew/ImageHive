@@ -4,7 +4,7 @@
   "private": true,
   "devDependencies": {
     "esbuild": "^0.14.42",
-     "wrangler": "^3.0.0"
+     "wrangler": "^3.56.0"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^2.2.2",

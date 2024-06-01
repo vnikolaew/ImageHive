@@ -42,6 +42,7 @@
 - [Next.js](https://nextjs.org): A React framework for building server-side rendered and statically generated applications.
 - [NextAuth](https://next-auth.js.org): For user authentication.
 - [Prisma](https://www.prisma.io): Next-generation ORM, it provides a clean and type-safe API for submitting database queries.
+- [PostgreSQL](https://www.postgresql.org/):  PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
 - [Tailwind CSS](https://tailwindcss.com): A utility-first CSS framework for rapid UI development.
 - [TypeScript](https://www.typescriptlang.org): A typed superset of JavaScript that provides enhanced tooling and developer productivity.
 
@@ -57,4 +58,4 @@ The ImageHive project is licensed under the MIT License. Feel free to use, modif
 
 ## Contact &colon;envelope&colon;
 
-If you have any questions, suggestions, or feedback regarding Code Racer, please feel free to reach out to me via e-mail at [discord](https://discord.gg/4kGbBaa).
+If you have any questions, suggestions, or feedback regarding ImageHive, please feel free to reach out to me via e-mail at <victorio.nikolaev25@gmail.com>.

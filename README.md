@@ -10,8 +10,8 @@
 </div>
 
 <div align="center">
-  <img alt="Repo License" src="https://img.shields.io/github/license/webdevcody/code-racer">
-  <img alt="Website Status" src="https://img.shields.io/website?url=https%3A%2F%2Fcode-racer-eight.vercel.app">
+  <img alt="Repo License" src="https://img.shields.io/github/license/vnikolaew/ImageHive">
+  <img alt="Website Status" src="https://img.shields.io/website?url=https%3A%2F%2Fimage-hive.vercel.app/">
 
   </div>
 
